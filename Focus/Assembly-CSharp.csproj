@@ -134,6 +134,7 @@
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\EyeHistogram.compute" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\TAA.cginc" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\AmbientOcclusion.cginc" />
+    <None Include="Assets\Audio\AudioGoesHere.txt" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Editor Resources\Monitors\VectorscopeCompute.compute" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\ColorGrading.cginc" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
@@ -156,6 +157,7 @@
     <None Include="Assets\PostProcessingVolume\PostProcessing\Editor Resources\Monitors\VectorscopeRender.shader" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\Bloom.shader" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\Uber.shader" />
+    <None Include="Assets\Art\ArtGoesHere.txt" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\DepthOfField.shader" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\TAA.shader" />
     <None Include="Assets\PostProcessingVolume\PostProcessing\Resources\Shaders\Blit.shader" />
