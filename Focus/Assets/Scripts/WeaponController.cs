@@ -33,6 +33,9 @@ public class WeaponController : MonoBehaviour
 
     private int CurrentWeaponIndex = -1;
 
+    [SerializeField] GameObject GunHolder;
+    
+
     // Start is called before the first frame update
     void Start()
     {

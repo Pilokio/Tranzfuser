@@ -11,8 +11,8 @@ public class WallRunning : MonoBehaviour
 
     private Rigidbody rb;
 
-    public Transform head;
-    public Transform cam;
+  //  public Transform head;
+   // public Transform cam;
 
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
@@ -37,9 +37,9 @@ public class WallRunning : MonoBehaviour
         RaycastHit leftWall;
         RaycastHit rightWall;
 
-        if(Physics.Raycast(head.position, head.right, out rightWall))
+        if(Physics.Raycast(transform.position, transform.right, out rightWall))
         {
-            distFromRight = Vector3.Distance(head.position, rightWall.point);
+            distFromRight = Vector3.Distance(transform.position, rightWall.point);
             if(distFromRight < 3f)
             {
                 isRight = true;
@@ -47,9 +47,9 @@ public class WallRunning : MonoBehaviour
             }
         }
 
-        if (Physics.Raycast(head.position, -head.right, out leftWall))
+        if (Physics.Raycast(transform.position, -transform.right, out leftWall))
         {
-            distFromLeft = Vector3.Distance(head.position, leftWall.point);
+            distFromLeft = Vector3.Distance(transform.position, leftWall.point);
             if (distFromLeft < 3f)
             {
                 isRight = false;
@@ -68,11 +68,11 @@ public class WallRunning : MonoBehaviour
             if (isRight)
             {
                 // Can use Lerp for smooth action
-                cam.localEulerAngles = new Vector3(0f, 0f, 10f);
+                Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, 10f);
             }
             if (isLeft)
             {
-                cam.localEulerAngles = new Vector3(0f, 0f, -10f);
+                Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, -10f);
             }
         }
     }
@@ -86,12 +86,12 @@ public class WallRunning : MonoBehaviour
                 if (isLeft)
                 {
                     rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(head.right * sideForce * Time.deltaTime);
+                    rb.AddForce(transform.right * sideForce * Time.deltaTime);
                 }
                 if (isRight)
                 {
                     rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(-head.right * sideForce * Time.deltaTime);
+                    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
                 }
             }
         }
@@ -102,7 +102,7 @@ public class WallRunning : MonoBehaviour
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = true;
-            cam.localEulerAngles = new Vector3(0f, 0f, 0f);
+            Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         }
     }
 }
