@@ -151,8 +151,7 @@ public class PlayerMovement : MonoBehaviour {
         rb.AddForce(Camera.main.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
-        rb.velocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), Mathf.Clamp(rb.angularVelocity.y, -maxSpeed, maxSpeed), Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
-
+        rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y, Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
     }
 
     private void Jump()
