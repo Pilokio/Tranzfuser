@@ -45,14 +45,20 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    [SerializeField] float PlayerGravity = -9.8f;
 
+    private Vector2 LookDirection = new Vector2();
+    private Vector2 MoveDirection = new Vector2();
+    private float XRotation = 0.0f;
+    [SerializeField] float LookSensitivity = 100.0f;
+    float YVelocity = 0.0f;
+    [SerializeField] float JumpHeight = 100.0f;
+  
     void Start()
-    {
+    {      
+        rb = GetComponent<Rigidbody>();
         playerScale = transform.localScale;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -68,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         MyInput();
-        Look();
+       // Look();
     }
 
     /// <summary>
@@ -88,78 +94,75 @@ public class PlayerMovement : MonoBehaviour
             StopCrouch();
     }
 
-    private void StartCrouch()
-    {
-        transform.localScale = crouchScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
-
-        if (rb.velocity.magnitude > 0.5f)
-        {
-            if (grounded)
-            {
-                rb.AddForce(transform.forward * slideForce);
-            }
-        }
-    }
-
-    private void StopCrouch()
-    {
-        transform.localScale = playerScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-    }
-
     private void Movement()
     {
-        // Extra gravity
-        // rb.AddForce(Vector3.down * Time.deltaTime * 10);
+        //Below are the changes made to the core movement functionality
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Find actual velocity relative to where player is looking
-        // Vector2 mag = FindVelRelativeToLook();
-        // float xMag = mag.x, yMag = mag.y;
+        //Get the input axis and place them into 2 new vectors
+        MoveDirection = new Vector2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        LookDirection = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * LookSensitivity * Time.deltaTime;
 
-        // Counteract sliding and sloppy movement
-        //CounterMovement(x, y, mag);
+        //Clamp the manual gravity when touching the ground
+        if(grounded && YVelocity < 0)
+        {
+            YVelocity = -2.0f;
+        }
+
+        //Update the x rotation of the camera based on the new Look Direction
+        XRotation -= LookDirection.y;
+        //Clamp to prevent full 360 rotation around the x-axis
+        XRotation = Mathf.Clamp(XRotation, -90, 90);
+        //Update the camera's x rotation
+        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, 0);
+        //Rotate the entire player container transform around the y-axis based on the look direction
+        transform.Rotate(transform.up * LookDirection.x);
+
+        //Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
+        Vector3 Move = (transform.right * MoveDirection.y) + (transform.forward * MoveDirection.x);
 
         // If holding jump && ready to jump, then jump
-        if (readyToJump && jumping) Jump();
-
-        //Set max speed
-        float maxSpeed = this.maxSpeed;
-
-        // If sliding down a ramp, add force down so player stays grounded and also builds speed
-        if (crouching && grounded && readyToJump)
+        if (readyToJump && jumping)
         {
-            rb.AddForce(Vector3.down * Time.deltaTime * 3000);
-            return;
+            //Calculate the jump force 
+            //FIXME currently broken, need to investigate how the jumping / grounding currently works
+            YVelocity = Mathf.Sqrt(JumpHeight * -2.0f * PlayerGravity);
+            readyToJump = false;
+            Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-        // if (x > 0 && xMag > maxSpeed) x = 0;
-        // if (x < 0 && xMag < -maxSpeed) x = 0;
-        // if (y > 0 && yMag > maxSpeed) y = 0;
-        // if (y < 0 && yMag < -maxSpeed) y = 0;
+
+        //Using the 3D move direction, apply the speed factor, and yVelocity under the influence of gravity
+        Move *= moveSpeed;
+        YVelocity += PlayerGravity;
+        Move.y = YVelocity;
+
+        //Apply the final movement force to the rigidbody, making use of fixed delta time
+        rb.AddForce(Move * Time.fixedDeltaTime);
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        
+
+
+        //// If sliding down a ramp, add force down so player stays grounded and also builds speed
+        //if (crouching && grounded && readyToJump)
+        //{
+        //    rb.AddForce(Vector3.down * Time.deltaTime * 3000);
+        //    return;
+        //}
 
         // Some multipliers
-        float multiplier = 1f, multiplierV = 1f;
+      //  float multiplier = 1f, multiplierV = 1f;
 
         // Movement in air
-        if (!grounded)
-        {
-            multiplier = 0.5f;
-            multiplierV = 0.5f;
-        }
-
+        //if (!grounded)
+        //{
+        //    multiplier = 0.5f;
+        //    multiplierV = 0.5f;
+        //}
         // Movement while sliding
-        if (grounded && crouching) multiplierV = 0f;
-
-
-        Vector3 MoveDirection = new Vector3(-x, 0, -y);
-        MoveDirection *= Time.deltaTime * moveSpeed;
-        rb.AddForce(MoveDirection);
-
-        // Apply forces to move player
-        // rb.AddForce(transform.right * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        // rb.AddForce(transform.forward * x * moveSpeed * Time.deltaTime * multiplier);
+       // if (grounded && crouching) multiplierV = 0f;
+    
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
             Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
@@ -309,6 +312,30 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+    private void StartCrouch()
+    {
+        transform.localScale = crouchScale;
+        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+
+        if (rb.velocity.magnitude > 0.5f)
+        {
+            if (grounded)
+            {
+                rb.AddForce(transform.forward * slideForce);
+            }
+        }
+    }
+
+    private void StopCrouch()
+    {
+        transform.localScale = playerScale;
+        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+    }
+
+
+
+
+    [Header("Bullet Cleanup Parameters")]
     [SerializeField] private float TimeForBulletCheck = 1.0f;
     [SerializeField] private int MaxBulletsInSceneCount = 10;
 
@@ -322,7 +349,7 @@ public class PlayerMovement : MonoBehaviour
         {
             yield return new WaitForSeconds(TimeForBulletCheck);
 
-            Debug.Log("Checking Bullets");
+           // Debug.Log("Checking Bullets");
 
             //Find all the bullets in the scene
             GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
@@ -330,7 +357,7 @@ public class PlayerMovement : MonoBehaviour
             //If there are more than the set number of bullets in the scene
             if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
             {
-                Debug.Log("Too many Bullets. Removing some.");
+               // Debug.Log("Too many Bullets. Removing some.");
                 //Delete the bullets found up to the desired amount
                 for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
                 {

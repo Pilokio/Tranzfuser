@@ -22,7 +22,7 @@ public class ProjectileController : MonoBehaviour
     /// </summary>
     public void Fire()
     {
-        rb.AddForce(new Vector3(Direction.x * Force.x, Direction.y * Force.y, Direction.z * Force.z));
+        rb.AddForce(new Vector3(Direction.x * Force.x, Direction.y * Force.y, Direction.z * Force.z) * Time.deltaTime);
     }
 
     private void OnCollisionEnter(Collision collision)
