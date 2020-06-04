@@ -19,6 +19,9 @@ public class ProjectileController : MonoBehaviour
         rb.useGravity = true;
     }
 
+    /// <summary>
+    /// This function simply propels the projectile in the assigned direction using its assigned force value
+    /// </summary>
     public void Fire()
     {
         rb.AddForce(new Vector3(Direction.x * Force.x, Direction.y * Force.y, Direction.z * Force.z));
@@ -26,9 +29,14 @@ public class ProjectileController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //TODO
+        //Check the tag of the object it collides with and respond accordingly before destroying itself
+        //ie Enemy would be ragdolled, surfaces would have an impact decal spawned, etc.
+
+
         if (collision.gameObject.tag != "Player" || collision.gameObject.layer != 9)
         {
-            Debug.Log("I hit something");
+            //Debug.Log("I hit something");
             //Destroy(this.gameObject);
         }
     }

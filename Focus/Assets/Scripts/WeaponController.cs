@@ -1,49 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// This component is used to determine the weapons that can be used by the character it is placed on
+/// as well as the usage of them
+/// </summary>
 public class WeaponController : MonoBehaviour
 {
-    //The different possible weapons types
-    //Add more here for additional weapons
-    public enum WeaponType { Pistol };
-    
-    //Struct containing the details regarding each possible weapon
-    [System.Serializable]
-    public struct WeaponStats
-    {
-        public WeaponType Type;
-        public GameObject ProjectilePrefab;
-        public GameObject WeaponObject;
-        public bool IsRanged;
-        public float Range;
-        public float MagSize;
-        public float ProjectileForce;
-    }
-
-    //The currently equipped weapon
-    [SerializeField] WeaponType CurrentlyEquippedWeapon;
-
+    [Header("Weapon Details")]
     //A list of the stats for each possible weapon
-    [SerializeField] List<WeaponStats> WeaponsList = new List<WeaponStats>();
-
-    //The current ammo count, should only be edited within this script when firing a weapon
-    //however may need to be accessed from elsewhere
-    public float CurrentAmmoCount { get; private set; }
-
-    //The index in the weapon list array
-    private int CurrentWeaponIndex = -1;
+    [SerializeField] List<Weapon> WeaponsList = new List<Weapon>();
 
     //The gun holder object, the parent of the gun after instantiation
     //ie where it will be placed in relation to the player object
     [SerializeField] GameObject GunHolder;
+    
+    //The index in the weapon list array
+    private int CurrentWeaponIndex = -1;
 
     //The currently equipped gun, stored after instantiation to allow for deletion on weapon change
     private GameObject CurrentGun;
 
+    
+    [Header("Debug")]
+    //For Debugging to show currently equipped weapon and ammo counters
+    [SerializeField] Text AmmoCounter;
+
     // Start is called before the first frame update
     void Start()
     {
+        //Error handling for if the gun holder is not assigned in the editor
         if (GunHolder == null)
         {
             //Manual search for the GunHolder object
@@ -77,66 +65,52 @@ public class WeaponController : MonoBehaviour
             }
         }
 
-        ChangeWeapon(CurrentlyEquippedWeapon);
+        //Init the currently equipped weapon
+        ChangeWeapon(0);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //All of the folllowing should be moved to the Player controller script along with a reference to this component
+        //This will allow Enemy AI to utilise the same code for weapon usage
+        AmmoCounter.text = WeaponsList[CurrentWeaponIndex].WeaponName + ": " + WeaponsList[CurrentWeaponIndex].AmmoInCLip + "/" + WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
         if (Input.GetMouseButtonDown(0))
         {
             UseWeapon();
         }
-    }
 
-    //This function changes the currently equipped weapon
-    //It changes the appropriate parameters and instantiates the new gun object in place of the previously equipped one
-    public void ChangeWeapon(WeaponType newWeapon)
-    {
-        //Check the desired item type is contained in the current weapon list
-        if (WeaponsList.FindAll(weap => weap.Type == newWeapon).Count > 0)
+        if(Input.GetKeyDown(KeyCode.R))
         {
-            CurrentlyEquippedWeapon = newWeapon;
+            ReloadWeapon();
+        }
 
-            //This will update the current weapon index for use later
-            GetWeaponIndex();
-
-            //Update the ammo count
-            //FIXME if changing weapons the ammo will be fully replenished, this should be altered to
-            //store the ammo count on a weapon by weapon basis to prevent an exploit
-            CurrentAmmoCount = WeaponsList[CurrentWeaponIndex].MagSize;
-
-            //If a current gun object is present then delete the previously equipped weapon
-            if (CurrentGun != null)
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            if(CurrentWeaponIndex + 1 < WeaponsList.Count)
             {
-                Destroy(CurrentGun.gameObject);
+                Debug.Log("Changing Weapon");
+                ChangeWeapon(CurrentWeaponIndex + 1);
             }
+            else
+            {
 
-            //Instantiate the new gun object
-            CurrentGun = Instantiate(WeaponsList[CurrentWeaponIndex].WeaponObject, GunHolder.transform);
-        }
-        else
-        {
-            Debug.LogError("Unable to change weapon as weapon type does not exist in the weapon list of " + transform.name + " in the WeaponController component");
+                ChangeWeapon(0);
+            }
         }
     }
 
-    //This function acts as an overload for the change weapon function above to allow
-    //for a weapon change via index (ie iterate through different weapons on keypress)
-    public void ChangeWeapon(int newID)
+    /// <summary>
+    /// This function changes the currently equipped weapon to the new ID.
+    ///It swaps out the weapon prefabs to show the currently equipped one.
+    /// </summary>
+    public void ChangeWeapon(int index)
     {
         //Check ID is not out of bounds
-        if (newID >= 0 && newID < WeaponsList.Count)
+        if (index >= 0 && index < WeaponsList.Count)
         {
-            CurrentWeaponIndex = newID;
-
-            CurrentlyEquippedWeapon = WeaponsList[CurrentWeaponIndex].Type;
-
-            //Update the ammo count
-            //FIXME if changing weapons the ammo will be fully replenished, this should be altered to
-            //store the ammo count on a weapon by weapon basis to prevent an exploit
-            CurrentAmmoCount = WeaponsList[CurrentWeaponIndex].MagSize;
-
+            CurrentWeaponIndex = index;
+            
             //If a current gun object is present then delete the previously equipped weapon
             if (CurrentGun != null)
             {
@@ -152,56 +126,114 @@ public class WeaponController : MonoBehaviour
             Debug.LogError("Invalid weapon ID presented when changing weapon in WeaponController component of " + transform.name);
         }
     }
-
-    //This function will update the current weapon index
-    //FIXME ? This script only works if there are only one weapon of each type
-    //To fix this a unique ID for each weapon would need to be generated to allow for multiples
-    void GetWeaponIndex()
-    {
-        //Loop through the weapons list and find the corresponding weapon id
-        for(int i = 0; i < WeaponsList.Count; i++)
-        {
-            if(WeaponsList[i].Type == CurrentlyEquippedWeapon)
-            {
-                CurrentWeaponIndex = i;
-                return;
-            }
-        }
-
-        //Set to -1 if the appropriate ID cannot be found
-        CurrentWeaponIndex = -1;
-        return;
-    }
-
-
-    //This function handles the use of the currently equipped weapon
+    
+    /// <summary>
+    /// This function is called to use the currently equipped weapon if possible
+    /// </summary>    
     void UseWeapon()
     {
-        if(CurrentGun == null || CurrentGun.transform.childCount == 0)
+        //Error handling for if required parameters are null or invalid
+
+        if (CurrentGun == null || CurrentGun.transform.childCount == 0)
         {
             Debug.LogError("Error when trying to use weapon. Check the object is instantiated correctly and a child object for the tip of the barrel is present.");
+            return;
         }
 
-        if(CurrentWeaponIndex == -1)
+        if (CurrentWeaponIndex == -1)
         {
             Debug.LogError("Invalid Weapon is equipped. Unable to find suitable ID in WeaponController component of " + transform.name);
             return;
         }
 
-        //If there is still ammo in the magazine and a suitable weapon is equipped
-        if (CurrentAmmoCount > 0)
-        {      
-            //Find the tip of the gun's barrel
-            Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
-           //Instantiate the bullet at the tip of the gun
-            GameObject projectile = Instantiate(WeaponsList[CurrentWeaponIndex].ProjectilePrefab, BarrelEnd.position, BarrelEnd.rotation);
-            //Set its projectile force based on the stats in the weaponList and its direction based on the forward vector of the barrel tip
-            projectile.GetComponent<ProjectileController>().Force = Vector3.one * WeaponsList[CurrentWeaponIndex].ProjectileForce;
-            projectile.GetComponent<ProjectileController>().Direction = BarrelEnd.forward;
-            //Fire the projectile
-            projectile.GetComponent<ProjectileController>().Fire();
-            //Decrement the ammo count
-            CurrentAmmoCount--;
+        //Check that the currently equipped weapon is not a melee weapon
+        if (WeaponsList[CurrentWeaponIndex].IsRanged)
+        {
+            //If there is still ammo in the magazine and a suitable weapon is equipped
+            if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
+            {
+                //Find the tip of the gun's barrel
+                Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
+                //Instantiate the bullet at the tip of the gun
+                GameObject projectile = Instantiate(WeaponsList[CurrentWeaponIndex].ProjectilePrefab, BarrelEnd.position, BarrelEnd.rotation);
+                //Set its projectile force based on the stats in the weaponList and its direction based on the forward vector of the barrel tip
+                projectile.GetComponent<ProjectileController>().Force = Vector3.one * WeaponsList[CurrentWeaponIndex].ProjectileForce;
+                projectile.GetComponent<ProjectileController>().Direction = BarrelEnd.forward;
+                //Fire the projectile
+                projectile.GetComponent<ProjectileController>().Fire();
+                //Decrement the ammo count
+                WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
+                WeaponsList[CurrentWeaponIndex].SpareAmmoCount--;
+            }
+            else if(WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
+            {
+                //Automatically reload if the player attempts to fire the weapon 
+                //provided they have more ammunition
+                ReloadWeapon();
+            }
+        }
+        else
+        {
+            //Add Melee stuff here if we decide to add it
+        }
+    }
+
+    /// <summary>
+    /// This function reloads the weapon if there is enough spare ammo for it
+    /// </summary>
+    void ReloadWeapon()
+    {
+        //Ensure there is spare ammo to load into the weapon
+        if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
+        {
+            //Take the ammo from the clip and add it to the spare ammo counter (prevents the current mag being lost in the reload)
+            WeaponsList[CurrentWeaponIndex].SpareAmmoCount += WeaponsList[CurrentWeaponIndex].AmmoInCLip;
+            WeaponsList[CurrentWeaponIndex].AmmoInCLip = 0;
+
+            //If the player has more ammo than can be loaded into the magazine
+            //Add the total magazine capacity to ammo in clip, and subtract it from the spare ammo counter
+            if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > WeaponsList[CurrentWeaponIndex].MagazineCapacity)
+            {
+                WeaponsList[CurrentWeaponIndex].AmmoInCLip = WeaponsList[CurrentWeaponIndex].MagazineCapacity;
+                WeaponsList[CurrentWeaponIndex].SpareAmmoCount -= WeaponsList[CurrentWeaponIndex].MagazineCapacity;
+            }
+            else
+            {
+                //If the player has less than the magazine capacity, add all their spare ammo into the clip
+                //and set the spare counter to 0
+                WeaponsList[CurrentWeaponIndex].AmmoInCLip = WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
+                WeaponsList[CurrentWeaponIndex].SpareAmmoCount = 0;
+            }
+        }
+        else
+        {
+            //Used for Debug Purposes
+            //Debug.Log("No Ammo to load");
         }
     }
 }
+
+/// <summary>
+/// This class represents the Weapons in the game. 
+/// It contains the relevant information regarding its identifiers, ammo supplies, and usage. 
+/// All of which can be assigned in the editor
+/// </summary>
+[System.Serializable]
+public class Weapon
+{
+    public enum WeaponType { Pistol };
+
+    public string WeaponName; 
+    public string WeaponID;
+    public WeaponType Type;
+    public GameObject ProjectilePrefab;
+    public GameObject WeaponObject;
+    public int MagazineCapacity;
+    public int SpareAmmoCount;
+    public int AmmoInCLip;
+    public float ProjectileForce;
+    public bool IsRanged;
+}
+
+//TODO?
+//Have spare ammo count stored seperately to allow for multiples of the same weapon type to share an ammo pool
