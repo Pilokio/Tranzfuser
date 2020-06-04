@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
-    [SerializeField] float PlayerGravity = -9.8f;
+    [SerializeField] float PlayerGravity = -30f;
 
     private Vector2 LookDirection = new Vector2();
     private Vector2 MoveDirection = new Vector2();
@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         MyInput();
-       // Look();
+        Look();
     }
 
     /// <summary>
@@ -101,22 +101,12 @@ public class PlayerMovement : MonoBehaviour
 
         //Get the input axis and place them into 2 new vectors
         MoveDirection = new Vector2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        LookDirection = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * LookSensitivity * Time.deltaTime;
 
         //Clamp the manual gravity when touching the ground
         if(grounded && YVelocity < 0)
         {
             YVelocity = -2.0f;
         }
-
-        //Update the x rotation of the camera based on the new Look Direction
-        XRotation -= LookDirection.y;
-        //Clamp to prevent full 360 rotation around the x-axis
-        XRotation = Mathf.Clamp(XRotation, -90, 90);
-        //Update the camera's x rotation
-        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, 0);
-        //Rotate the entire player container transform around the y-axis based on the look direction
-        transform.Rotate(transform.up * LookDirection.x);
 
         //Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.y) + (transform.forward * MoveDirection.x);
@@ -200,20 +190,16 @@ public class PlayerMovement : MonoBehaviour
     private float desiredX;
     private void Look()
     {
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        LookDirection = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * LookSensitivity * Time.deltaTime;
 
-        // Find current look rotation
-        Vector3 rot = Camera.main.transform.localRotation.eulerAngles;
-        desiredX = rot.y + mouseX;
-
-        // Rotate, and also make sure we dont over- or under-rotate.
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        // Perform the rotations
-        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
-        transform.localRotation = Quaternion.Euler(0, desiredX, 0);
+        //Update the x rotation of the camera based on the new Look Direction
+        XRotation -= LookDirection.y;
+        //Clamp to prevent full 360 rotation around the x-axis
+        XRotation = Mathf.Clamp(XRotation, -90, 90);
+        //Update the camera's x rotation
+        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, 0);
+        //Rotate the entire player container transform around the y-axis based on the look direction
+        transform.Rotate(transform.up * LookDirection.x);
     }
 
     private void CounterMovement(float x, float y, Vector2 mag)

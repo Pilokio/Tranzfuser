@@ -1171,7 +1171,7 @@ GameObject:
   - component: {fileID: 1356558074}
   - component: {fileID: 1356558073}
   - component: {fileID: 1356558072}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: RunnableWall
   m_Icon: {fileID: 0}
@@ -1199,7 +1199,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1356558070}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 9f324c85540392c40850a3d11e0d0ead, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1388,7 +1388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4084b382069b9b14688b464a7db65718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5000
+  moveSpeed: 7500
   maxSpeed: 10000
   grounded: 0
   whatIsGround:
@@ -1399,6 +1399,9 @@ MonoBehaviour:
   slideForce: 400
   slideCounterMovement: 0.2
   jumpForce: 550
+  PlayerGravity: -30
+  LookSensitivity: 100
+  JumpHeight: 100
   TimeForBulletCheck: 1
   MaxBulletsInSceneCount: 10
 --- !u!54 &1564139280
@@ -1592,7 +1595,7 @@ GameObject:
   - component: {fileID: 1799948299}
   - component: {fileID: 1799948298}
   - component: {fileID: 1799948297}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: RunnableWall
   m_Icon: {fileID: 0}
@@ -1620,7 +1623,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799948295}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 9f324c85540392c40850a3d11e0d0ead, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
