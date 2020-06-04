@@ -1,8 +1,6 @@
 ﻿// Utility scripts for the post processing stack
 // https://github.com/keijiro/PostProcessingUtilities
 
-using UnityEngine;
-
 namespace UnityEngine.PostProcessing.Utilities
 {
     [RequireComponent(typeof(PostProcessingBehaviour))]
@@ -213,7 +211,7 @@ namespace UnityEngine.PostProcessing.Utilities
 
                 if (enableGrain)
                     _profile.grain.settings = grain;
-                    
+
             }
 
             if (controlVignette)

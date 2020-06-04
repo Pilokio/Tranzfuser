@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class WallRunning : MonoBehaviour
 {
@@ -11,8 +7,8 @@ public class WallRunning : MonoBehaviour
 
     private Rigidbody rb;
 
-  //  public Transform head;
-   // public Transform cam;
+    //  public Transform head;
+    // public Transform cam;
 
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
@@ -37,10 +33,10 @@ public class WallRunning : MonoBehaviour
         RaycastHit leftWall;
         RaycastHit rightWall;
 
-        if(Physics.Raycast(transform.position, transform.right, out rightWall))
+        if (Physics.Raycast(transform.position, transform.right, out rightWall))
         {
             distFromRight = Vector3.Distance(transform.position, rightWall.point);
-            if(distFromRight < 3f)
+            if (distFromRight < 3f)
             {
                 isRight = true;
                 isLeft = false;

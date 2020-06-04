@@ -1,7 +1,6 @@
 ﻿// Utility scripts for the post processing stack
 // https://github.com/keijiro/PostProcessingUtilities
 
-using UnityEngine;
 using UnityEditor;
 
 namespace UnityEngine.PostProcessing.Utilities

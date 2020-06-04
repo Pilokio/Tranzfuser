@@ -1,5 +1,3 @@
-using UnityEngine.Rendering;
-
 namespace UnityEngine.PostProcessing
 {
     using DebugMode = BuiltinDebugViewsModel.Mode;
@@ -8,15 +6,15 @@ namespace UnityEngine.PostProcessing
     {
         static class Uniforms
         {
-            internal static readonly int _DepthOfFieldTex    = Shader.PropertyToID("_DepthOfFieldTex");
-            internal static readonly int _Distance           = Shader.PropertyToID("_Distance");
-            internal static readonly int _LensCoeff          = Shader.PropertyToID("_LensCoeff");
-            internal static readonly int _MaxCoC             = Shader.PropertyToID("_MaxCoC");
-            internal static readonly int _RcpMaxCoC          = Shader.PropertyToID("_RcpMaxCoC");
-            internal static readonly int _RcpAspect          = Shader.PropertyToID("_RcpAspect");
-            internal static readonly int _MainTex            = Shader.PropertyToID("_MainTex");
-            internal static readonly int _HistoryCoC         = Shader.PropertyToID("_HistoryCoC");
-            internal static readonly int _HistoryWeight      = Shader.PropertyToID("_HistoryWeight");
+            internal static readonly int _DepthOfFieldTex = Shader.PropertyToID("_DepthOfFieldTex");
+            internal static readonly int _Distance = Shader.PropertyToID("_Distance");
+            internal static readonly int _LensCoeff = Shader.PropertyToID("_LensCoeff");
+            internal static readonly int _MaxCoC = Shader.PropertyToID("_MaxCoC");
+            internal static readonly int _RcpMaxCoC = Shader.PropertyToID("_RcpMaxCoC");
+            internal static readonly int _RcpAspect = Shader.PropertyToID("_RcpAspect");
+            internal static readonly int _MainTex = Shader.PropertyToID("_MainTex");
+            internal static readonly int _HistoryCoC = Shader.PropertyToID("_HistoryCoC");
+            internal static readonly int _HistoryWeight = Shader.PropertyToID("_HistoryWeight");
             internal static readonly int _DepthOfFieldParams = Shader.PropertyToID("_DepthOfFieldParams");
         }
 

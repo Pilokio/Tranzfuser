@@ -1,7 +1,5 @@
 ﻿//Not Included: Bloom_LensDirt_Texture; Colorgrading GradingCurves; Fog; LUT Texture
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
 
@@ -17,22 +15,22 @@ public class PostProcessVolumeReceiver : MonoBehaviour
     //private FogModel.Settings fogSettings;
     private AntialiasingModel.Settings antialiasingSettings;
     private AmbientOcclusionModel.Settings ambientOcclusionSettings;
-   private ScreenSpaceReflectionModel.Settings screenSpaceReflectionSettings;
-   private DepthOfFieldModel.Settings depthOfFieldSettings;
-   private MotionBlurModel.Settings motionBlurSettings;
-   private EyeAdaptationModel.Settings eyeAdaptationSettings;
-   private BloomModel.Settings bloomSettings;
-   private ColorGradingModel.Settings colorGradingSettings;
-   private UserLutModel.Settings userLutSettings;
-   private ChromaticAberrationModel.Settings chromaticAberrationSettings;
-   private GrainModel.Settings grainSettings;
-   private VignetteModel.Settings vignetteSettings;
-   private DitheringModel.Settings ditheringSettings;
+    private ScreenSpaceReflectionModel.Settings screenSpaceReflectionSettings;
+    private DepthOfFieldModel.Settings depthOfFieldSettings;
+    private MotionBlurModel.Settings motionBlurSettings;
+    private EyeAdaptationModel.Settings eyeAdaptationSettings;
+    private BloomModel.Settings bloomSettings;
+    private ColorGradingModel.Settings colorGradingSettings;
+    private UserLutModel.Settings userLutSettings;
+    private ChromaticAberrationModel.Settings chromaticAberrationSettings;
+    private GrainModel.Settings grainSettings;
+    private VignetteModel.Settings vignetteSettings;
+    private DitheringModel.Settings ditheringSettings;
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-        _profileOriginal=this.GetComponent<PostProcessingBehaviour>().profile;
-        if (_profileOriginal==null)
+        _profileOriginal = this.GetComponent<PostProcessingBehaviour>().profile;
+        if (_profileOriginal == null)
         {
             Debug.LogError("No Post ProcessingProfile added to camera!");
             return;
@@ -43,13 +41,13 @@ public class PostProcessVolumeReceiver : MonoBehaviour
         colorGradingSettings = _profileCopy.colorGrading.settings;
         this.GetComponent<Rigidbody>().isKinematic = false;
         this.GetComponent<Rigidbody>().useGravity = false;
-        this.GetComponent<Collider>().isTrigger=true;
+        this.GetComponent<Collider>().isTrigger = true;
     }
-	
-	// Update is called once per frame
+
+    // Update is called once per frame
     public void SetValues(ref PostProcessVolume volume, float percentage)
     {
-        if (volume.antialiasing.enabled )
+        if (volume.antialiasing.enabled)
         {
             _profileCopy.antialiasing.enabled = true;
             //Give all values in case something changes/was forgotten
@@ -89,8 +87,8 @@ public class PostProcessVolumeReceiver : MonoBehaviour
             _profileCopy.ambientOcclusion.settings = volume.ambientOcclusion.settings;
 
 
-            ambientOcclusionSettings.intensity=Mathf.Lerp(_profileOriginal.ambientOcclusion.settings.intensity, volume.ambientOcclusion.settings.intensity,percentage);
-            ambientOcclusionSettings.radius=Mathf.Lerp(_profileOriginal.ambientOcclusion.settings.radius, volume.ambientOcclusion.settings.radius,percentage);
+            ambientOcclusionSettings.intensity = Mathf.Lerp(_profileOriginal.ambientOcclusion.settings.intensity, volume.ambientOcclusion.settings.intensity, percentage);
+            ambientOcclusionSettings.radius = Mathf.Lerp(_profileOriginal.ambientOcclusion.settings.radius, volume.ambientOcclusion.settings.radius, percentage);
             ambientOcclusionSettings.sampleCount = volume.ambientOcclusion.settings.sampleCount;
             ambientOcclusionSettings.downsampling = volume.ambientOcclusion.settings.downsampling;
             ambientOcclusionSettings.forceForwardCompatibility = volume.ambientOcclusion.settings.forceForwardCompatibility;
@@ -112,12 +110,12 @@ public class PostProcessVolumeReceiver : MonoBehaviour
 
 
             //Reflection
-            screenSpaceReflectionSettings.reflection.blendType =volume.screenSpaceReflection.settings.reflection.blendType;
+            screenSpaceReflectionSettings.reflection.blendType = volume.screenSpaceReflection.settings.reflection.blendType;
             screenSpaceReflectionSettings.reflection.reflectionQuality = volume.screenSpaceReflection.settings.reflection.reflectionQuality;
-            screenSpaceReflectionSettings.reflection.maxDistance =Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.maxDistance, volume.screenSpaceReflection.settings.reflection.maxDistance, percentage);
-            screenSpaceReflectionSettings.reflection.iterationCount =(int)Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.iterationCount, volume.screenSpaceReflection.settings.reflection.iterationCount, percentage);
-            screenSpaceReflectionSettings.reflection.stepSize =(int)Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.stepSize, volume.screenSpaceReflection.settings.reflection.stepSize, percentage);
-            screenSpaceReflectionSettings.reflection.widthModifier =Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.widthModifier, volume.screenSpaceReflection.settings.reflection.widthModifier, percentage);
+            screenSpaceReflectionSettings.reflection.maxDistance = Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.maxDistance, volume.screenSpaceReflection.settings.reflection.maxDistance, percentage);
+            screenSpaceReflectionSettings.reflection.iterationCount = (int)Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.iterationCount, volume.screenSpaceReflection.settings.reflection.iterationCount, percentage);
+            screenSpaceReflectionSettings.reflection.stepSize = (int)Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.stepSize, volume.screenSpaceReflection.settings.reflection.stepSize, percentage);
+            screenSpaceReflectionSettings.reflection.widthModifier = Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.widthModifier, volume.screenSpaceReflection.settings.reflection.widthModifier, percentage);
             screenSpaceReflectionSettings.reflection.reflectionBlur = Mathf.Lerp(_profileOriginal.screenSpaceReflection.settings.reflection.reflectionBlur, volume.screenSpaceReflection.settings.reflection.reflectionBlur, percentage);
             screenSpaceReflectionSettings.reflection.reflectBackfaces = volume.screenSpaceReflection.settings.reflection.reflectBackfaces;
 
@@ -166,8 +164,8 @@ public class PostProcessVolumeReceiver : MonoBehaviour
             _profileCopy.motionBlur.settings = volume.motionBlur.settings;
 
 
-            motionBlurSettings.shutterAngle=Mathf.Lerp(_profileOriginal.motionBlur.settings.shutterAngle, volume.motionBlur.settings.shutterAngle, percentage);
-            motionBlurSettings.sampleCount=(int)Mathf.Lerp(_profileOriginal.motionBlur.settings.sampleCount, volume.motionBlur.settings.sampleCount, percentage);
+            motionBlurSettings.shutterAngle = Mathf.Lerp(_profileOriginal.motionBlur.settings.shutterAngle, volume.motionBlur.settings.shutterAngle, percentage);
+            motionBlurSettings.sampleCount = (int)Mathf.Lerp(_profileOriginal.motionBlur.settings.sampleCount, volume.motionBlur.settings.sampleCount, percentage);
             motionBlurSettings.frameBlending = Mathf.Lerp(_profileOriginal.motionBlur.settings.frameBlending, volume.motionBlur.settings.frameBlending, percentage);
 
             _profileCopy.motionBlur.settings = motionBlurSettings;
@@ -187,7 +185,7 @@ public class PostProcessVolumeReceiver : MonoBehaviour
 
             //LuminosityRange
             eyeAdaptationSettings.logMin = (int)Mathf.Lerp(_profileOriginal.eyeAdaptation.settings.logMin, volume.eyeAdaptation.settings.logMin, percentage);
-            eyeAdaptationSettings.logMax = (int) Mathf.Lerp(_profileOriginal.eyeAdaptation.settings.logMax, volume.eyeAdaptation.settings.logMax, percentage);
+            eyeAdaptationSettings.logMax = (int)Mathf.Lerp(_profileOriginal.eyeAdaptation.settings.logMax, volume.eyeAdaptation.settings.logMax, percentage);
 
             //AutoExposure
             eyeAdaptationSettings.lowPercent = Mathf.Lerp(_profileOriginal.eyeAdaptation.settings.lowPercent, volume.eyeAdaptation.settings.lowPercent, percentage);
@@ -219,12 +217,12 @@ public class PostProcessVolumeReceiver : MonoBehaviour
 
 
             //Bloom
-            bloomSettings.bloom.intensity=Mathf.Lerp(_profileOriginal.bloom.settings.bloom.intensity, volume.bloom.settings.bloom.intensity, percentage);
-            bloomSettings.bloom.threshold=Mathf.Lerp(_profileOriginal.bloom.settings.bloom.threshold, volume.bloom.settings.bloom.threshold, percentage);
-            bloomSettings.bloom.thresholdLinear=Mathf.Lerp(_profileOriginal.bloom.settings.bloom.thresholdLinear, volume.bloom.settings.bloom.thresholdLinear, percentage);
-            bloomSettings.bloom.softKnee=Mathf.Lerp(_profileOriginal.bloom.settings.bloom.softKnee, volume.bloom.settings.bloom.softKnee, percentage);
-            bloomSettings.bloom.radius=Mathf.Lerp(_profileOriginal.bloom.settings.bloom.radius, volume.bloom.settings.bloom.radius, percentage);
-            bloomSettings.bloom.antiFlicker=volume.bloom.settings.bloom.antiFlicker;
+            bloomSettings.bloom.intensity = Mathf.Lerp(_profileOriginal.bloom.settings.bloom.intensity, volume.bloom.settings.bloom.intensity, percentage);
+            bloomSettings.bloom.threshold = Mathf.Lerp(_profileOriginal.bloom.settings.bloom.threshold, volume.bloom.settings.bloom.threshold, percentage);
+            bloomSettings.bloom.thresholdLinear = Mathf.Lerp(_profileOriginal.bloom.settings.bloom.thresholdLinear, volume.bloom.settings.bloom.thresholdLinear, percentage);
+            bloomSettings.bloom.softKnee = Mathf.Lerp(_profileOriginal.bloom.settings.bloom.softKnee, volume.bloom.settings.bloom.softKnee, percentage);
+            bloomSettings.bloom.radius = Mathf.Lerp(_profileOriginal.bloom.settings.bloom.radius, volume.bloom.settings.bloom.radius, percentage);
+            bloomSettings.bloom.antiFlicker = volume.bloom.settings.bloom.antiFlicker;
 
             //Dirt
             bloomSettings.lensDirt.texture = _profileOriginal.bloom.settings.lensDirt.texture;
@@ -346,7 +344,7 @@ public class PostProcessVolumeReceiver : MonoBehaviour
 
             userLutSettings.lut = _profileOriginal.userLut.settings.lut;
             userLutSettings.contribution = Mathf.Lerp(_profileOriginal.userLut.settings.contribution, volume.userLut.settings.contribution, percentage);
-        
+
             _profileCopy.userLut.settings = userLutSettings;
         }
         else
@@ -402,11 +400,12 @@ public class PostProcessVolumeReceiver : MonoBehaviour
             vignetteSettings.mode = volume.vignette.settings.mode;
             vignetteSettings.color = Color.Lerp(_profileOriginal.vignette.settings.color, volume.vignette.settings.color, percentage);
 
-            if (vignetteSettings.mode==VignetteModel.Mode.Masked)
+            if (vignetteSettings.mode == VignetteModel.Mode.Masked)
             {
                 vignetteSettings.opacity = Mathf.Lerp(_profileOriginal.vignette.settings.opacity, volume.vignette.settings.opacity, percentage);
 
-            }else if (vignetteSettings.mode == VignetteModel.Mode.Classic)
+            }
+            else if (vignetteSettings.mode == VignetteModel.Mode.Classic)
             {
                 vignetteSettings.center = Vector3.Lerp(_profileOriginal.vignette.settings.center, volume.vignette.settings.center, percentage);
 
@@ -516,7 +515,7 @@ public class PostProcessVolumeReceiver : MonoBehaviour
         {
             _profileCopy.bloom.enabled = false;
         }
-        
+
         //colorGrading
         if (_profileOriginal.colorGrading.enabled)
         {

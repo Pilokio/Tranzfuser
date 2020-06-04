@@ -1,14 +1,13 @@
-using UnityEngine;
-using UnityEngine.PostProcessing;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using UnityEngine;
+using UnityEngine.PostProcessing;
 
 namespace UnityEditor.PostProcessing
 {
+    using ColorWheelMode = ColorGradingModel.ColorWheelMode;
     using Settings = ColorGradingModel.Settings;
     using Tonemapper = ColorGradingModel.Tonemapper;
-	using ColorWheelMode = ColorGradingModel.ColorWheelMode;
 
     [PostProcessingModelEditor(typeof(ColorGradingModel))]
     public class ColorGradingModelEditor : PostProcessingModelEditor
@@ -49,7 +48,7 @@ namespace UnityEditor.PostProcessing
 
         struct ColorWheelsSettings
         {
-	        public SerializedProperty mode;
+            public SerializedProperty mode;
             public SerializedProperty log;
             public SerializedProperty linear;
         }
@@ -91,14 +90,14 @@ namespace UnityEditor.PostProcessing
         CurveEditor m_CurveEditor;
         Dictionary<SerializedProperty, Color> m_CurveDict;
 
-		// Neutral tonemapping curve helper
+        // Neutral tonemapping curve helper
         const int k_CurveResolution = 24;
         const float k_NeutralRangeX = 2f;
         const float k_NeutralRangeY = 1f;
         Vector3[] m_RectVertices = new Vector3[4];
         Vector3[] m_LineVertices = new Vector3[2];
         Vector3[] m_CurveVertices = new Vector3[k_CurveResolution];
-	    Rect m_NeutralCurveRect;
+        Rect m_NeutralCurveRect;
 
         public override void OnEnable()
         {
@@ -140,7 +139,7 @@ namespace UnityEditor.PostProcessing
             // Color wheels
             m_ColorWheels = new ColorWheelsSettings
             {
-				mode = FindSetting((Settings x) => x.colorWheels.mode),
+                mode = FindSetting((Settings x) => x.colorWheels.mode),
                 log = FindSetting((Settings x) => x.colorWheels.log),
                 linear = FindSetting((Settings x) => x.colorWheels.linear)
             };
@@ -171,10 +170,10 @@ namespace UnityEditor.PostProcessing
             var settings = CurveEditor.Settings.defaultSettings;
 
             m_CurveEditor = new CurveEditor(settings);
-            AddCurve(m_Curves.master,   new Color(1f, 1f, 1f), 2, false);
-            AddCurve(m_Curves.red,      new Color(1f, 0f, 0f), 2, false);
-            AddCurve(m_Curves.green,    new Color(0f, 1f, 0f), 2, false);
-            AddCurve(m_Curves.blue,     new Color(0f, 0.5f, 1f), 2, false);
+            AddCurve(m_Curves.master, new Color(1f, 1f, 1f), 2, false);
+            AddCurve(m_Curves.red, new Color(1f, 0f, 0f), 2, false);
+            AddCurve(m_Curves.green, new Color(0f, 1f, 0f), 2, false);
+            AddCurve(m_Curves.blue, new Color(0f, 0.5f, 1f), 2, false);
             AddCurve(m_Curves.hueVShue, new Color(1f, 1f, 1f), 0, true);
             AddCurve(m_Curves.hueVSsat, new Color(1f, 1f, 1f), 0, true);
             AddCurve(m_Curves.satVSsat, new Color(1f, 1f, 1f), 0, false);
@@ -226,7 +225,7 @@ namespace UnityEditor.PostProcessing
 
             if (tid == (int)Tonemapper.Neutral)
             {
-	            DrawNeutralTonemappingCurve();
+                DrawNeutralTonemappingCurve();
 
                 EditorGUILayout.PropertyField(m_Tonemapping.neutralBlackIn, EditorGUIHelper.GetContent("Black In"));
                 EditorGUILayout.PropertyField(m_Tonemapping.neutralWhiteIn, EditorGUIHelper.GetContent("White In"));
@@ -239,19 +238,19 @@ namespace UnityEditor.PostProcessing
             m_Tonemapping.tonemapper.intValue = tid;
         }
 
-	    void DrawNeutralTonemappingCurve()
-	    {
+        void DrawNeutralTonemappingCurve()
+        {
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Space(EditorGUI.indentLevel * 15f);
                 m_NeutralCurveRect = GUILayoutUtility.GetRect(128, 80);
             }
 
-			// Background
-			m_RectVertices[0] = PointInRect(             0f,              0f);
-            m_RectVertices[1] = PointInRect(k_NeutralRangeX,              0f);
+            // Background
+            m_RectVertices[0] = PointInRect(0f, 0f);
+            m_RectVertices[1] = PointInRect(k_NeutralRangeX, 0f);
             m_RectVertices[2] = PointInRect(k_NeutralRangeX, k_NeutralRangeY);
-            m_RectVertices[3] = PointInRect(             0f, k_NeutralRangeY);
+            m_RectVertices[3] = PointInRect(0f, k_NeutralRangeY);
 
             Handles.DrawSolidRectangleWithOutline(
                 m_RectVertices,
@@ -267,16 +266,16 @@ namespace UnityEditor.PostProcessing
             for (var i = 1; i < k_NeutralRangeX; i++)
                 DrawLine(i, 0, i, k_NeutralRangeY, 0.4f);
 
-			// Label
+            // Label
             Handles.Label(
                 PointInRect(0, k_NeutralRangeY) + Vector3.right,
                 "Neutral Tonemapper", EditorStyles.miniLabel
                 );
 
-			// Precompute some values
+            // Precompute some values
             var tonemap = ((ColorGradingModel)target).settings.tonemapping;
 
-		    const float scaleFactor = 20f;
+            const float scaleFactor = 20f;
             const float scaleFactorHalf = scaleFactor * 0.5f;
 
             float inBlack = tonemap.neutralBlackIn * scaleFactor + 1f;
@@ -292,10 +291,10 @@ namespace UnityEditor.PostProcessing
             float d = Mathf.Max(0f, Mathf.LerpUnclamped(0.02f, 0.20f, blackRatio));
             const float e = 0.02f;
             const float f = 0.30f;
-		    float whiteLevel = tonemap.neutralWhiteLevel;
-		    float whiteClip = tonemap.neutralWhiteClip / scaleFactorHalf;
+            float whiteLevel = tonemap.neutralWhiteLevel;
+            float whiteClip = tonemap.neutralWhiteClip / scaleFactorHalf;
 
-			// Tonemapping curve
+            // Tonemapping curve
             var vcount = 0;
             while (vcount < k_CurveResolution)
             {
@@ -325,9 +324,9 @@ namespace UnityEditor.PostProcessing
                 Handles.color = Color.white * 0.9f;
                 Handles.DrawAAPolyLine(2.0f, vcount, m_CurveVertices);
             }
-	    }
+        }
 
-		void DrawLine(float x1, float y1, float x2, float y2, float grayscale)
+        void DrawLine(float x1, float y1, float x2, float y2, float grayscale)
         {
             m_LineVertices[0] = PointInRect(x1, y1);
             m_LineVertices[1] = PointInRect(x2, y2);
@@ -335,32 +334,32 @@ namespace UnityEditor.PostProcessing
             Handles.DrawAAPolyLine(2f, m_LineVertices);
         }
 
-		Vector3 PointInRect(float x, float y)
+        Vector3 PointInRect(float x, float y)
         {
             x = Mathf.Lerp(m_NeutralCurveRect.x, m_NeutralCurveRect.xMax, x / k_NeutralRangeX);
             y = Mathf.Lerp(m_NeutralCurveRect.yMax, m_NeutralCurveRect.y, y / k_NeutralRangeY);
             return new Vector3(x, y, 0);
         }
 
-		float NeutralCurve(float x, float a, float b, float c, float d, float e, float f)
-		{
-			return ((x * (a * x + c * b) + d * e) / (x * (a * x + b) + d * f)) - e / f;
-		}
+        float NeutralCurve(float x, float a, float b, float c, float d, float e, float f)
+        {
+            return ((x * (a * x + c * b) + d * e) / (x * (a * x + b) + d * f)) - e / f;
+        }
 
-	    float NeutralTonemap(float x, float a, float b, float c, float d, float e, float f, float whiteLevel, float whiteClip)
-	    {
-			x = Mathf.Max(0f, x);
+        float NeutralTonemap(float x, float a, float b, float c, float d, float e, float f, float whiteLevel, float whiteClip)
+        {
+            x = Mathf.Max(0f, x);
 
-			// Tonemap
-			float whiteScale = 1f / NeutralCurve(whiteLevel, a, b, c, d, e, f);
-			x = NeutralCurve(x * whiteScale, a, b, c, d, e, f);
-			x *= whiteScale;
+            // Tonemap
+            float whiteScale = 1f / NeutralCurve(whiteLevel, a, b, c, d, e, f);
+            x = NeutralCurve(x * whiteScale, a, b, c, d, e, f);
+            x *= whiteScale;
 
-			// Post-curve white point adjustment
-			x /= whiteClip;
+            // Post-curve white point adjustment
+            x /= whiteClip;
 
-			return x;
-	    }
+            return x;
+        }
 
         void DoBasicGUI()
         {
@@ -403,28 +402,28 @@ namespace UnityEditor.PostProcessing
 
         void DoColorWheelsGUI()
         {
-	        int wheelMode = m_ColorWheels.mode.intValue;
+            int wheelMode = m_ColorWheels.mode.intValue;
 
-	        using (new EditorGUILayout.HorizontalScope())
-	        {
-		        GUILayout.Space(15);
-		        if (GUILayout.Toggle(wheelMode == (int)ColorWheelMode.Linear, "Linear", EditorStyles.miniButtonLeft)) wheelMode = (int)ColorWheelMode.Linear;
-		        if (GUILayout.Toggle(wheelMode == (int)ColorWheelMode.Log, "Log", EditorStyles.miniButtonRight)) wheelMode = (int)ColorWheelMode.Log;
-	        }
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Space(15);
+                if (GUILayout.Toggle(wheelMode == (int)ColorWheelMode.Linear, "Linear", EditorStyles.miniButtonLeft)) wheelMode = (int)ColorWheelMode.Linear;
+                if (GUILayout.Toggle(wheelMode == (int)ColorWheelMode.Log, "Log", EditorStyles.miniButtonRight)) wheelMode = (int)ColorWheelMode.Log;
+            }
 
-	        m_ColorWheels.mode.intValue = wheelMode;
-	        EditorGUILayout.Space();
+            m_ColorWheels.mode.intValue = wheelMode;
+            EditorGUILayout.Space();
 
-	        if (wheelMode == (int)ColorWheelMode.Linear)
-	        {
-		        EditorGUILayout.PropertyField(m_ColorWheels.linear);
-		        WheelSetTitle(GUILayoutUtility.GetLastRect(), "Linear Controls");
-	        }
-			else if (wheelMode == (int)ColorWheelMode.Log)
-			{
-				EditorGUILayout.PropertyField(m_ColorWheels.log);
-				WheelSetTitle(GUILayoutUtility.GetLastRect(), "Log Controls");
-			}
+            if (wheelMode == (int)ColorWheelMode.Linear)
+            {
+                EditorGUILayout.PropertyField(m_ColorWheels.linear);
+                WheelSetTitle(GUILayoutUtility.GetLastRect(), "Linear Controls");
+            }
+            else if (wheelMode == (int)ColorWheelMode.Log)
+            {
+                EditorGUILayout.PropertyField(m_ColorWheels.log);
+                WheelSetTitle(GUILayoutUtility.GetLastRect(), "Log Controls");
+            }
         }
 
         static void WheelSetTitle(Rect position, string label)
@@ -520,13 +519,17 @@ namespace UnityEditor.PostProcessing
                     {
                         switch (curveEditingId)
                         {
-                            case 1: SetCurveVisible(m_Curves.hueVShue);
+                            case 1:
+                                SetCurveVisible(m_Curves.hueVShue);
                                 break;
-                            case 2: SetCurveVisible(m_Curves.hueVSsat);
+                            case 2:
+                                SetCurveVisible(m_Curves.hueVSsat);
                                 break;
-                            case 3: SetCurveVisible(m_Curves.satVSsat);
+                            case 3:
+                                SetCurveVisible(m_Curves.satVSsat);
                                 break;
-                            case 4: SetCurveVisible(m_Curves.lumVSsat);
+                            case 4:
+                                SetCurveVisible(m_Curves.lumVSsat);
                                 break;
                         }
                     }
@@ -539,17 +542,21 @@ namespace UnityEditor.PostProcessing
                         {
                             case 0:
                                 if (y) m_Curves.master.animationCurveValue = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-                                if (r) m_Curves.red.animationCurveValue    = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-                                if (g) m_Curves.green.animationCurveValue  = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-                                if (b) m_Curves.blue.animationCurveValue   = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+                                if (r) m_Curves.red.animationCurveValue = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+                                if (g) m_Curves.green.animationCurveValue = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+                                if (b) m_Curves.blue.animationCurveValue = AnimationCurve.Linear(0f, 0f, 1f, 1f);
                                 break;
-                            case 1: m_Curves.hueVShue.animationCurveValue = new AnimationCurve();
+                            case 1:
+                                m_Curves.hueVShue.animationCurveValue = new AnimationCurve();
                                 break;
-                            case 2: m_Curves.hueVSsat.animationCurveValue = new AnimationCurve();
+                            case 2:
+                                m_Curves.hueVSsat.animationCurveValue = new AnimationCurve();
                                 break;
-                            case 3: m_Curves.satVSsat.animationCurveValue = new AnimationCurve();
+                            case 3:
+                                m_Curves.satVSsat.animationCurveValue = new AnimationCurve();
                                 break;
-                            case 4: m_Curves.lumVSsat.animationCurveValue = new AnimationCurve();
+                            case 4:
+                                m_Curves.lumVSsat.animationCurveValue = new AnimationCurve();
                                 break;
                         }
                     }

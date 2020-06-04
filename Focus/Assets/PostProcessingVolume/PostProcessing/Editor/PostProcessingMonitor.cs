@@ -21,14 +21,14 @@ namespace UnityEditor.PostProcessing
         public abstract GUIContent GetMonitorTitle();
 
         public virtual void OnMonitorSettings()
-        {}
+        { }
 
         public abstract void OnMonitorGUI(Rect r);
 
         public virtual void OnFrameData(RenderTexture source)
-        {}
+        { }
 
         public virtual void Dispose()
-        {}
+        { }
     }
 }

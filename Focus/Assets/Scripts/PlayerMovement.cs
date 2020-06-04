@@ -1,13 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour
+{
 
     // Assingables
     //public Transform playerCam;
     //public Transform orientation;
-    
+
     // Other
     private Rigidbody rb;
 
@@ -15,13 +15,13 @@ public class PlayerMovement : MonoBehaviour {
     private float xRotation;
     private float sensitivity = 50f;
     private float sensMultiplier = 1f;
-    
+
     // Movement
     public float moveSpeed;
     public float maxSpeed;
     public bool grounded;
     public LayerMask whatIsGround;
-    
+
     public float counterMovement = 0.175f;
     private float threshold = 0.01f;
     public float maxSlopeAngle = 35f;
@@ -36,11 +36,11 @@ public class PlayerMovement : MonoBehaviour {
     private bool readyToJump = true;
     private float jumpCooldown = 0.25f;
     public float jumpForce = 550f;
-    
+
     // Input
     float x, y;
     bool jumping, sprinting, crouching;
-    
+
     // Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
@@ -49,17 +49,17 @@ public class PlayerMovement : MonoBehaviour {
     {
         rb = GetComponent<Rigidbody>();
     }
-    
+
     void Start()
     {
-        playerScale =  transform.localScale;
+        playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         StartCoroutine(CheckForBullets());
     }
 
-    
+
     private void FixedUpdate()
     {
         Movement();
@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour {
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
-      
+
         //Crouching
         if (Input.GetKeyDown(KeyCode.LeftControl))
             StartCrouch();
@@ -93,9 +93,9 @@ public class PlayerMovement : MonoBehaviour {
         transform.localScale = crouchScale;
         transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
 
-        if (rb.velocity.magnitude > 0.5f) 
+        if (rb.velocity.magnitude > 0.5f)
         {
-            if (grounded) 
+            if (grounded)
             {
                 rb.AddForce(transform.forward * slideForce);
             }
@@ -111,42 +111,44 @@ public class PlayerMovement : MonoBehaviour {
     private void Movement()
     {
         // Extra gravity
-       // rb.AddForce(Vector3.down * Time.deltaTime * 10);
-        
+        // rb.AddForce(Vector3.down * Time.deltaTime * 10);
+
         // Find actual velocity relative to where player is looking
-       // Vector2 mag = FindVelRelativeToLook();
-       // float xMag = mag.x, yMag = mag.y;
+        // Vector2 mag = FindVelRelativeToLook();
+        // float xMag = mag.x, yMag = mag.y;
 
         // Counteract sliding and sloppy movement
         //CounterMovement(x, y, mag);
-        
+
         // If holding jump && ready to jump, then jump
         if (readyToJump && jumping) Jump();
 
         //Set max speed
         float maxSpeed = this.maxSpeed;
-        
+
         // If sliding down a ramp, add force down so player stays grounded and also builds speed
-        if (crouching && grounded && readyToJump) {
+        if (crouching && grounded && readyToJump)
+        {
             rb.AddForce(Vector3.down * Time.deltaTime * 3000);
             return;
         }
-        
+
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-       // if (x > 0 && xMag > maxSpeed) x = 0;
-       // if (x < 0 && xMag < -maxSpeed) x = 0;
-       // if (y > 0 && yMag > maxSpeed) y = 0;
-       // if (y < 0 && yMag < -maxSpeed) y = 0;
+        // if (x > 0 && xMag > maxSpeed) x = 0;
+        // if (x < 0 && xMag < -maxSpeed) x = 0;
+        // if (y > 0 && yMag > maxSpeed) y = 0;
+        // if (y < 0 && yMag < -maxSpeed) y = 0;
 
         // Some multipliers
         float multiplier = 1f, multiplierV = 1f;
-        
+
         // Movement in air
-        if (!grounded) {
+        if (!grounded)
+        {
             multiplier = 0.5f;
             multiplierV = 0.5f;
         }
-        
+
         // Movement while sliding
         if (grounded && crouching) multiplierV = 0f;
 
@@ -156,8 +158,8 @@ public class PlayerMovement : MonoBehaviour {
         rb.AddForce(MoveDirection);
 
         // Apply forces to move player
-       // rb.AddForce(transform.right * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-       // rb.AddForce(transform.forward * x * moveSpeed * Time.deltaTime * multiplier);
+        // rb.AddForce(transform.right * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
+        // rb.AddForce(transform.forward * x * moveSpeed * Time.deltaTime * multiplier);
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
             Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
@@ -168,29 +170,30 @@ public class PlayerMovement : MonoBehaviour {
 
     private void Jump()
     {
-        if (grounded && readyToJump) {
+        if (grounded && readyToJump)
+        {
             readyToJump = false;
 
             // Add jump forces
             rb.AddForce(Vector2.up * jumpForce * 1.5f);
             rb.AddForce(normalVector * jumpForce * 0.5f);
-            
+
             // If jumping while falling, reset y velocity.
             Vector3 vel = rb.velocity;
             if (rb.velocity.y < 0.5f)
                 rb.velocity = new Vector3(vel.x, 0, vel.z);
-            else if (rb.velocity.y > 0) 
+            else if (rb.velocity.y > 0)
                 rb.velocity = new Vector3(vel.x, vel.y / 2, vel.z);
-            
+
             Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
-    
+
     private void ResetJump()
     {
         readyToJump = true;
     }
-    
+
     private float desiredX;
     private void Look()
     {
@@ -200,7 +203,7 @@ public class PlayerMovement : MonoBehaviour {
         // Find current look rotation
         Vector3 rot = Camera.main.transform.localRotation.eulerAngles;
         desiredX = rot.y + mouseX;
-        
+
         // Rotate, and also make sure we dont over- or under-rotate.
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
@@ -215,21 +218,25 @@ public class PlayerMovement : MonoBehaviour {
         if (!grounded || jumping) return;
 
         // Slow down sliding
-        if (crouching) {
+        if (crouching)
+        {
             rb.AddForce(moveSpeed * Time.deltaTime * -rb.velocity.normalized * slideCounterMovement);
             return;
         }
 
         // Counter movement
-        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0)) {
+        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
+        {
             rb.AddForce(moveSpeed * transform.right * Time.deltaTime * -mag.x * counterMovement);
         }
-        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
+        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
+        {
             rb.AddForce(moveSpeed * transform.forward * Time.deltaTime * -mag.y * counterMovement);
         }
-        
+
         // Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
-        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed) {
+        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed)
+        {
             float fallspeed = rb.velocity.y;
             Vector3 n = rb.velocity.normalized * maxSpeed;
             rb.velocity = new Vector3(n.x, fallspeed, n.z);
@@ -252,7 +259,7 @@ public class PlayerMovement : MonoBehaviour {
         float magnitue = rb.velocity.magnitude;
         float yMag = magnitue * Mathf.Cos(u * Mathf.Deg2Rad);
         float xMag = magnitue * Mathf.Cos(v * Mathf.Deg2Rad);
-        
+
         return new Vector2(xMag, yMag);
     }
 
@@ -263,7 +270,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private bool cancellingGrounded;
-    
+
     /// <summary>
     /// Handle ground detection
     /// </summary>
@@ -274,10 +281,12 @@ public class PlayerMovement : MonoBehaviour {
         if (whatIsGround != (whatIsGround | (1 << layer))) return;
 
         // Iterate through every collision in a physics update
-        for (int i = 0; i < other.contactCount; i++) {
+        for (int i = 0; i < other.contactCount; i++)
+        {
             Vector3 normal = other.contacts[i].normal;
             // FLOOR
-            if (IsFloor(normal)) {
+            if (IsFloor(normal))
+            {
                 grounded = true;
                 cancellingGrounded = false;
                 normalVector = normal;
@@ -299,7 +308,7 @@ public class PlayerMovement : MonoBehaviour {
         grounded = false;
     }
 
-    
+
     [SerializeField] private float TimeForBulletCheck = 1.0f;
     [SerializeField] private int MaxBulletsInSceneCount = 10;
 
@@ -330,6 +339,6 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
     }
-    
+
 
 }

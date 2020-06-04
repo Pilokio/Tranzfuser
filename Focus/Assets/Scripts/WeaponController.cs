@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +8,9 @@ using UnityEngine.UI;
 /// </summary>
 public class WeaponController : MonoBehaviour
 {
+
+    public TimeManager timeManager;
+
     [Header("Weapon Details")]
     //A list of the stats for each possible weapon
     [SerializeField] List<Weapon> WeaponsList = new List<Weapon>();
@@ -16,14 +18,14 @@ public class WeaponController : MonoBehaviour
     //The gun holder object, the parent of the gun after instantiation
     //ie where it will be placed in relation to the player object
     [SerializeField] GameObject GunHolder;
-    
+
     //The index in the weapon list array
     private int CurrentWeaponIndex = -1;
 
     //The currently equipped gun, stored after instantiation to allow for deletion on weapon change
     private GameObject CurrentGun;
 
-    
+
     [Header("Debug")]
     //For Debugging to show currently equipped weapon and ammo counters
     [SerializeField] Text AmmoCounter;
@@ -80,14 +82,14 @@ public class WeaponController : MonoBehaviour
             UseWeapon();
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             ReloadWeapon();
         }
 
-        if(Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            if(CurrentWeaponIndex + 1 < WeaponsList.Count)
+            if (CurrentWeaponIndex + 1 < WeaponsList.Count)
             {
                 Debug.Log("Changing Weapon");
                 ChangeWeapon(CurrentWeaponIndex + 1);
@@ -110,7 +112,7 @@ public class WeaponController : MonoBehaviour
         if (index >= 0 && index < WeaponsList.Count)
         {
             CurrentWeaponIndex = index;
-            
+
             //If a current gun object is present then delete the previously equipped weapon
             if (CurrentGun != null)
             {
@@ -126,7 +128,7 @@ public class WeaponController : MonoBehaviour
             Debug.LogError("Invalid weapon ID presented when changing weapon in WeaponController component of " + transform.name);
         }
     }
-    
+
     /// <summary>
     /// This function is called to use the currently equipped weapon if possible
     /// </summary>    
@@ -152,6 +154,10 @@ public class WeaponController : MonoBehaviour
             //If there is still ammo in the magazine and a suitable weapon is equipped
             if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
             {
+                // Start slowmotion
+                timeManager.DoSlowmotion();
+                // Slow motion end
+
                 //Find the tip of the gun's barrel
                 Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
                 //Instantiate the bullet at the tip of the gun
@@ -165,7 +171,7 @@ public class WeaponController : MonoBehaviour
                 WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
                 WeaponsList[CurrentWeaponIndex].SpareAmmoCount--;
             }
-            else if(WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
+            else if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
             {
                 //Automatically reload if the player attempts to fire the weapon 
                 //provided they have more ammunition
@@ -223,7 +229,7 @@ public class Weapon
 {
     public enum WeaponType { Pistol };
 
-    public string WeaponName; 
+    public string WeaponName;
     public string WeaponID;
     public WeaponType Type;
     public GameObject ProjectilePrefab;

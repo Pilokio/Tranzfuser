@@ -1,8 +1,6 @@
 ﻿// Utility scripts for the post processing stack
 // https://github.com/keijiro/PostProcessingUtilities
 
-using UnityEngine;
-
 namespace UnityEngine.PostProcessing.Utilities
 {
     [RequireComponent(typeof(PostProcessingController))]
@@ -12,21 +10,24 @@ namespace UnityEngine.PostProcessing.Utilities
 
         [SerializeField] Transform _target;
 
-        public Transform target {
+        public Transform target
+        {
             get { return _target; }
             set { _target = value; }
         }
 
         [SerializeField] float _offset = 0;
 
-        public float offset {
+        public float offset
+        {
             get { return _offset; }
             set { _offset = value; }
         }
 
         [SerializeField] float _speed = 10;
 
-        public float speed {
+        public float speed
+        {
             get { return _speed; }
             set { _speed = Mathf.Max(0.01f, value); }
         }

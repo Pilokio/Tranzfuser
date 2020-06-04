@@ -1,7 +1,5 @@
-﻿using System;
+﻿using UnityEditor;
 using UnityEngine;
-using System.Collections;
-using UnityEditor;
 
 [CustomEditor(typeof(PostProcessVolume))]
 public class ResetValues : Editor

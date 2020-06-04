@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
 {
@@ -11,7 +9,7 @@ public class GrapplingGun : MonoBehaviour
 
     public LayerMask CanBeGrappled;
     public Transform gunTip, camera, player;
-    
+
 
     private void Awake()
     {

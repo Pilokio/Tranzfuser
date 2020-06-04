@@ -142,7 +142,7 @@ namespace UnityEditor.PostProcessing
         #region Constructors & destructors
         public CurveEditor()
             : this(Settings.defaultSettings)
-        {}
+        { }
 
         public CurveEditor(Settings settings)
         {
@@ -785,7 +785,7 @@ namespace UnityEditor.PostProcessing
             segment[0] = CurveToCanvas(new Vector3(start.time, start.value));
             segment[3] = CurveToCanvas(new Vector3(end.time, end.value));
 
-            float middle  = start.time + ((end.time - start.time) * 0.333333f);
+            float middle = start.time + ((end.time - start.time) * 0.333333f);
             float middle2 = start.time + ((end.time - start.time) * 0.666666f);
 
             segment[1] = CurveToCanvas(new Vector3(middle, ProjectTangent(start.time, start.value, start.outTangent, middle)));
