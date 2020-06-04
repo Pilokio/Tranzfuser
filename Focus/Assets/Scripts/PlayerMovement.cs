@@ -1,4 +1,5 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
@@ -54,6 +55,8 @@ public class PlayerMovement : MonoBehaviour {
         playerScale =  transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        StartCoroutine(CheckForBullets());
     }
 
     
@@ -146,9 +149,14 @@ public class PlayerMovement : MonoBehaviour {
         // Movement while sliding
         if (grounded && crouching) multiplierV = 0f;
 
+
+        Vector3 MoveDirection = new Vector3(-x, 0, -y);
+        MoveDirection *= Time.deltaTime * moveSpeed;
+        rb.AddForce(MoveDirection);
+
         // Apply forces to move player
-        rb.AddForce(Camera.main.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        rb.AddForce(Camera.main.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+       // rb.AddForce(transform.right * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
+       // rb.AddForce(transform.forward * x * moveSpeed * Time.deltaTime * multiplier);
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
         rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y, Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
@@ -209,10 +217,10 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         // Counter movement
-        if (Math.Abs(mag.x) > threshold && Math.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0)) {
+        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0)) {
             rb.AddForce(moveSpeed * transform.right * Time.deltaTime * -mag.x * counterMovement);
         }
-        if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
+        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
             rb.AddForce(moveSpeed * transform.forward * Time.deltaTime * -mag.y * counterMovement);
         }
         
@@ -286,5 +294,38 @@ public class PlayerMovement : MonoBehaviour {
     {
         grounded = false;
     }
+
     
+    [SerializeField] private float TimeForBulletCheck = 1.0f;
+    [SerializeField] private int MaxBulletsInSceneCount = 10;
+
+
+    //Coroutine for optimisation by removing bullets if there are too many in the scene
+    //Currently just for debug as bullets will typically destroy themselves and spawn an impact decal or something?
+    //Could be adapted for shell casings later on though?
+    IEnumerator CheckForBullets()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(TimeForBulletCheck);
+
+            Debug.Log("Checking Bullets");
+
+            //Find all the bullets in the scene
+            GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
+
+            //If there are more than the set number of bullets in the scene
+            if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
+            {
+                Debug.Log("Too many Bullets. Removing some.");
+                //Delete the bullets found up to the desired amount
+                for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
+                {
+                    Destroy(AllBulletsInScene[i]);
+                }
+            }
+        }
+    }
+    
+
 }

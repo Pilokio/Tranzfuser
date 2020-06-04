@@ -13,7 +13,7 @@ public class ProjectileController : MonoBehaviour
     private Rigidbody rb;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = true;
@@ -26,7 +26,10 @@ public class ProjectileController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("I hit something");
-        Destroy(this.gameObject);
+        if (collision.gameObject.tag != "Player" || collision.gameObject.layer != 9)
+        {
+            Debug.Log("I hit something");
+            //Destroy(this.gameObject);
+        }
     }
 }
