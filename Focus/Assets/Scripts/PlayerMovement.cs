@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-    //Assingables
+    // Assingables
     //public Transform playerCam;
-   // public Transform orientation;
+    //public Transform orientation;
     
-    //Other
+    // Other
     private Rigidbody rb;
 
-    //Rotation and look
+    // Rotation and look
     private float xRotation;
     private float sensitivity = 50f;
     private float sensMultiplier = 1f;
     
-    //Movement
-    public float moveSpeed = 4500;
-    public float maxSpeed = 20;
+    // Movement
+    public float moveSpeed;
+    public float maxSpeed;
     public bool grounded;
     public LayerMask whatIsGround;
     
@@ -26,22 +26,22 @@ public class PlayerMovement : MonoBehaviour {
     private float threshold = 0.01f;
     public float maxSlopeAngle = 35f;
 
-    //Crouch & Slide
+    // Crouch & Slide
     private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
     private Vector3 playerScale;
     public float slideForce = 400;
     public float slideCounterMovement = 0.2f;
 
-    //Jumping
+    // Jumping
     private bool readyToJump = true;
     private float jumpCooldown = 0.25f;
     public float jumpForce = 550f;
     
-    //Input
+    // Input
     float x, y;
     bool jumping, sprinting, crouching;
     
-    //Sliding
+    // Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
@@ -92,6 +92,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         transform.localScale = crouchScale;
         transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
+
         if (rb.velocity.magnitude > 0.5f) 
         {
             if (grounded) 
@@ -158,8 +159,11 @@ public class PlayerMovement : MonoBehaviour {
        // rb.AddForce(transform.right * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
        // rb.AddForce(transform.forward * x * moveSpeed * Time.deltaTime * multiplier);
 
-        rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y, Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
-        rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y, Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
+        rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
+            Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
+
+        rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y,
+            Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
     }
 
     private void Jump()
