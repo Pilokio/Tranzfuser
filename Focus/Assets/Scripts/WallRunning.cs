@@ -11,7 +11,7 @@ public class WallRunning : MonoBehaviour
     // public Transform cam;
 
     private float minAngle = 0.0f;
-    private float maxAngle = 45.0f;
+    private float maxAngle = 30.0f;
 
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
@@ -103,8 +103,7 @@ public class WallRunning : MonoBehaviour
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = true;
-            float angle = Mathf.LerpAngle(minAngle, maxAngle, Time.time); // The new vector will either be negative or positive depending on the direction of the wall
-            Camera.main.transform.eulerAngles = new Vector3(0, angle, 0);
+            Camera.main.transform.eulerAngles = new Vector3(0, 0, 0);
         }
     }
 }

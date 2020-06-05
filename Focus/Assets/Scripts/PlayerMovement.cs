@@ -89,6 +89,11 @@ public class PlayerMovement : MonoBehaviour
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            Climb();
+        }
     }
 
     private void Movement()
@@ -223,6 +228,11 @@ public class PlayerMovement : MonoBehaviour
             Vector3 n = rb.velocity.normalized * maxSpeed;
             rb.velocity = new Vector3(n.x, fallspeed, n.z);
         }
+    }
+
+    private void Climb()
+    {
+        rb.Translate(Vector3(0, 0.5, 0) * Time.deltaTime);
     }
 
     /// <summary>
