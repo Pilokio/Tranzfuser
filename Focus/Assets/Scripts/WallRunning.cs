@@ -32,6 +32,17 @@ public class WallRunning : MonoBehaviour
     {
         WallChecker();
 
+
+        if(!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
+        {
+            float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime);
+            Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
+
+            if(Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
+            {
+                Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
+            }
+        }
     }
 
     // Checks if the player is colliding with a wall
@@ -51,6 +62,10 @@ public class WallRunning : MonoBehaviour
                 isLeft = false;
             }
         }
+        else
+        {
+            isRight = false;
+        }
 
         if (Physics.Raycast(transform.position, -transform.right, out leftWall))
         {
@@ -63,6 +78,10 @@ public class WallRunning : MonoBehaviour
                 isRight = false;
                 isLeft = true;
             }
+        }
+        else
+        {
+            isLeft = false;
         }
     }
 
