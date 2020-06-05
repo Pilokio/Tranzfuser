@@ -104,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
         // Get the input axis and place them into 2 new vectors
-        MoveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        MoveDirection = new Vector2(ControllerSupport.LeftHorizontal.GetAxis(), ControllerSupport.LeftVertical.GetAxis());
 
        
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
@@ -184,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
     private float desiredX;
     private void Look()
     {
-        LookDirection = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * LookSensitivity * Time.deltaTime;
+        LookDirection = new Vector2(ControllerSupport.RightHorizontal.GetAxis(), ControllerSupport.RightVertical.GetAxis()) * LookSensitivity * Time.deltaTime;
 
         //Update the x rotation of the camera based on the new Look Direction
         XRotation -= LookDirection.y;
