@@ -181,7 +181,6 @@ public class WeaponController : MonoBehaviour
                 projectile.GetComponent<ProjectileController>().Fire();
                 //Decrement the ammo count
                 WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
-                WeaponsList[CurrentWeaponIndex].SpareAmmoCount--;
             }
             else if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
             {

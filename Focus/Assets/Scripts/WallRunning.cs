@@ -13,6 +13,9 @@ public class WallRunning : MonoBehaviour
     private float minAngle = 0.0f;
     private float maxAngle = 30.0f;
 
+    private float WallRunRoteLeft = -30.0f;
+    private float WallRunRoteRight = 30.0f;
+
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
     private bool isRight;
@@ -39,8 +42,10 @@ public class WallRunning : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.right, out rightWall))
         {
             distFromRight = Vector3.Distance(transform.position, rightWall.point);
-            if (distFromRight < 3f)
+            if (distFromRight < 3f && rightWall.transform.tag == "RunnableWall")
             {
+                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteRight, Time.deltaTime);
+                Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = true;
                 isLeft = false;
             }
@@ -49,8 +54,11 @@ public class WallRunning : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.right, out leftWall))
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
-            if (distFromLeft < 3f)
+           
+            if (distFromLeft < 3f && rightWall.transform.tag == "RunnableWall")
             {
+                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
+                Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = false;
                 isLeft = true;
             }
@@ -63,18 +71,6 @@ public class WallRunning : MonoBehaviour
         {
             rb.useGravity = false;
             Debug.Log("Wall Running!");
-
-            if (isRight)
-            {
-                // FIXME Need to find out why player is not tilting when wall running (also in OnCollisionExit function)
-                float angle = Mathf.LerpAngle(minAngle, maxAngle, Time.time);
-                Camera.main.transform.eulerAngles = new Vector3(0f, angle, 0f);
-            }
-            if (isLeft)
-            {
-                float angle = Mathf.LerpAngle(minAngle, maxAngle, Time.time);
-                Camera.main.transform.eulerAngles = new Vector3(0f, angle, 0f);
-            }
         }
     }
 
@@ -103,7 +99,10 @@ public class WallRunning : MonoBehaviour
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = true;
-            Camera.main.transform.eulerAngles = new Vector3(0, 0, 0);
+         
+               //float angle = Mathf.LerpAngle(Camera.main.transform.eulerAngles.z, 0.0f, Time.deltaTime);
+               // Camera.main.transform.eulerAngles = new Vector3(0f, 0.0f, angle);
+            
         }
     }
 }

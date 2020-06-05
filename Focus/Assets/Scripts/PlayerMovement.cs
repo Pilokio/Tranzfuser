@@ -102,33 +102,20 @@ public class PlayerMovement : MonoBehaviour
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
         // Get the input axis and place them into 2 new vectors
-        MoveDirection = new Vector2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        MoveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        // Clamp the manual gravity when touching the ground
-        if (grounded && YVelocity < 0)
-        {
-            YVelocity = -2.0f;
-        }
-
+       
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
-        Vector3 Move = (transform.right * MoveDirection.y) + (transform.forward * MoveDirection.x);
+        Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y);
 
         // If holding jump && ready to jump, then jump
         if (readyToJump && jumping)
         {
-            //Calculate the jump force 
-            //FIXME currently broken, need to investigate how the jumping / grounding currently works
-            YVelocity = Mathf.Sqrt(JumpHeight * -2.0f * -9.8f);
-            readyToJump = false;
-            Invoke(nameof(ResetJump), jumpCooldown);
+            Jump();
         }
 
-        // Using the 3D move direction, apply the speed factor
-        Move *= moveSpeed;
-        Move.y = YVelocity;
-
         // Apply the final movement force to the rigidbody, making use of fixed delta time
-        rb.AddForce(Move * Time.fixedDeltaTime);
+        rb.AddForce(Move * moveSpeed * Time.fixedDeltaTime);
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
             Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
@@ -170,6 +157,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (grounded && readyToJump)
         {
+            Debug.Log("Trying to jump");
+
             readyToJump = false;
 
             // Add jump forces
@@ -202,7 +191,7 @@ public class PlayerMovement : MonoBehaviour
         //Clamp to prevent full 360 rotation around the x-axis
         XRotation = Mathf.Clamp(XRotation, -90, 90);
         //Update the camera's x rotation
-        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, 0);
+        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, Camera.main.transform.localRotation.eulerAngles.z);
         //Rotate the entire player container transform around the y-axis based on the look direction
         transform.Rotate(transform.up * LookDirection.x);
     }
@@ -239,7 +228,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Climb()
     {
-        rb.Translate(Vector3(0, 0.5, 0) * Time.deltaTime);
+       // rb.Translate(Vector3(0, 0.5, 0) * Time.deltaTime);
     }
 
     /// <summary>
