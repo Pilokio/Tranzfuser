@@ -31,6 +31,18 @@ public class WallRunning : MonoBehaviour
     private void Update()
     {
         WallChecker();
+
+
+        if(!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
+        {
+            float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime);
+            Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
+
+            if(Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
+            {
+                Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
+            }
+        }
     }
 
     // Checks if the player is colliding with a wall
@@ -50,18 +62,26 @@ public class WallRunning : MonoBehaviour
                 isLeft = false;
             }
         }
+        else
+        {
+            isRight = false;
+        }
 
         if (Physics.Raycast(transform.position, -transform.right, out leftWall))
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
            
-            if (distFromLeft < 3f && rightWall.transform.tag == "RunnableWall")
+            if (distFromLeft < 3f && leftWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = false;
                 isLeft = true;
             }
+        }
+        else
+        {
+            isLeft = false;
         }
     }
 
@@ -80,16 +100,16 @@ public class WallRunning : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                if (isLeft)
-                {
-                    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(transform.right * sideForce * Time.deltaTime);
-                }
-                if (isRight)
-                {
-                    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
-                }
+                //if (isLeft)
+                //{
+                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+                //    rb.AddForce(transform.right * sideForce * Time.deltaTime);
+                //}
+                //if (isRight)
+                //{
+                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+                //    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
+                //}
             }
         }
     }
