@@ -167,7 +167,7 @@ public class WeaponController : MonoBehaviour
             if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
             {
                 // Start slowmotion
-//                timeManager.DoSlowmotion();
+                //                timeManager.DoSlowmotion();
                 // Slow motion end
 
                 //Find the tip of the gun's barrel

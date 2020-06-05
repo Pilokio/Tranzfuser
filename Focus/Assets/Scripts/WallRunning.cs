@@ -7,8 +7,11 @@ public class WallRunning : MonoBehaviour
 
     private Rigidbody rb;
 
-    //  public Transform head;
+    // public Transform head;
     // public Transform cam;
+
+    private float minAngle = 0.0f;
+    private float maxAngle = 30.0f;
 
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
@@ -63,12 +66,14 @@ public class WallRunning : MonoBehaviour
 
             if (isRight)
             {
-                // Can use Lerp for smooth action
-                Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, 10f);
+                // FIXME Need to find out why player is not tilting when wall running (also in OnCollisionExit function)
+                float angle = Mathf.LerpAngle(minAngle, maxAngle, Time.time);
+                Camera.main.transform.eulerAngles = new Vector3(0f, angle, 0f);
             }
             if (isLeft)
             {
-                Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, -10f);
+                float angle = Mathf.LerpAngle(minAngle, maxAngle, Time.time);
+                Camera.main.transform.eulerAngles = new Vector3(0f, angle, 0f);
             }
         }
     }
@@ -98,7 +103,7 @@ public class WallRunning : MonoBehaviour
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = true;
-            Camera.main.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+            Camera.main.transform.eulerAngles = new Vector3(0, 0, 0);
         }
     }
 }
