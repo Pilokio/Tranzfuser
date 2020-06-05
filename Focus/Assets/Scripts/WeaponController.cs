@@ -33,10 +33,10 @@ public class WeaponController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Error handling for if the gun holder is not assigned in the editor
+        // Error handling for if the gun holder is not assigned in the editor
         if (GunHolder == null)
         {
-            //Manual search for the GunHolder object
+            // Manual search for the GunHolder object
             foreach (Transform child in transform)
             {
                 if (child.tag == "GunHolder")
@@ -67,7 +67,7 @@ public class WeaponController : MonoBehaviour
             }
         }
 
-        //Init the currently equipped weapon
+        // Init the currently equipped weapon
         ChangeWeapon(0);
 
         ControllerSupport.InitialiseControllerSupport();
@@ -77,8 +77,8 @@ public class WeaponController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //All of the folllowing should be moved to the Player controller script along with a reference to this component
-        //This will allow Enemy AI to utilise the same code for weapon usage
+        // All of the folllowing should be moved to the Player controller script along with a reference to this component
+        // This will allow Enemy AI to utilise the same code for weapon usage
         AmmoCounter.text = WeaponsList[CurrentWeaponIndex].WeaponName + ": " + WeaponsList[CurrentWeaponIndex].AmmoInCLip + "/" + WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
 
         if (ControllerSupport.Fire1.GetCustomButtonDown())
@@ -120,18 +120,18 @@ public class WeaponController : MonoBehaviour
     /// </summary>
     public void ChangeWeapon(int index)
     {
-        //Check ID is not out of bounds
+        // Check ID is not out of bounds
         if (index >= 0 && index < WeaponsList.Count)
         {
             CurrentWeaponIndex = index;
 
-            //If a current gun object is present then delete the previously equipped weapon
+            // If a current gun object is present then delete the previously equipped weapon
             if (CurrentGun != null)
             {
                 Destroy(CurrentGun.gameObject);
             }
 
-            //Instantiate the new gun object
+            // Instantiate the new gun object
             CurrentGun = Instantiate(WeaponsList[CurrentWeaponIndex].WeaponObject, GunHolder.transform);
 
         }
@@ -146,7 +146,7 @@ public class WeaponController : MonoBehaviour
     /// </summary>    
     void UseWeapon()
     {
-        //Error handling for if required parameters are null or invalid
+        // Error handling for if required parameters are null or invalid
 
         if (CurrentGun == null || CurrentGun.transform.childCount == 0)
         {
@@ -160,7 +160,7 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
-        //Check that the currently equipped weapon is not a melee weapon
+        // Check that the currently equipped weapon is not a melee weapon
         if (WeaponsList[CurrentWeaponIndex].IsRanged)
         {
             //If there is still ammo in the magazine and a suitable weapon is equipped
@@ -224,8 +224,8 @@ public class WeaponController : MonoBehaviour
         }
         else
         {
-            //Used for Debug Purposes
-            //Debug.Log("No Ammo to load");
+            // Used for Debug Purposes
+            // Debug.Log("No Ammo to load");
         }
     }
 }
