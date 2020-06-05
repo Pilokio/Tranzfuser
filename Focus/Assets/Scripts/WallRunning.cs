@@ -31,6 +31,7 @@ public class WallRunning : MonoBehaviour
     private void Update()
     {
         WallChecker();
+
     }
 
     // Checks if the player is colliding with a wall
@@ -55,7 +56,7 @@ public class WallRunning : MonoBehaviour
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
            
-            if (distFromLeft < 3f && rightWall.transform.tag == "RunnableWall")
+            if (distFromLeft < 3f && leftWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
