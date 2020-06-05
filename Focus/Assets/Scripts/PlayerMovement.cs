@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour
         {
             //Calculate the jump force 
             //FIXME currently broken, need to investigate how the jumping / grounding currently works
-            YVelocity = Mathf.Sqrt(JumpHeight * -2.0f * PlayerGravity);
+            YVelocity = Mathf.Sqrt(JumpHeight * -2.0f * -9.8f);
             readyToJump = false;
             Invoke(nameof(ResetJump), jumpCooldown);
         }
@@ -134,7 +134,6 @@ public class PlayerMovement : MonoBehaviour
 
         //Using the 3D move direction, apply the speed factor, and yVelocity under the influence of gravity
         Move *= moveSpeed;
-        YVelocity += PlayerGravity;
         Move.y = YVelocity;
 
         //Apply the final movement force to the rigidbody, making use of fixed delta time

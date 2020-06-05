@@ -69,6 +69,9 @@ public class WeaponController : MonoBehaviour
 
         //Init the currently equipped weapon
         ChangeWeapon(0);
+
+        ControllerSupport.InitialiseControllerSupport();
+        StartCoroutine(ControllerSupport.CheckForControllers());
     }
 
     // Update is called once per frame
@@ -77,31 +80,35 @@ public class WeaponController : MonoBehaviour
         //All of the folllowing should be moved to the Player controller script along with a reference to this component
         //This will allow Enemy AI to utilise the same code for weapon usage
         AmmoCounter.text = WeaponsList[CurrentWeaponIndex].WeaponName + ": " + WeaponsList[CurrentWeaponIndex].AmmoInCLip + "/" + WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
-        if (Input.GetMouseButtonDown(0))
+
+        if (ControllerSupport.Fire1.GetCustomButtonDown())
         {
+            if (!ControllerSupport.NoControllersConnected)
+            {
+                StartCoroutine(ControllerSupport.Fire1.ResetAxisButton());
+            }
+
             UseWeapon();
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (ControllerSupport.Fire2.GetCustomButtonDown())
         {
             timeManager.DoSlowmotion();
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (ControllerSupport.ActionButton4.GetCustomButtonDown())
         {
             ReloadWeapon();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (ControllerSupport.ActionButton3.GetCustomButtonDown())
         {
             if (CurrentWeaponIndex + 1 < WeaponsList.Count)
             {
-               // Debug.Log("Changing Weapon");
                 ChangeWeapon(CurrentWeaponIndex + 1);
             }
             else
             {
-
                 ChangeWeapon(0);
             }
         }
