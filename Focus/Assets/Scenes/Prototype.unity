@@ -1187,7 +1187,7 @@ Transform:
   m_GameObject: {fileID: 1356558070}
   m_LocalRotation: {x: -0.68370897, y: -0, z: -0.7297548, w: 0}
   m_LocalPosition: {x: -7.14, y: 24.83, z: 32.09}
-  m_LocalScale: {x: 48.713707, y: 8.061742, z: 0.3048451}
+  m_LocalScale: {x: 48.713707, y: 8.061742, z: 1.5148972}
   m_Children: []
   m_Father: {fileID: 1676606845}
   m_RootOrder: 7
@@ -1374,8 +1374,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad43942bd7f81b64db0baaa51fbe0369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upForce: 0
-  sideForce: 0
+  upForce: 20000
+  sideForce: 20000
 --- !u!114 &1564139279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1399,7 +1399,6 @@ MonoBehaviour:
   slideForce: 400
   slideCounterMovement: 0.2
   jumpForce: 550
-  PlayerGravity: -30
   LookSensitivity: 100
   JumpHeight: 100
   TimeForBulletCheck: 1
@@ -1611,7 +1610,7 @@ Transform:
   m_GameObject: {fileID: 1799948295}
   m_LocalRotation: {x: -0.7188517, y: -0, z: -0.6951634, w: 0}
   m_LocalPosition: {x: 2.13, y: 24.83, z: 34.18}
-  m_LocalScale: {x: 57.128834, y: 9.226664, z: 0.27979597}
+  m_LocalScale: {x: 57.128834, y: 9.226664, z: 1.4367244}
   m_Children: []
   m_Father: {fileID: 1676606845}
   m_RootOrder: 8

@@ -45,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
 
-    [SerializeField] float PlayerGravity = -30f;
 
     private Vector2 LookDirection = new Vector2();
     private Vector2 MoveDirection = new Vector2();
@@ -53,9 +52,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float LookSensitivity = 100.0f;
     float YVelocity = 0.0f;
     [SerializeField] float JumpHeight = 100.0f;
-  
+
     void Start()
-    {      
+    {
         rb = GetComponent<Rigidbody>();
         playerScale = transform.localScale;
 
@@ -77,9 +76,7 @@ public class PlayerMovement : MonoBehaviour
         Look();
     }
 
-    /// <summary>
-    /// Find user input. Should put this in its own class but im lazy
-    /// </summary>
+    // Find user input. Should put this in its own class
     private void MyInput()
     {
         x = Input.GetAxisRaw("Horizontal");
@@ -96,69 +93,65 @@ public class PlayerMovement : MonoBehaviour
 
     private void Movement()
     {
-        //Below are the changes made to the core movement functionality
+        // Below are the changes made to the core movement functionality
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Get the input axis and place them into 2 new vectors
+        // Get the input axis and place them into 2 new vectors
         MoveDirection = new Vector2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        //Clamp the manual gravity when touching the ground
-        if(grounded && YVelocity < 0)
+        // Clamp the manual gravity when touching the ground
+        if (grounded && YVelocity < 0)
         {
             YVelocity = -2.0f;
         }
 
-        //Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
+        // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.y) + (transform.forward * MoveDirection.x);
 
         // If holding jump && ready to jump, then jump
-        if (readyToJump && jumping)
-        {
-            //Calculate the jump force 
-            //FIXME currently broken, need to investigate how the jumping / grounding currently works
-            YVelocity = Mathf.Sqrt(JumpHeight * -2.0f * PlayerGravity);
-            readyToJump = false;
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+        if (readyToJump && jumping) Jump();
 
-
-        //Using the 3D move direction, apply the speed factor, and yVelocity under the influence of gravity
+        // Using the 3D move direction, apply the speed factor
         Move *= moveSpeed;
-        YVelocity += PlayerGravity;
         Move.y = YVelocity;
 
-        //Apply the final movement force to the rigidbody, making use of fixed delta time
+        // Apply the final movement force to the rigidbody, making use of fixed delta time
         rb.AddForce(Move * Time.fixedDeltaTime);
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        
-
-
-        //// If sliding down a ramp, add force down so player stays grounded and also builds speed
-        //if (crouching && grounded && readyToJump)
-        //{
-        //    rb.AddForce(Vector3.down * Time.deltaTime * 3000);
-        //    return;
-        //}
-
-        // Some multipliers
-      //  float multiplier = 1f, multiplierV = 1f;
-
-        // Movement in air
-        //if (!grounded)
-        //{
-        //    multiplier = 0.5f;
-        //    multiplierV = 0.5f;
-        //}
-        // Movement while sliding
-       // if (grounded && crouching) multiplierV = 0f;
-    
 
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
             Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
 
         rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y,
             Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        /* Old core movement functionality:
+
+        // If sliding down a ramp, add force down so player stays grounded and also builds speed
+        if (crouching && grounded && readyToJump)
+        {
+            rb.AddForce(Vector3.down * Time.deltaTime * 3000);
+            return;
+        }
+
+        // Some multipliers
+        float multiplier = 1f, multiplierV = 1f;
+
+        // Movement in air
+        if (!grounded)
+        {
+            multiplier = 0.5f;
+            multiplierV = 0.5f;
+        }
+        Movement while sliding
+        if (grounded && crouching) multiplierV = 0f;
+
+        */
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     private void Jump()
@@ -168,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
             readyToJump = false;
 
             // Add jump forces
-            rb.AddForce(Vector2.up * jumpForce * 1.5f);
+            rb.AddForce(Vector2.up * jumpForce * 3.5f);
             rb.AddForce(normalVector * jumpForce * 0.5f);
 
             // If jumping while falling, reset y velocity.
@@ -335,7 +328,7 @@ public class PlayerMovement : MonoBehaviour
         {
             yield return new WaitForSeconds(TimeForBulletCheck);
 
-           // Debug.Log("Checking Bullets");
+            // Debug.Log("Checking Bullets");
 
             //Find all the bullets in the scene
             GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
@@ -343,7 +336,7 @@ public class PlayerMovement : MonoBehaviour
             //If there are more than the set number of bullets in the scene
             if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
             {
-               // Debug.Log("Too many Bullets. Removing some.");
+                // Debug.Log("Too many Bullets. Removing some.");
                 //Delete the bullets found up to the desired amount
                 for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
                 {

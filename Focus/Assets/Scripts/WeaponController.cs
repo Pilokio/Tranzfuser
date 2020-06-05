@@ -96,7 +96,7 @@ public class WeaponController : MonoBehaviour
         {
             if (CurrentWeaponIndex + 1 < WeaponsList.Count)
             {
-               // Debug.Log("Changing Weapon");
+                // Debug.Log("Changing Weapon");
                 ChangeWeapon(CurrentWeaponIndex + 1);
             }
             else
@@ -160,7 +160,7 @@ public class WeaponController : MonoBehaviour
             if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
             {
                 // Start slowmotion
-//                timeManager.DoSlowmotion();
+                //                timeManager.DoSlowmotion();
                 // Slow motion end
 
                 //Find the tip of the gun's barrel
