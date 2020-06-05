@@ -31,6 +31,7 @@ public class WallRunning : MonoBehaviour
     private void Update()
     {
         WallChecker();
+
     }
 
     // Checks if the player is colliding with a wall

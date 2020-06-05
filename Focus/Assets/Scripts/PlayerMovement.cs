@@ -74,6 +74,8 @@ public class PlayerMovement : MonoBehaviour
     {
         MyInput();
         Look();
+
+        
     }
 
     // Find user input. Should put this in its own class
