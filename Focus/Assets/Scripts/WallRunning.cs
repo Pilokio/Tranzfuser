@@ -55,7 +55,7 @@ public class WallRunning : MonoBehaviour
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
            
-            if (distFromLeft < 3f && rightWall.transform.tag == "RunnableWall")
+            if (distFromLeft < 3f && leftWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
@@ -80,16 +80,16 @@ public class WallRunning : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                if (isLeft)
-                {
-                    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(transform.right * sideForce * Time.deltaTime);
-                }
-                if (isRight)
-                {
-                    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
-                }
+                //if (isLeft)
+                //{
+                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+                //    rb.AddForce(transform.right * sideForce * Time.deltaTime);
+                //}
+                //if (isRight)
+                //{
+                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+                //    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
+                //}
             }
         }
     }

@@ -157,13 +157,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (grounded && readyToJump)
         {
-            Debug.Log("Trying to jump");
-
             readyToJump = false;
 
             // Add jump forces
-            rb.AddForce(Vector2.up * jumpForce * 3.5f);
-            rb.AddForce(normalVector * jumpForce * 0.5f);
+            rb.AddForce(Vector3.up * jumpForce * 3.5f);
+           // rb.AddForce(normalVector * jumpForce * 0.5f);
 
             // If jumping while falling, reset y velocity.
             Vector3 vel = rb.velocity;
