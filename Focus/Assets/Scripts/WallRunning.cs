@@ -4,15 +4,11 @@ public class WallRunning : MonoBehaviour
 {
     [SerializeField] private float upForce;
     [SerializeField] private float sideForce;
+    //The minimum distance for the wall run to engage
+    [SerializeField] float MinWallRunDistance = 3.0f;
 
     private Rigidbody rb;
-
-    // public Transform head;
-    // public Transform cam;
-
-    private float minAngle = 0.0f;
-    private float maxAngle = 30.0f;
-
+    
     private float WallRunRoteLeft = -30.0f;
     private float WallRunRoteRight = 30.0f;
 
@@ -28,16 +24,16 @@ public class WallRunning : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+
+    public void RestoreCamera()
     {
-        WallChecker();
-
-
+        //If not touching a wall, and the camera z-rotation is not 0 then lerp back
         if(!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
         {
             float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime);
             Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
 
+            //Snap back to zero when the rotation is "close enough"
             if(Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
             {
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
@@ -46,7 +42,7 @@ public class WallRunning : MonoBehaviour
     }
 
     // Checks if the player is colliding with a wall
-    private void WallChecker()
+    public void WallChecker()
     {
         RaycastHit leftWall;
         RaycastHit rightWall;
@@ -54,7 +50,7 @@ public class WallRunning : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.right, out rightWall))
         {
             distFromRight = Vector3.Distance(transform.position, rightWall.point);
-            if (distFromRight < 3f && rightWall.transform.tag == "RunnableWall")
+            if (distFromRight < MinWallRunDistance && rightWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteRight, Time.deltaTime);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
@@ -71,7 +67,7 @@ public class WallRunning : MonoBehaviour
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
            
-            if (distFromLeft < 3f && leftWall.transform.tag == "RunnableWall")
+            if (distFromLeft < MinWallRunDistance && leftWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
@@ -90,39 +86,36 @@ public class WallRunning : MonoBehaviour
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = false;
-            Debug.Log("Wall Running!");
         }
     }
 
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.transform.CompareTag("RunnableWall"))
-        {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                //if (isLeft)
-                //{
-                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                //    rb.AddForce(transform.right * sideForce * Time.deltaTime);
-                //}
-                //if (isRight)
-                //{
-                //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
-                //    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
-                //}
-            }
-        }
-    }
+
+    //TODO move this calculation into seperate function for use in the player manager
+    //private void OnCollisionStay(Collision collision)
+    //{
+    //    if (collision.transform.CompareTag("RunnableWall"))
+    //    {
+    //        if (Input.GetKey(KeyCode.Space))
+    //        {
+    //            //if (isLeft)
+    //            //{
+    //            //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+    //            //    rb.AddForce(transform.right * sideForce * Time.deltaTime);
+    //            //}
+    //            //if (isRight)
+    //            //{
+    //            //    rb.AddForce(Vector3.up * upForce * Time.deltaTime);
+    //            //    rb.AddForce(-transform.right * sideForce * Time.deltaTime);
+    //            //}
+    //        }
+    //    }
+    //}
 
     private void OnCollisionExit(Collision collision)
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
             rb.useGravity = true;
-         
-               //float angle = Mathf.LerpAngle(Camera.main.transform.eulerAngles.z, 0.0f, Time.deltaTime);
-               // Camera.main.transform.eulerAngles = new Vector3(0f, 0.0f, angle);
-            
         }
     }
 }

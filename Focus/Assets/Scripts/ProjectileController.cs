@@ -34,8 +34,8 @@ public class ProjectileController : MonoBehaviour
 
         if (collision.gameObject.tag != "Player" || collision.gameObject.layer != 9)
         {
-            //Debug.Log("I hit something");
-            //Destroy(this.gameObject);
+            Debug.Log("I hit " + collision.gameObject.name);
+            Destroy(this.gameObject);
         }
     }
 }

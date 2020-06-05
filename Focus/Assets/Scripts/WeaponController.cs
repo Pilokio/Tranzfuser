@@ -8,9 +8,6 @@ using UnityEngine.UI;
 /// </summary>
 public class WeaponController : MonoBehaviour
 {
-
-    public TimeManager timeManager;
-
     [Header("Weapon Details")]
     //A list of the stats for each possible weapon
     [SerializeField] List<Weapon> WeaponsList = new List<Weapon>();
@@ -18,17 +15,15 @@ public class WeaponController : MonoBehaviour
     //The gun holder object, the parent of the gun after instantiation
     //ie where it will be placed in relation to the player object
     [SerializeField] GameObject GunHolder;
-
+    
     //The index in the weapon list array
-    private int CurrentWeaponIndex = -1;
+    public int CurrentWeaponIndex { get; private set; }
 
     //The currently equipped gun, stored after instantiation to allow for deletion on weapon change
     private GameObject CurrentGun;
-
-
-    [Header("Debug")]
-    //For Debugging to show currently equipped weapon and ammo counters
-    [SerializeField] Text AmmoCounter;
+    
+    //Reference to the character's stats which are used to determine if reloading is possible
+    CharacterStats MyStats;
 
     // Start is called before the first frame update
     void Start()
@@ -67,51 +62,9 @@ public class WeaponController : MonoBehaviour
             }
         }
 
+        MyStats = GetComponent<CharacterStats>();
         // Init the currently equipped weapon
         ChangeWeapon(0);
-
-        ControllerSupport.InitialiseControllerSupport();
-        StartCoroutine(ControllerSupport.CheckForControllers());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // All of the folllowing should be moved to the Player controller script along with a reference to this component
-        // This will allow Enemy AI to utilise the same code for weapon usage
-        AmmoCounter.text = WeaponsList[CurrentWeaponIndex].WeaponName + ": " + WeaponsList[CurrentWeaponIndex].AmmoInCLip + "/" + WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
-
-        if (ControllerSupport.Fire1.GetCustomButtonDown())
-        {
-            if (!ControllerSupport.NoControllersConnected)
-            {
-                StartCoroutine(ControllerSupport.Fire1.ResetAxisButton());
-            }
-
-            UseWeapon();
-        }
-
-        if (ControllerSupport.Fire2.GetCustomButtonDown())
-        {
-            timeManager.DoSlowmotion();
-        }
-
-        if (ControllerSupport.ActionButton4.GetCustomButtonDown())
-        {
-            ReloadWeapon();
-        }
-
-        if (ControllerSupport.ActionButton3.GetCustomButtonDown())
-        {
-            if (CurrentWeaponIndex + 1 < WeaponsList.Count)
-            {
-                ChangeWeapon(CurrentWeaponIndex + 1);
-            }
-            else
-            {
-                ChangeWeapon(0);
-            }
-        }
     }
 
     /// <summary>
@@ -144,7 +97,7 @@ public class WeaponController : MonoBehaviour
     /// <summary>
     /// This function is called to use the currently equipped weapon if possible
     /// </summary>    
-    void UseWeapon()
+    public void UseWeapon()
     {
         // Error handling for if required parameters are null or invalid
 
@@ -165,11 +118,7 @@ public class WeaponController : MonoBehaviour
         {
             //If there is still ammo in the magazine and a suitable weapon is equipped
             if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
-            {
-                // Start slowmotion
-                //                timeManager.DoSlowmotion();
-                // Slow motion end
-
+            { 
                 //Find the tip of the gun's barrel
                 Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
                 //Instantiate the bullet at the tip of the gun
@@ -182,7 +131,7 @@ public class WeaponController : MonoBehaviour
                 //Decrement the ammo count
                 WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
             }
-            else if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
+            else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > 0)
             {
                 //Automatically reload if the player attempts to fire the weapon 
                 //provided they have more ammunition
@@ -198,28 +147,29 @@ public class WeaponController : MonoBehaviour
     /// <summary>
     /// This function reloads the weapon if there is enough spare ammo for it
     /// </summary>
-    void ReloadWeapon()
+    public void ReloadWeapon()
     {
         //Ensure there is spare ammo to load into the weapon
-        if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > 0)
+        if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > 0)
         {
             //Take the ammo from the clip and add it to the spare ammo counter (prevents the current mag being lost in the reload)
-            WeaponsList[CurrentWeaponIndex].SpareAmmoCount += WeaponsList[CurrentWeaponIndex].AmmoInCLip;
+
+            MyStats.AddAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, WeaponsList[CurrentWeaponIndex].AmmoInCLip));
             WeaponsList[CurrentWeaponIndex].AmmoInCLip = 0;
 
             //If the player has more ammo than can be loaded into the magazine
             //Add the total magazine capacity to ammo in clip, and subtract it from the spare ammo counter
-            if (WeaponsList[CurrentWeaponIndex].SpareAmmoCount > WeaponsList[CurrentWeaponIndex].MagazineCapacity)
+            if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > WeaponsList[CurrentWeaponIndex].MagazineCapacity)
             {
                 WeaponsList[CurrentWeaponIndex].AmmoInCLip = WeaponsList[CurrentWeaponIndex].MagazineCapacity;
-                WeaponsList[CurrentWeaponIndex].SpareAmmoCount -= WeaponsList[CurrentWeaponIndex].MagazineCapacity;
+                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, WeaponsList[CurrentWeaponIndex].MagazineCapacity));
             }
             else
             {
                 //If the player has less than the magazine capacity, add all their spare ammo into the clip
                 //and set the spare counter to 0
-                WeaponsList[CurrentWeaponIndex].AmmoInCLip = WeaponsList[CurrentWeaponIndex].SpareAmmoCount;
-                WeaponsList[CurrentWeaponIndex].SpareAmmoCount = 0;
+                WeaponsList[CurrentWeaponIndex].AmmoInCLip = MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType);
+                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType)));
             }
         }
         else
@@ -227,6 +177,19 @@ public class WeaponController : MonoBehaviour
             // Used for Debug Purposes
             // Debug.Log("No Ammo to load");
         }
+    }
+
+    
+    //Returns the size of the weapons list for use elsewhere
+    public int GetWeaponListSize()
+    {
+        return WeaponsList.Count;
+    }
+
+    //Returns the currently selected weapon for use elsewhere
+    public Weapon GetCurrentlyEquippedWeapon()
+    {
+        return WeaponsList[CurrentWeaponIndex];
     }
 }
 
@@ -246,11 +209,23 @@ public class Weapon
     public GameObject ProjectilePrefab;
     public GameObject WeaponObject;
     public int MagazineCapacity;
-    public int SpareAmmoCount;
+    public AmmunitionType.AmmoType AmmoType;
     public int AmmoInCLip;
     public float ProjectileForce;
     public bool IsRanged;
 }
 
-//TODO?
-//Have spare ammo count stored seperately to allow for multiples of the same weapon type to share an ammo pool
+[System.Serializable]
+public class AmmunitionType
+{
+    public enum AmmoType { Pistol, SMG, Rifle, Shotgun, Launcher, Grenade };
+
+    public AmmoType Type;
+    public int Amount;
+
+    public AmmunitionType (AmmoType type, int amount)
+    {
+        this.Type = type;
+        this.Amount = amount;
+    }
+}
