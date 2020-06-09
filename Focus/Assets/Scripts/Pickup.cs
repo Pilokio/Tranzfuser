@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    enum PickupType {  HP, AMMO };
+    enum PickupType { HP, AMMO };
     [SerializeField] PickupType Type;
 
     [SerializeField] AmmunitionType ammunition;
@@ -20,15 +18,15 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.transform.tag == "Player")
+        if (other.transform.tag == "Player")
         {
             Debug.Log(transform.name + " has been picked up by the player");
-           
-            if(Type == PickupType.AMMO)
+
+            if (Type == PickupType.AMMO)
             {
                 other.GetComponent<CharacterStats>().AddAmmo(ammunition);
             }
-            else if(Type == PickupType.HP)
+            else if (Type == PickupType.HP)
             {
                 other.GetComponent<CharacterStats>().RestoreHealth(HPAmount);
             }

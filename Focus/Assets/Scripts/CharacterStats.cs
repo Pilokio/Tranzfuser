@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -12,7 +11,7 @@ public class CharacterStats : MonoBehaviour
     [SerializeField] public int Stamina = 100;
     [SerializeField] public int MaxHealth = 100;
     [SerializeField] public int MaxStamina = 100;
-    
+
     [Space()]
     [SerializeField] public bool CanPassiveRegen = true;
     [SerializeField] public int HealthRegenRate = 1;
@@ -35,11 +34,11 @@ public class CharacterStats : MonoBehaviour
 
     private void Start()
     {
-        IsDead = false;   
+        IsDead = false;
 
-        
+
         StartCoroutine(HealthRegen());
-        
+
         StartCoroutine(StaminaRegen());
     }
 
@@ -47,7 +46,7 @@ public class CharacterStats : MonoBehaviour
     {
         Health -= dmg;
 
-        if(Health <= 0)
+        if (Health <= 0)
         {
             Health = 0;
             IsDead = true;
@@ -89,7 +88,7 @@ public class CharacterStats : MonoBehaviour
     /// </summary>
     public void AddAmmo(AmmunitionType ammo)
     {
-        switch(ammo.Type)
+        switch (ammo.Type)
         {
             case AmmunitionType.AmmoType.Pistol:
                 PistolAmmo += ammo.Amount;
@@ -176,11 +175,11 @@ public class CharacterStats : MonoBehaviour
 
     IEnumerator HealthRegen()
     {
-        while(true)
+        while (true)
         {
             yield return new WaitForSeconds(HealthRegenRate);
 
-            if(CanPassiveRegen)
+            if (CanPassiveRegen)
             {
                 RestoreHealth(HealthRegenAmount);
             }

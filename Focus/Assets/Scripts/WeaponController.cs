@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// This component is used to determine the weapons that can be used by the character it is placed on
@@ -15,13 +14,13 @@ public class WeaponController : MonoBehaviour
     //The gun holder object, the parent of the gun after instantiation
     //ie where it will be placed in relation to the player object
     [SerializeField] GameObject GunHolder;
-    
+
     //The index in the weapon list array
     public int CurrentWeaponIndex { get; private set; }
 
     //The currently equipped gun, stored after instantiation to allow for deletion on weapon change
     private GameObject CurrentGun;
-    
+
     //Reference to the character's stats which are used to determine if reloading is possible
     CharacterStats MyStats;
 
@@ -118,7 +117,7 @@ public class WeaponController : MonoBehaviour
         {
             //If there is still ammo in the magazine and a suitable weapon is equipped
             if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
-            { 
+            {
                 //Find the tip of the gun's barrel
                 Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
                 //Instantiate the bullet at the tip of the gun
@@ -179,7 +178,7 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    
+
     //Returns the size of the weapons list for use elsewhere
     public int GetWeaponListSize()
     {
@@ -223,7 +222,7 @@ public class AmmunitionType
     public AmmoType Type;
     public int Amount;
 
-    public AmmunitionType (AmmoType type, int amount)
+    public AmmunitionType(AmmoType type, int amount)
     {
         this.Type = type;
         this.Amount = amount;

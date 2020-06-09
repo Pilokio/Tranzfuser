@@ -46,8 +46,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 wallNormalVector;
 
 
-  //  private Vector2 LookDirection = new Vector2();
-  //  private Vector2 MoveDirection = new Vector2();
+    //  private Vector2 LookDirection = new Vector2();
+    //  private Vector2 MoveDirection = new Vector2();
     private float XRotation = 0.0f;
     [SerializeField] float LookSensitivity = 100.0f;
     float YVelocity = 0.0f;
@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
         StartCoroutine(CheckForBullets());
     }
 
-    public void Move(Vector2 MoveDirection)
+    public void Move(Vector3 MoveDirection)
     {
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y);
@@ -87,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
 
             // Add jump forces
             rb.AddForce(Vector3.up * jumpForce * 3.5f);
-           // rb.AddForce(normalVector * jumpForce * 0.5f);
+            // rb.AddForce(normalVector * jumpForce * 0.5f);
 
             // If jumping while falling, reset y velocity.
             Vector3 vel = rb.velocity;
@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-   
+
 
     public void Look(Vector2 LookDirection)
     {
@@ -116,16 +116,11 @@ public class PlayerMovement : MonoBehaviour
         transform.Rotate(transform.up * LookDirection.x);
     }
 
-    public void Climb()
-    {
-       // rb.Translate(Vector3(0, 0.5, 0) * Time.deltaTime);
-    }
-    
     private void ResetJump()
     {
         readyToJump = true;
     }
-    
+
     private bool IsFloor(Vector3 v)
     {
         float angle = Vector3.Angle(Vector3.up, v);
@@ -230,32 +225,32 @@ public class PlayerMovement : MonoBehaviour
 
 
 
- /* Old core movement functionality:
+    /* Old core movement functionality:
 
-        // If sliding down a ramp, add force down so player stays grounded and also builds speed
-        if (crouching && grounded && readyToJump)
-        {
-            rb.AddForce(Vector3.down * Time.deltaTime * 3000);
-            return;
-        }
+           // If sliding down a ramp, add force down so player stays grounded and also builds speed
+           if (crouching && grounded && readyToJump)
+           {
+               rb.AddForce(Vector3.down * Time.deltaTime * 3000);
+               return;
+           }
 
-        // Some multipliers
-        float multiplier = 1f, multiplierV = 1f;
+           // Some multipliers
+           float multiplier = 1f, multiplierV = 1f;
 
-        // Movement in air
-        if (!grounded)
-        {
-            multiplier = 0.5f;
-            multiplierV = 0.5f;
-        }
-        Movement while sliding
-        if (grounded && crouching) multiplierV = 0f;
+           // Movement in air
+           if (!grounded)
+           {
+               multiplier = 0.5f;
+               multiplierV = 0.5f;
+           }
+           Movement while sliding
+           if (grounded && crouching) multiplierV = 0f;
 
-        */
+           */
 
     private void CounterMovement(float x, float y, Vector2 mag)
     {
-      //  if (!grounded || jumping) return;
+        //  if (!grounded || jumping) return;
 
         // Slow down sliding
         //if (crouching)
@@ -285,7 +280,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-   /// <summary>
+    /// <summary>
     /// Find the velocity relative to where the player is looking
     /// Useful for vectors calculations regarding movement and limiting movement
     /// </summary>

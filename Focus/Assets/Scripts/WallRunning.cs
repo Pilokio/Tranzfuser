@@ -8,7 +8,7 @@ public class WallRunning : MonoBehaviour
     [SerializeField] float MinWallRunDistance = 3.0f;
 
     private Rigidbody rb;
-    
+
     private float WallRunRoteLeft = -30.0f;
     private float WallRunRoteRight = 30.0f;
 
@@ -28,13 +28,13 @@ public class WallRunning : MonoBehaviour
     public void RestoreCamera()
     {
         //If not touching a wall, and the camera z-rotation is not 0 then lerp back
-        if(!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
+        if (!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
         {
             float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime * 5);
             Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
 
             //Snap back to zero when the rotation is "close enough"
-            if(Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
+            if (Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
             {
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
             }
@@ -66,7 +66,7 @@ public class WallRunning : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.right, out leftWall))
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
-           
+
             if (distFromLeft < MinWallRunDistance && leftWall.transform.tag == "RunnableWall")
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
