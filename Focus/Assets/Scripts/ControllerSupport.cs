@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -12,7 +11,7 @@ using UnityEngine;
 /// and if so, what controller type it is. Additional controllers can be added by creating a bool to track their connection status,
 /// and by adding their joystick name to the array of supported names
 /// </summary>
-static class ControllerSupport 
+static class ControllerSupport
 {
     //The 4 action buttons on the right hand side of the controller starting with the bottom
     //and working anti-clockwise
@@ -24,18 +23,18 @@ static class ControllerSupport
 
 
     public static CustomButton Fire2 = new CustomButton();
-    public static CustomButton ActionButton5  = new CustomButton();
+    public static CustomButton ActionButton5 = new CustomButton();
     public static CustomButton Fire1 = new CustomButton();
     public static CustomButton ActionButton6 = new CustomButton();
 
 
     //The standard horizontal and vertical axis. Mapped to the left joystick on controllers
     public static CustomAxis LeftHorizontal = new CustomAxis();
-    public static CustomAxis LeftVertical    = new CustomAxis();
+    public static CustomAxis LeftVertical = new CustomAxis();
 
     //The Horizontal and vertical axis, mapped to the right joystick on controllers, and the mouse X & Y 
     public static CustomAxis RightHorizontal = new CustomAxis();
-    public static CustomAxis RightVertical    = new CustomAxis();
+    public static CustomAxis RightVertical = new CustomAxis();
 
     //The D-Pad on controllers
     public static CustomAxis DirectionHorizontal = new CustomAxis();
@@ -61,7 +60,7 @@ static class ControllerSupport
         LeftVertical = LeftVertical.Create(CustomAxis.AxisName.LeftVertical);
         RightHorizontal = RightHorizontal.Create(CustomAxis.AxisName.RightHorizontal);
         RightVertical = RightVertical.Create(CustomAxis.AxisName.RightVertical);
-        DirectionHorizontal =   DirectionHorizontal.Create(CustomAxis.AxisName.DirectionHorizontal);
+        DirectionHorizontal = DirectionHorizontal.Create(CustomAxis.AxisName.DirectionHorizontal);
         DirectionVertical = DirectionVertical.Create(CustomAxis.AxisName.DirectionVertical);
         LeftTriggerAxis = LeftTriggerAxis.Create(CustomAxis.AxisName.LeftTrigger);
         RightTriggerAxis = RightTriggerAxis.Create(CustomAxis.AxisName.RightTrigger);
@@ -72,7 +71,7 @@ static class ControllerSupport
         ActionButton4 = ActionButton4.Create("PS4SquareButton", "XBOXXButton", KeyCode.R);
 
 
-        Fire2  = Fire2.Create("LeftTriggerPS4", "LeftTriggerXBOX", KeyCode.Mouse1, true);
+        Fire2 = Fire2.Create("LeftTriggerPS4", "LeftTriggerXBOX", KeyCode.Mouse1, true);
         ActionButton5 = ActionButton5.Create("LeftButtonPS4", "LeftBumperXBOX", KeyCode.X);
         Fire1 = Fire1.Create("RightTriggerPS4", "RightTriggerXBOX", KeyCode.Mouse0, true);
         ActionButton6 = ActionButton6.Create("RightButtonPS4", "RightBumperXBOX", KeyCode.Z);
@@ -100,8 +99,8 @@ static class ControllerSupport
     /// Coroutine to check for connected controllers every 2 seconds realtime 
     /// </summary>
     public static IEnumerator CheckForControllers()
-    {       
-        if(!ControllerSupportInitialised)
+    {
+        if (!ControllerSupportInitialised)
         {
             InitialiseControllerSupport();
         }
@@ -122,7 +121,7 @@ static class ControllerSupport
 
                     NoControllersConnected = false;
 
-                    if(Input.GetJoystickNames()[i] == SupportedJoystickNames[0])
+                    if (Input.GetJoystickNames()[i] == SupportedJoystickNames[0])
                     {
                         Debug.Log("PS4 Controller Connected");
                         PS4Win = true;
@@ -142,9 +141,9 @@ static class ControllerSupport
                     {
                         Debug.Log("Controller Disconnected");
                     }
-                   
+
                     i = Input.GetJoystickNames().Length;
-                   
+
                     PS4Win = false;
                     NoControllersConnected = true;
                 }
@@ -210,16 +209,16 @@ public class CustomButton
     public bool GetCustomButtonDown()
     {
         //If there are any controllers connected check controller buttons, rather than mouse&keyboard
-        if(!ControllerSupport.NoControllersConnected)
+        if (!ControllerSupport.NoControllersConnected)
         {
             //PS4 Controller 
-            if(ControllerSupport.PS4Win)
+            if (ControllerSupport.PS4Win)
             {
                 //Used for the triggers on the controller as they are categorised as axis rather than buttons
-               if(IsAxis)
+                if (IsAxis)
                 {
                     //Check the button is ready as well as pressed, as axis would trigger this multiple times otherwise
-                   if( Input.GetAxisRaw(PS4ButtonName) == - 1.0f && AxisButtonReady)
+                    if (Input.GetAxisRaw(PS4ButtonName) == -1.0f && AxisButtonReady)
                     {
                         AxisButtonReady = false;
                         return true;
@@ -230,13 +229,13 @@ public class CustomButton
                     }
                 }
 
-               //If it is not an axis just return the GetButtonDown as normal
+                //If it is not an axis just return the GetButtonDown as normal
                 return Input.GetButtonDown(PS4ButtonName);
             }
 
             //XBOX One Controller
-            if(ControllerSupport.XBoxWin)
-            {                  
+            if (ControllerSupport.XBoxWin)
+            {
                 //Used for the triggers on the controller as they are categorised as axis rather than buttons
                 if (IsAxis)
                 {
@@ -277,11 +276,11 @@ public class CustomButton
         {
             //PS4 Controller 
             if (ControllerSupport.PS4Win)
-            {               
+            {
                 //Used for the triggers on the controller as they are categorised as axis rather than buttons
                 if (IsAxis)
                 {
-                    if (Input.GetAxisRaw(PS4ButtonName)  == -1.0f)
+                    if (Input.GetAxisRaw(PS4ButtonName) == -1.0f)
                     {
                         return true;
                     }
@@ -396,7 +395,7 @@ public class CustomButton
 /// </summary>
 public class CustomAxis
 {
-    public enum AxisName { LeftHorizontal, LeftVertical, RightHorizontal, RightVertical, DirectionHorizontal , DirectionVertical, LeftTrigger, RightTrigger};
+    public enum AxisName { LeftHorizontal, LeftVertical, RightHorizontal, RightVertical, DirectionHorizontal, DirectionVertical, LeftTrigger, RightTrigger };
 
     private AxisName MyAxisName;
 
@@ -416,16 +415,16 @@ public class CustomAxis
     /// </summary>
     public float GetAxis()
     {
-        switch(MyAxisName)
+        switch (MyAxisName)
         {
             case AxisName.LeftHorizontal:
                 return Input.GetAxis("Horizontal");
             case AxisName.LeftVertical:
                 return Input.GetAxis("Vertical");
             case AxisName.RightHorizontal:
-                if(!ControllerSupport.NoControllersConnected)
+                if (!ControllerSupport.NoControllersConnected)
                 {
-                    if(ControllerSupport.PS4Win)
+                    if (ControllerSupport.PS4Win)
                     {
                         return Input.GetAxis("HorizontalRightStickPS4");
                     }
@@ -473,12 +472,12 @@ public class CustomAxis
                 }
                 else
                 {
-                    if(Input.GetKey(KeyCode.LeftArrow))
+                    if (Input.GetKey(KeyCode.LeftArrow))
                     {
                         return -1;
                     }
 
-                    if(Input.GetKey(KeyCode.RightArrow))
+                    if (Input.GetKey(KeyCode.RightArrow))
                     {
                         return 1;
                     }

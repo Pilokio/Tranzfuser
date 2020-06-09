@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -51,7 +49,7 @@ public class PlayerManager : MonoBehaviour
             }
 
             //Use the equipped weapon
-           MyWeaponController.UseWeapon();
+            MyWeaponController.UseWeapon();
         }
 
 
@@ -87,7 +85,7 @@ public class PlayerManager : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////
 
-        if(ControllerSupport.ActionButton5.GetCustomButtonDown())
+        if (ControllerSupport.ActionButton5.GetCustomButtonDown())
         {
             MyMovement.StartCrouch();
         }
@@ -95,25 +93,17 @@ public class PlayerManager : MonoBehaviour
         {
             MyMovement.StopCrouch();
         }
-        
+
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
         if (ControllerSupport.ActionButton1.GetCustomButtonDown())
         {
             MyMovement.Jump();
         }
 
-        //Trigger the climb function
-        //NB Currently not mapped to a controller
-        if (Input.GetKey(KeyCode.C))
-        {
-            MyMovement.Climb();
-        }
-
-        if(Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             MyStats.TakeDamage(25);
         }
-
     }
 
     void UpdateUI()
