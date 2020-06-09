@@ -30,7 +30,7 @@ public class WallRunning : MonoBehaviour
         //If not touching a wall, and the camera z-rotation is not 0 then lerp back
         if(!isRight && !isLeft && Camera.main.transform.localEulerAngles.z != 0.0f)
         {
-            float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime);
+            float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime * 5);
             Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
 
             //Snap back to zero when the rotation is "close enough"
