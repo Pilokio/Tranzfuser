@@ -1,12 +1,17 @@
 fileFormatVersion: 2
-guid: 1ff9612a04a329844a9ea1a3a4acbfcc
+guid: 04424b586967b454ebc4da87e96fd3e9
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
     second: Take 001
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: hand_mat
+    second: {fileID: 2100000, guid: c7c75a33539da3a408e1b6152b63a01d, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

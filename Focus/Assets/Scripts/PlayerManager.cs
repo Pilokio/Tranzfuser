@@ -84,7 +84,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         ///////////////////////////////////////////////////////////////////////
-        
+
         // Crouch using X
         if (ControllerSupport.ActionButton5.GetCustomButtonDown())
         {
@@ -109,8 +109,8 @@ public class PlayerManager : MonoBehaviour
 
     void UpdateUI()
     {
-        AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": " 
-            + MyWeaponController.GetCurrentlyEquippedWeapon().AmmoInCLip + "/" 
+        AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
+            + MyWeaponController.GetCurrentlyEquippedWeapon().AmmoInCLip + "/"
             + MyStats.GetAmmoCount(MyWeaponController.GetCurrentlyEquippedWeapon().AmmoType);
 
         HealthBar.maxValue = MyStats.MaxHealth;
