@@ -77,6 +77,10 @@ public class PlayerMovement : MonoBehaviour
 
         rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y,
             Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
+
+        //Vector3 Move = (transform.right * MoveDirection.x * 15) + (transform.forward * MoveDirection.y * 15);
+
+        //rb.velocity = Move;
     }
 
     public void Jump()
