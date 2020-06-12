@@ -25,7 +25,6 @@ public class Ladder : MonoBehaviour
         }
 
         // Descend ladder
-        // Currently not working
         if (other.tag == "Player" && Input.GetKey(KeyCode.S))
         {
             player.GetComponent<Rigidbody>().useGravity = false;
