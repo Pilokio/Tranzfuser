@@ -67,8 +67,6 @@ public class PlayerMovement : MonoBehaviour
         StartCoroutine(CheckForBullets());
     }
 
-
-
     public void RBMove(Vector2 MoveDirection)
     {
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
