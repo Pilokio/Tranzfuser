@@ -7,27 +7,34 @@ public class Ladder : MonoBehaviour
 
     public GameObject player;
 
+    // Here we are disabling the player manager script so the player can use the ladder 
+    // (may need to change in future if we are wanting the player to jump off the ladder etc)
+    public void OnTriggerEnter(Collider other)
+    {
+        player.GetComponent<Rigidbody>().useGravity = false;
+        player.GetComponent<PlayerManager>().enabled = false;
+    }
+
     private void OnTriggerStay(Collider other)
     {
         // Ascend ladder
         if (other.tag == "Player" && Input.GetKey(KeyCode.W))
         {
-            //Debug.Log("Touching ladder");
-            Physics.gravity = new Vector3(0, 0, 0); //Invert
+            player.GetComponent<Rigidbody>().useGravity = false;
             player.GetComponent<Rigidbody>().velocity = new Vector3(0, speed, 0);
         }
 
         // Descend ladder
-        // Currently not working
         if (other.tag == "Player" && Input.GetKey(KeyCode.S))
         {
-            Physics.gravity = new Vector3(0, 0, 0); //Invert
+            player.GetComponent<Rigidbody>().useGravity = false;
             player.GetComponent<Rigidbody>().velocity = new Vector3(0, -speed, 0);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Physics.gravity = new Vector3(0, -30f, 0); //Invert
+        player.GetComponent<Rigidbody>().useGravity = true;
+        player.GetComponent<PlayerManager>().enabled = true;
     }
 }

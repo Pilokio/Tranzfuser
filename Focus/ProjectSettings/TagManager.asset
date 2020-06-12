@@ -7,6 +7,8 @@ TagManager:
   - RunnableWall
   - Bullet
   - GunHolder
+  - Enemy
+  - CameraHolder
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - 
   - Ground
   - Gun Layer
-  - 
+  - Enemy
   - 
   - 
   - 

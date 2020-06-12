@@ -17,7 +17,10 @@ public class PlayerMovement : MonoBehaviour
     private float sensMultiplier = 1f;
 
     // Movement
-    public float moveSpeed;
+    public float WalkSpeed;
+    public float SprintSpeed;
+    public bool IsSprinting;
+
     public float maxSpeed;
     public bool grounded;
     public LayerMask whatIsGround;
@@ -64,19 +67,48 @@ public class PlayerMovement : MonoBehaviour
         StartCoroutine(CheckForBullets());
     }
 
-    public void Move(Vector3 MoveDirection)
+    public void RBMove(Vector2 MoveDirection)
     {
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y);
 
-        // Apply the final movement force to the rigidbody, making use of fixed delta time
-        rb.AddForce(Move * moveSpeed * Time.fixedDeltaTime);
+        Move.Normalize();
 
+        if (IsSprinting)
+        {
+            rb.MovePosition(rb.position + Move * SprintSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            rb.MovePosition(rb.position + Move * WalkSpeed * Time.fixedDeltaTime);
+        }
+    }
+
+    public void ForceMove(Vector2 MoveDirection)
+    {
+        // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
+        Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y);
+        float ForceWalk = 5000;
+        float ForceSprint = 10000;
+        if (IsSprinting)
+        {
+            // Apply the final movement force to the rigidbody, making use of fixed delta time
+            rb.AddForce(Move * ForceSprint * Time.fixedDeltaTime);
+        }
+        else
+        {
+            rb.AddForce(Move * ForceWalk * Time.fixedDeltaTime);
+
+        }
         rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
             Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
 
         rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y,
             Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
+
+        //Vector3 Move = (transform.right * MoveDirection.x * 15) + (transform.forward * MoveDirection.y * 15);
+
+        //rb.velocity = Move;
     }
 
     public void Jump()
@@ -260,14 +292,14 @@ public class PlayerMovement : MonoBehaviour
         //}
 
         // Counter movement
-        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
-        {
-            rb.AddForce(moveSpeed * transform.right * Time.deltaTime * -mag.x * counterMovement);
-        }
-        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
-        {
-            rb.AddForce(moveSpeed * transform.forward * Time.deltaTime * -mag.y * counterMovement);
-        }
+        //if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
+        //{
+        //    rb.AddForce(moveSpeed * transform.right * Time.deltaTime * -mag.x * counterMovement);
+        //}
+        //if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
+        //{
+        //    rb.AddForce(moveSpeed * transform.forward * Time.deltaTime * -mag.y * counterMovement);
+        //}
 
         // Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
         if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed)

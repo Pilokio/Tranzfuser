@@ -19,10 +19,18 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
 
+    public bool MoveWithForces = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Init the custom input manager and only track controllers connected on start
+        CustomInputManager.InitialiseCustomInputManager();
+        //Add bindings for a single player to the custom input manager
+        CustomInputManager.CreateDefaultSinglePlayerInputManager();
+        //Begin checking for controllers, to determine changes to the tracked controller list
+        StartCoroutine(CustomInputManager.CheckForControllers());
+
         MyMovement = GetComponent<PlayerMovement>();
         MyWallRunning = GetComponent<WallRunning>();
         MyWeaponController = GetComponent<WeaponController>();
@@ -105,6 +113,16 @@ public class PlayerManager : MonoBehaviour
         {
             MyStats.TakeDamage(25);
         }
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            MyMovement.IsSprinting = true;
+        }
+        else
+        {
+            MyMovement.IsSprinting = false;
+        }
+
     }
 
     void UpdateUI()
@@ -141,7 +159,14 @@ public class PlayerManager : MonoBehaviour
     private void FixedUpdate()
     {
         //Core Player movement
-        MyMovement.Look(new Vector2(ControllerSupport.RightHorizontal.GetAxis(), ControllerSupport.RightVertical.GetAxis()));
-        MyMovement.Move(new Vector2(ControllerSupport.LeftHorizontal.GetAxis(), ControllerSupport.LeftVertical.GetAxis()));
+        MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        if (MoveWithForces)
+        {
+            MyMovement.ForceMove(new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical")));
+        }
+        else
+        {
+            MyMovement.RBMove(new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical")));
+        }
     }
 }
