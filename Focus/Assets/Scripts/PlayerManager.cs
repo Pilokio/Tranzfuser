@@ -24,6 +24,13 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Init the custom input manager and only track controllers connected on start
+        CustomInputManager.InitialiseCustomInputManager();
+        //Add bindings for a single player to the custom input manager
+        CustomInputManager.CreateDefaultSinglePlayerInputManager();
+        //Begin checking for controllers, to determine changes to the tracked controller list
+        StartCoroutine(CustomInputManager.CheckForControllers());
+
         MyMovement = GetComponent<PlayerMovement>();
         MyWallRunning = GetComponent<WallRunning>();
         MyWeaponController = GetComponent<WeaponController>();
