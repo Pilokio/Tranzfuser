@@ -4,79 +4,72 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    // Assingables
-    //public Transform playerCam;
-    //public Transform orientation;
+
+
+    // Movement
+    public float XRotation { get; set; }
+    [Header("LookAt Parameters")]
+    [SerializeField] float LookSensitivityKeyboardAndMouse = 100.0f;
+    [SerializeField] float LookSensitivityController = 150.0f;
+
+    [Header("Movement Parameters")]
+    [SerializeField] float WalkSpeed;
+    [SerializeField] float SprintSpeed;
+    public bool IsSprinting { get; set; }
+
+    private bool grounded;
+    [SerializeField] float maxSlopeAngle = 35f;
+    [SerializeField] LayerMask whatIsGround;
+
+    // Jumping Params
+    [Space]
+    [SerializeField] float jumpCooldown = 0.25f;
+    [SerializeField] float jumpForce = 550f;
+    private bool readyToJump = true;
+
+
+    private bool cancellingGrounded;
+    private Vector3 normalVector = Vector3.up;
+
+
 
     // Other
     private Rigidbody rb;
 
-    // Rotation and look
-    private float xRotation;
-    private float sensitivity = 50f;
-    private float sensMultiplier = 1f;
-
-    // Movement
-    public float moveSpeed;
-    public float maxSpeed;
-    public bool grounded;
-    public LayerMask whatIsGround;
-
-    public float counterMovement = 0.175f;
-    private float threshold = 0.01f;
-    public float maxSlopeAngle = 35f;
-
-    // Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
-    private Vector3 playerScale;
-    public float slideForce = 400;
-    public float slideCounterMovement = 0.2f;
-
-    // Jumping
-    private bool readyToJump = true;
-    private float jumpCooldown = 0.25f;
-    public float jumpForce = 550f;
-
-    // Input
-    float x, y;
-    bool sprinting;
-
-    // Sliding
-    private Vector3 normalVector = Vector3.up;
-    private Vector3 wallNormalVector;
-
-
-    //  private Vector2 LookDirection = new Vector2();
-    //  private Vector2 MoveDirection = new Vector2();
-    private float XRotation = 0.0f;
-    [SerializeField] float LookSensitivity = 100.0f;
-    float YVelocity = 0.0f;
-    [SerializeField] float JumpHeight = 100.0f;
-
+    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        playerScale = transform.localScale;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        StartCoroutine(CheckForBullets());
     }
 
-    public void Move(Vector3 MoveDirection)
+    public void Move(Vector2 MoveDirection)
     {
+
+        if (MoveDirection.x < 0.25 && MoveDirection.x > -0.25)
+            MoveDirection.x = 0.0f;
+
+        if (MoveDirection.y < 0.25 && MoveDirection.y > -0.25)
+            MoveDirection.y = 0.0f;
+
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
-        Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y);
+        Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y).normalized;
 
-        // Apply the final movement force to the rigidbody, making use of fixed delta time
-        rb.AddForce(Move * moveSpeed * Time.fixedDeltaTime);
 
-        rb.velocity = new Vector3(Mathf.Clamp(rb.velocity.x, -maxSpeed, maxSpeed), rb.velocity.y,
-            Mathf.Clamp(rb.velocity.z, -maxSpeed, maxSpeed));
+        if (IsSprinting)
+        {
+            Move *= SprintSpeed * Time.fixedDeltaTime;
+        }
+        else
+        {
+            Move *= WalkSpeed * Time.fixedDeltaTime;
+        }
 
-        rb.angularVelocity = new Vector3(Mathf.Clamp(rb.angularVelocity.x, -maxSpeed, maxSpeed), rb.angularVelocity.y,
-            Mathf.Clamp(rb.angularVelocity.z, -maxSpeed, maxSpeed));
+        if (Move.magnitude > 0.1f)
+            rb.MovePosition(new Vector3(rb.position.x + Move.x, rb.position.y, rb.position.z + Move.z));
+
     }
 
     public void Jump()
@@ -100,10 +93,23 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
-
     public void Look(Vector2 LookDirection)
     {
+        float LookSensitivity = 0.0f;
+
+        
+
+            LookSensitivity = LookSensitivityController;
+
+        if (CustomInputManager.ControllersConnected == false)
+            LookSensitivity /= 3;
+
+        if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
+            LookDirection.x = 0.0f;
+
+        if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
+            LookDirection.y = 0.0f;
+
         LookDirection *= LookSensitivity * Time.deltaTime;
 
         //Update the x rotation of the camera based on the new Look Direction
@@ -121,17 +127,6 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
 
-    private bool IsFloor(Vector3 v)
-    {
-        float angle = Vector3.Angle(Vector3.up, v);
-        return angle < maxSlopeAngle;
-    }
-
-    private bool cancellingGrounded;
-
-    /// <summary>
-    /// Handle ground detection
-    /// </summary>
     private void OnCollisionStay(Collision other)
     {
         // Make sure we are only checking for walkable layers
@@ -161,143 +156,48 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private bool IsFloor(Vector3 v)
+    {
+        float angle = Vector3.Angle(Vector3.up, v);
+        return angle < maxSlopeAngle;
+    }
+
     private void StopGrounded()
     {
         grounded = false;
     }
 
-    public void StartCrouch()
-    {
-        transform.localScale = crouchScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z);
-
-        if (rb.velocity.magnitude > 0.5f)
-        {
-            if (grounded)
-            {
-                rb.AddForce(transform.forward * slideForce);
-            }
-        }
-    }
-
-    public void StopCrouch()
-    {
-        transform.localScale = playerScale;
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-    }
+    //[Header("Bullet Cleanup Parameters")]
+    //[SerializeField] private float TimeForBulletCheck = 1.0f;
+    //[SerializeField] private int MaxBulletsInSceneCount = 10;
 
 
+    ////Coroutine for optimisation by removing bullets if there are too many in the scene
+    ////Currently just for debug as bullets will typically destroy themselves and spawn an impact decal or something?
+    ////Could be adapted for shell casings later on though?
+    //IEnumerator CheckForBullets()
+    //{
+    //    while (true)
+    //    {
+    //        yield return new WaitForSeconds(TimeForBulletCheck);
 
+    //        // Debug.Log("Checking Bullets");
 
-    [Header("Bullet Cleanup Parameters")]
-    [SerializeField] private float TimeForBulletCheck = 1.0f;
-    [SerializeField] private int MaxBulletsInSceneCount = 10;
+    //        //Find all the bullets in the scene
+    //        GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
 
+    //        //If there are more than the set number of bullets in the scene
+    //        if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
+    //        {
+    //            // Debug.Log("Too many Bullets. Removing some.");
+    //            //Delete the bullets found up to the desired amount
+    //            for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
+    //            {
+    //                Destroy(AllBulletsInScene[i]);
+    //            }
+    //        }
+    //    }
+    //}
 
-    //Coroutine for optimisation by removing bullets if there are too many in the scene
-    //Currently just for debug as bullets will typically destroy themselves and spawn an impact decal or something?
-    //Could be adapted for shell casings later on though?
-    IEnumerator CheckForBullets()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(TimeForBulletCheck);
-
-            // Debug.Log("Checking Bullets");
-
-            //Find all the bullets in the scene
-            GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
-
-            //If there are more than the set number of bullets in the scene
-            if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
-            {
-                // Debug.Log("Too many Bullets. Removing some.");
-                //Delete the bullets found up to the desired amount
-                for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
-                {
-                    Destroy(AllBulletsInScene[i]);
-                }
-            }
-        }
-    }
-
-
-
-
-
-    /* Old core movement functionality:
-
-           // If sliding down a ramp, add force down so player stays grounded and also builds speed
-           if (crouching && grounded && readyToJump)
-           {
-               rb.AddForce(Vector3.down * Time.deltaTime * 3000);
-               return;
-           }
-
-           // Some multipliers
-           float multiplier = 1f, multiplierV = 1f;
-
-           // Movement in air
-           if (!grounded)
-           {
-               multiplier = 0.5f;
-               multiplierV = 0.5f;
-           }
-           Movement while sliding
-           if (grounded && crouching) multiplierV = 0f;
-
-           */
-
-    private void CounterMovement(float x, float y, Vector2 mag)
-    {
-        //  if (!grounded || jumping) return;
-
-        // Slow down sliding
-        //if (crouching)
-        //{
-        //    rb.AddForce(moveSpeed * Time.deltaTime * -rb.velocity.normalized * slideCounterMovement);
-        //    return;
-        //}
-
-        // Counter movement
-        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
-        {
-            rb.AddForce(moveSpeed * transform.right * Time.deltaTime * -mag.x * counterMovement);
-        }
-        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
-        {
-            rb.AddForce(moveSpeed * transform.forward * Time.deltaTime * -mag.y * counterMovement);
-        }
-
-        // Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
-        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed)
-        {
-            float fallspeed = rb.velocity.y;
-            Vector3 n = rb.velocity.normalized * maxSpeed;
-            rb.velocity = new Vector3(n.x, fallspeed, n.z);
-        }
-    }
-
-
-
-    /// <summary>
-    /// Find the velocity relative to where the player is looking
-    /// Useful for vectors calculations regarding movement and limiting movement
-    /// </summary>
-    /// <returns></returns>
-    public Vector2 FindVelRelativeToLook()
-    {
-        float lookAngle = transform.eulerAngles.y;
-        float moveAngle = Mathf.Atan2(rb.velocity.x, rb.velocity.z) * Mathf.Rad2Deg;
-
-        float u = Mathf.DeltaAngle(lookAngle, moveAngle);
-        float v = 90 - u;
-
-        float magnitue = rb.velocity.magnitude;
-        float yMag = magnitue * Mathf.Cos(u * Mathf.Deg2Rad);
-        float xMag = magnitue * Mathf.Cos(v * Mathf.Deg2Rad);
-
-        return new Vector2(xMag, yMag);
-    }
 
 }
