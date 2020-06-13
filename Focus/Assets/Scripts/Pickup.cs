@@ -18,7 +18,7 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.tag == "Player")
+        if (other.transform.tag == "Player" && other.GetComponent<CharacterStats>() != null)
         {
             Debug.Log(transform.name + " has been picked up by the player");
 

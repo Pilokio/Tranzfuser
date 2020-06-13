@@ -1,13 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
+
+
 
     // Movement
     public float XRotation { get; set; }
-    public float LookSensitivity = 100.0f;
+    [Header("LookAt Parameters")]
+    [SerializeField] float LookSensitivityKeyboardAndMouse = 100.0f;
+    [SerializeField] float LookSensitivityController = 150.0f;
 
     [Header("Movement Parameters")]
     [SerializeField] float WalkSpeed;
@@ -19,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask whatIsGround;
 
     // Jumping Params
+    [Space]
     [SerializeField] float jumpCooldown = 0.25f;
     [SerializeField] float jumpForce = 550f;
     private bool readyToJump = true;
@@ -40,7 +44,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
+
     public void Move(Vector2 MoveDirection)
     {
 
@@ -91,11 +95,21 @@ public class PlayerController : MonoBehaviour
 
     public void Look(Vector2 LookDirection)
     {
+        float LookSensitivity = 0.0f;
+
+        //LookDirection = new Vector2(Mathf.Clamp(LookDirection.x, -1, 1), Mathf.Clamp(LookDirection.y, -1, 1));
+
+        LookSensitivity = LookSensitivityController;
+
+        if (CustomInputManager.ControllersConnected == false)
+            LookSensitivity = LookSensitivityKeyboardAndMouse;
+
         if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
             LookDirection.x = 0.0f;
 
         if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
             LookDirection.y = 0.0f;
+
 
         LookDirection *= LookSensitivity * Time.deltaTime;
 
@@ -153,4 +167,38 @@ public class PlayerController : MonoBehaviour
     {
         grounded = false;
     }
+
+    //[Header("Bullet Cleanup Parameters")]
+    //[SerializeField] private float TimeForBulletCheck = 1.0f;
+    //[SerializeField] private int MaxBulletsInSceneCount = 10;
+
+
+    ////Coroutine for optimisation by removing bullets if there are too many in the scene
+    ////Currently just for debug as bullets will typically destroy themselves and spawn an impact decal or something?
+    ////Could be adapted for shell casings later on though?
+    //IEnumerator CheckForBullets()
+    //{
+    //    while (true)
+    //    {
+    //        yield return new WaitForSeconds(TimeForBulletCheck);
+
+    //        // Debug.Log("Checking Bullets");
+
+    //        //Find all the bullets in the scene
+    //        GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
+
+    //        //If there are more than the set number of bullets in the scene
+    //        if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
+    //        {
+    //            // Debug.Log("Too many Bullets. Removing some.");
+    //            //Delete the bullets found up to the desired amount
+    //            for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
+    //            {
+    //                Destroy(AllBulletsInScene[i]);
+    //            }
+    //        }
+    //    }
+    //}
+
+
 }
