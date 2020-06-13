@@ -120,14 +120,10 @@ public class EnemyController : MonoBehaviour
             //Raycast to determine if the enemy can see the player from its current position
             //This accounts for the detection range and line of sight
             if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
-            {
-                if(hit.transform.gameObject.layer != 8)
-                    Debug.Log("I see " + hit.transform.name);
-                
+            {  
                 //If the raycast hits the player then they must be in range, with a clear line of sight
                 if (hit.transform.tag == "Player")
                 {
-                    Debug.Log("I see you");
                     //Reset line of sight timer
                     LineOfSightTimer = TimeToLose;
                     TargetSighted = true;
@@ -184,7 +180,6 @@ public class EnemyController : MonoBehaviour
 
                 if(LineOfSightTimer <= 0.0f)
                 {
-                    Debug.Log("Must've been the wind");
                     CurrentState = EnemyState.Patrol;
                 }
 
@@ -215,7 +210,6 @@ public class EnemyController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("I have lost the target.");
                     CurrentState = EnemyState.Run;
                 }
                 break;
