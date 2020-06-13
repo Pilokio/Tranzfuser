@@ -195,5 +195,11 @@ public class CharacterStats : MonoBehaviour
             RestoreStamina(StaminaRegenAmount);
         }
     }
+
+
+    public virtual void Die()
+    {
+        Debug.Log(transform.name + " is dead");
+    }
 }
 

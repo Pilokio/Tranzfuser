@@ -12,7 +12,7 @@ public class Ladder : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         player.GetComponent<Rigidbody>().useGravity = false;
-        player.GetComponent<PlayerManager>().enabled = false;
+        player.GetComponent<PlayerController>().enabled = false;
     }
 
     private void OnTriggerStay(Collider other)
@@ -35,6 +35,6 @@ public class Ladder : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         player.GetComponent<Rigidbody>().useGravity = true;
-        player.GetComponent<PlayerManager>().enabled = true;
+        player.GetComponent<PlayerController>().enabled = true;
     }
 }
