@@ -75,8 +75,6 @@ public class PlayerController3D : CharacterController3D
       
       
         Cursor.lockState = CursorLockMode.Locked;
-        ControllerSupport.InitialiseControllerSupport();
-        StartCoroutine(ControllerSupport.CheckForControllers());
     }
 
     void InitFirstPersonCamera()
