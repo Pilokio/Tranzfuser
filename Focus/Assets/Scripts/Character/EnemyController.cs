@@ -26,6 +26,8 @@ public class EnemyController : MonoBehaviour
 
     Transform Target;
 
+    Mesh ConeOfVisionDebugMesh;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,10 +36,60 @@ public class EnemyController : MonoBehaviour
         LineOfSightTimer = TimeToLose;
     }
 
+    Mesh CreateViewCone(float aAngle, float aDistance, int aConeResolution = 30)
+    {
+        Vector3[] verts = new Vector3[aConeResolution + 1];
+        Vector3[] normals = new Vector3[verts.Length];
+        int[] tris = new int[aConeResolution * 3];
+        Vector3 a = Quaternion.Euler(-aAngle, 0, 0) * Vector3.forward * aDistance;
+        Vector3 n = Quaternion.Euler(-aAngle, 0, 0) * Vector3.up;
+        Quaternion step = Quaternion.Euler(0, 0, 360f / aConeResolution);
+        verts[0] = Vector3.zero;
+        normals[0] = Vector3.back;
+        for (int i = 0; i < aConeResolution; i++)
+        {
+            normals[i + 1] = n;
+            verts[i + 1] = a;
+            a = step * a;
+            n = step * n;
+            tris[i * 3] = 0;
+            tris[i * 3 + 1] = (i + 1) % aConeResolution + 1;
+            tris[i * 3 + 2] = i + 1;
+        }
+        Mesh m = new Mesh();
+        m.vertices = verts;
+        m.normals = normals;
+        m.triangles = tris;
+        m.RecalculateBounds();
+        return m;
+    }
+    private void OnValidate()
+    {
+        ConeOfVisionDebugMesh = CreateViewCone(VisionConeAngle, DetectionRange, 10);
+    }
+
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, DetectionRange);
+         Gizmos.color = Color.red;
+        foreach(Transform target in PatrolPoints)
+        {
+            Gizmos.DrawWireSphere(target.position, 2.0f);
+        }
+
+        if(ConeOfVisionDebugMesh == null)
+        {
+            ConeOfVisionDebugMesh = CreateViewCone(VisionConeAngle, DetectionRange, 10);
+        }
+
+        Gizmos.DrawWireMesh(ConeOfVisionDebugMesh, 0, transform.position + EyePosition, transform.rotation);
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection( EyePosition), 0.5f);
+
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position + EyePosition, Heading * DetectionRange);
+
     }
     [SerializeField] LayerMask DetectionMask;
 
@@ -45,11 +97,11 @@ public class EnemyController : MonoBehaviour
     [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
     [SerializeField] int TargetPatrolPoint = 0;
     RaycastHit hit;
-
+    [SerializeField] Vector3 EyePosition = new Vector3();
     [SerializeField] float TimeToLose = 2.0f;
     float LineOfSightTimer = 0.0f;
 
-
+    Vector3 Heading = new Vector3();
     // Update is called once per frame
     void Update()
     {   
@@ -57,7 +109,7 @@ public class EnemyController : MonoBehaviour
         float distance = Vector3.Distance(Target.position, transform.position);
         
         //Calculate the direction of the player in relation to the enemy
-        Vector3 Heading = Target.position - transform.position;
+        Heading = Target.position - (transform.position + EyePosition);
         //Using the heading, calculate the angle between it and the current Look Direction (the forward vector)
         float angle = Vector3.Angle(transform.forward, Heading);
 
@@ -67,11 +119,15 @@ public class EnemyController : MonoBehaviour
         {
             //Raycast to determine if the enemy can see the player from its current position
             //This accounts for the detection range and line of sight
-            if (Physics.Raycast(transform.position + new Vector3(0, 1.25f, 0), Heading, out hit, DetectionRange, DetectionMask))
+            if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
             {
+                if(hit.transform.gameObject.layer != 8)
+                    Debug.Log("I see " + hit.transform.name);
+                
                 //If the raycast hits the player then they must be in range, with a clear line of sight
                 if (hit.transform.tag == "Player")
                 {
+                    Debug.Log("I see you");
                     //Reset line of sight timer
                     LineOfSightTimer = TimeToLose;
                     TargetSighted = true;
@@ -122,7 +178,6 @@ public class EnemyController : MonoBehaviour
 
                 if(!TargetSighted)
                 {
-                    Debug.Log("Searching");
                     LineOfSightTimer -= Time.deltaTime;
                 }
 
@@ -155,7 +210,6 @@ public class EnemyController : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("You can run but you cant hide");
                         CurrentState = EnemyState.Run;
                     }
                 }

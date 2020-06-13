@@ -1441,7 +1441,7 @@ GameObject:
   - component: {fileID: 451348750}
   - component: {fileID: 451348745}
   - component: {fileID: 451348747}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1458,7 +1458,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 2
-  m_Speed: 20
+  m_Speed: 10
   m_Acceleration: 20
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1559,7 +1559,7 @@ MonoBehaviour:
   AttackRange: 25
   DetectionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2871
   VisionConeAngle: 45
   PatrolPoints:
   - {fileID: 2053716993}
@@ -1567,6 +1567,8 @@ MonoBehaviour:
   - {fileID: 983075754}
   - {fileID: 291915860}
   TargetPatrolPoint: 0
+  EyePosition: {x: 0, y: 3.5, z: 1}
+  TimeToLose: 10
 --- !u!1 &498788229
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,7 +1953,7 @@ GameObject:
   - component: {fileID: 668100183}
   - component: {fileID: 668100182}
   - component: {fileID: 668100181}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2003,7 +2005,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 8d530ffe6c4968843806085897955b9d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2267,7 +2269,7 @@ GameObject:
   - component: {fileID: 749893871}
   - component: {fileID: 749893870}
   - component: {fileID: 749893869}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlayerGraphic
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -2598,7 +2600,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194230}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -3814,8 +3816,7 @@ GameObject:
   - component: {fileID: 1564139284}
   - component: {fileID: 1564139283}
   - component: {fileID: 1564139285}
-  - component: {fileID: 1564139287}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlayerContainer (updated)
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -3961,22 +3962,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxStepHeight: 0.5
   stepSearchOvershoot: 0.01
---- !u!208 &1564139287
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1564139276}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 2, y: 1.5, z: 2}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1.5, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &1616361670
 GameObject:
   m_ObjectHideFlags: 0
@@ -3987,7 +3972,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1616361671}
   - component: {fileID: 4531442652993881322}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GunHolder
   m_TagString: GunHolder
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -5190,7 +5175,7 @@ GameObject:
   - component: {fileID: 2093977744}
   - component: {fileID: 2093977746}
   - component: {fileID: 2093977745}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: EnemyGraphic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5230,7 +5215,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 79f64ed6f5d6d374d91c3a0af4070258, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5291,7 +5276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8317205677825929942}
   - component: {fileID: 6153837470106196009}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Gun Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5440,7 +5425,7 @@ GameObject:
   - component: {fileID: 50744786878896908}
   - component: {fileID: 1823887877794271370}
   - component: {fileID: 2692041860397910907}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: polySurface49
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5456,7 +5441,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8220279636613579862}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: smooth hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
