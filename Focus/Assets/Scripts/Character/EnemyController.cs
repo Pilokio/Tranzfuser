@@ -211,6 +211,7 @@ public class EnemyController : MonoBehaviour
                     {
                         Debug.Log("Bang");
                         FaceTarget();
+                        MyWeaponController.UseWeapon(Target.position);
                     }
                     else
                     {
