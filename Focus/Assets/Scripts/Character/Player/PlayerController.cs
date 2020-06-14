@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Slider HealthBar;
     [SerializeField] Text FPS;
 
+
+    public bool IsClimbing = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -149,7 +152,10 @@ public class PlayerController : MonoBehaviour
         MyWallRunning.WallChecker();
         MyWallRunning.RestoreCamera();
 
-        MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        if (!IsClimbing)
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
 
 
 
@@ -159,10 +165,20 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
         //Core Player movement
-        MyMovement.Move(new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical")));
-        
-     
+        if (!IsClimbing)
+        {
+            GetComponent<Rigidbody>().useGravity = true;
+            MyMovement.Move(MoveDirection);
+        }
+        else
+        {
+            GetComponent<Rigidbody>().useGravity = false;
+            MyMovement.Move(new Vector2(MoveDirection.x, 0));
+            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
     }
 
     private void LateUpdate()
