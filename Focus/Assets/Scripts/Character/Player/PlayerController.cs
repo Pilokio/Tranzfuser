@@ -15,10 +15,11 @@ public class PlayerController : MonoBehaviour
     CharacterStats MyStats;
     TimeManager MyTimeManager;
 
+#pragma warning disable 0649
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
-    [SerializeField] Text FPS;
+#pragma warning restore 0649
 
 
     public bool IsClimbing = false;
@@ -140,8 +141,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FPS.text = "FPS: " + ((int)(1.0f / Time.deltaTime)).ToString();
-
         //Check for all player input
         HandleInput();
 

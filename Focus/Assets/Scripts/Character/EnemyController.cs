@@ -24,7 +24,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float DetectionRange = 10.0f;
     [SerializeField] float AttackRange = 5.0f;
 
-    [SerializeField] LayerMask DetectionMask;
+    [SerializeField] LayerMask DetectionMask = new LayerMask();
 
     [SerializeField] float VisionConeAngle = 45;
     [SerializeField] List<Transform> PatrolPoints = new List<Transform>();

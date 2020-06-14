@@ -8,7 +8,7 @@ public class GrapplingGun : MonoBehaviour
     private SpringJoint joint;
 
     public LayerMask CanBeGrappled;
-    public Transform gunTip, camera, player;
+    public Transform gunTip, DepthCam, player;
 
 
     private void Awake()
@@ -39,7 +39,7 @@ public class GrapplingGun : MonoBehaviour
     void StartGrapple()
     {
         RaycastHit hit;
-        if (Physics.Raycast(camera.position, camera.forward, out hit, maxDistance))
+        if (Physics.Raycast(DepthCam.position, DepthCam.forward, out hit, maxDistance))
         {
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<SpringJoint>();

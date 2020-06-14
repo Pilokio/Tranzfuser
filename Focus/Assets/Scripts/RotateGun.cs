@@ -4,8 +4,8 @@ public class RotateGun : MonoBehaviour
 {
     public GrapplingGun grappling;
 
-    private Quaternion desiredRotation;
-    private float rotationSpeed = 5f;
+    //private Quaternion desiredRotation;
+    //private float rotationSpeed = 5f;
 
     private void Update()
     {

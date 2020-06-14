@@ -19,9 +19,9 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsSprinting { get; set; }
 
-    private bool grounded;
+    private bool grounded = false;
     [SerializeField] float maxSlopeAngle = 35f;
-    [SerializeField] LayerMask whatIsGround;
+    [SerializeField] LayerMask whatIsGround = new LayerMask();
 
     // Jumping Params
     [Space]
@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private bool readyToJump = true;
 
 
-    private bool cancellingGrounded;
+    private bool cancellingGrounded = false;
     private Vector3 normalVector = Vector3.up;
 
 
