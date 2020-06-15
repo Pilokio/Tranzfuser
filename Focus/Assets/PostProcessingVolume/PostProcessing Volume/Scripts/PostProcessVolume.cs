@@ -126,11 +126,9 @@ public class PostProcessVolume : MonoBehaviour
 
                 float max = Mathf.Max(distanceXPerc, distanceYPerc, distanceZPerc);
                 return Mathf.Clamp01(1 - max);
-                break;
             case VolumeShape.SPHERE:
                 float percentage = (distanceVec.magnitude - InnerSphereRadius) / (_sphereCollider.radius - InnerSphereRadius);
                 return Mathf.Clamp01(1 - percentage);
-                break;
         }
 
         return 0;

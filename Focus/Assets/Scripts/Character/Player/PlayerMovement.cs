@@ -13,13 +13,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float LookSensitivityController = 150.0f;
 
     [Header("Movement Parameters")]
-    [SerializeField] float WalkSpeed;
-    [SerializeField] float SprintSpeed;
+    [SerializeField] float WalkSpeed = 5.0f;
+    [SerializeField] float SprintSpeed = 10.0f;
+    [SerializeField] float ClimbSpeed = 2.0f;
+
     public bool IsSprinting { get; set; }
 
-    private bool grounded;
+    private bool grounded = false;
     [SerializeField] float maxSlopeAngle = 35f;
-    [SerializeField] LayerMask whatIsGround;
+    [SerializeField] LayerMask whatIsGround = new LayerMask();
 
     // Jumping Params
     [Space]
@@ -28,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private bool readyToJump = true;
 
 
-    private bool cancellingGrounded;
+    private bool cancellingGrounded = false;
     private Vector3 normalVector = Vector3.up;
 
 
@@ -121,6 +123,12 @@ public class PlayerMovement : MonoBehaviour
         Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, Camera.main.transform.localRotation.eulerAngles.z);
         //Rotate the entire player container transform around the y-axis based on the look direction
         transform.Rotate(transform.up * LookDirection.x);
+    }
+
+    public void ClimbLadder(Vector3 Direction)
+    {
+        Direction *= ClimbSpeed * Time.deltaTime;   
+        rb.MovePosition(rb.position + Direction);
     }
 
     private void ResetJump()

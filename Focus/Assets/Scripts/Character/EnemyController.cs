@@ -4,24 +4,41 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(EnemyStats))]
+[RequireComponent(typeof(WeaponController))]
 public class EnemyController : MonoBehaviour
 {
     private NavMeshAgent Agent;
-
 
     public enum EnemyState
     {
         Patrol = 0,
         Run = 1,
-        Shoot = 2
+        Shoot = 2,
+        TakeCover = 3
     }
 
-    [SerializeField] EnemyState CurrentState = EnemyState.Patrol;
-
+    [SerializeField] EnemyState StartingState = EnemyState.Patrol;
+    EnemyState CurrentState;
 
     [SerializeField] float DetectionRange = 10.0f;
     [SerializeField] float AttackRange = 5.0f;
 
+    [SerializeField] LayerMask DetectionMask = new LayerMask();
+
+    [SerializeField] float VisionConeAngle = 45;
+    [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
+    [SerializeField] int TargetPatrolPoint = 0;
+    RaycastHit hit;
+    [SerializeField] Vector3 EyePosition = new Vector3();
+    [SerializeField] float TimeToLose = 2.0f;
+    float LineOfSightTimer = 0.0f;
+
+    Vector3 Heading = new Vector3();
+
+
+
+    WeaponController MyWeaponController;
     private bool TargetSighted = false;
 
     Transform Target;
@@ -31,6 +48,8 @@ public class EnemyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        MyWeaponController = GetComponent<WeaponController>();
+        CurrentState = StartingState;
         Target = PlayerManager.Instance.Player.transform;
         Agent = GetComponent<NavMeshAgent>();
         LineOfSightTimer = TimeToLose;
@@ -91,17 +110,7 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawLine(transform.position + EyePosition, Heading * DetectionRange);
 
     }
-    [SerializeField] LayerMask DetectionMask;
-
-    [SerializeField] float VisionConeAngle = 45;
-    [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
-    [SerializeField] int TargetPatrolPoint = 0;
-    RaycastHit hit;
-    [SerializeField] Vector3 EyePosition = new Vector3();
-    [SerializeField] float TimeToLose = 2.0f;
-    float LineOfSightTimer = 0.0f;
-
-    Vector3 Heading = new Vector3();
+   
     // Update is called once per frame
     void Update()
     {   
@@ -212,6 +221,9 @@ public class EnemyController : MonoBehaviour
                 {
                     CurrentState = EnemyState.Run;
                 }
+                break;
+            case EnemyState.TakeCover:
+                Debug.Log("I should hide");
                 break;
             default:
                 break;

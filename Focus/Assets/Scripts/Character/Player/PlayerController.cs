@@ -15,10 +15,14 @@ public class PlayerController : MonoBehaviour
     CharacterStats MyStats;
     TimeManager MyTimeManager;
 
+#pragma warning disable 0649
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
-    [SerializeField] Text FPS;
+#pragma warning restore 0649
+
+
+    public bool IsClimbing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -137,8 +141,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FPS.text = "FPS: " + ((int)(1.0f / Time.deltaTime)).ToString();
-
         //Check for all player input
         HandleInput();
 
@@ -149,7 +151,10 @@ public class PlayerController : MonoBehaviour
         MyWallRunning.WallChecker();
         MyWallRunning.RestoreCamera();
 
-        MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        if (!IsClimbing)
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
 
 
 
@@ -159,10 +164,20 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
         //Core Player movement
-        MyMovement.Move(new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical")));
-        
-     
+        if (!IsClimbing)
+        {
+            GetComponent<Rigidbody>().useGravity = true;
+            MyMovement.Move(MoveDirection);
+        }
+        else
+        {
+            GetComponent<Rigidbody>().useGravity = false;
+            MyMovement.Move(new Vector2(MoveDirection.x, 0));
+            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
     }
 
     private void LateUpdate()

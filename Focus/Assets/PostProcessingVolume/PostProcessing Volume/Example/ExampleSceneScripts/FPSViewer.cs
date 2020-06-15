@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class FPSViewer : MonoBehaviour
 {
+#pragma warning disable 0649
+
     [SerializeField] private bool m_IsWalking;
     [SerializeField] private float m_WalkSpeed;
     [SerializeField] private float m_RunSpeed;
@@ -28,6 +30,8 @@ public class FPSViewer : MonoBehaviour
     private float m_NextStep;
     private bool m_Jumping;
     private MouseCamera m_MouseLook;
+#pragma warning restore 0649
+
     // Use this for initialization
     private void Start()
     {

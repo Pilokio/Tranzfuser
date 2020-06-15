@@ -10,13 +10,13 @@ public class PlayerMoveTest : MonoBehaviour
     public float LookSensitivity = 100.0f;
 
     [Header("Movement Parameters")]
-    [SerializeField] float WalkSpeed;
-    [SerializeField] float SprintSpeed;
+    [SerializeField] float WalkSpeed = 10.0f;
+    [SerializeField] float SprintSpeed = 20.0f;
     public bool IsSprinting { get; set; }
 
     private bool grounded;
     [SerializeField] float maxSlopeAngle = 35f;
-    [SerializeField] LayerMask whatIsGround;
+    [SerializeField] LayerMask whatIsGround = new LayerMask();
 
     // Jumping Params
     [SerializeField] float jumpCooldown = 0.25f;
