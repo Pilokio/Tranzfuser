@@ -46,7 +46,7 @@ public class ProjectileController : MonoBehaviour
             }
             else
             {
-                Debug.Log("I hit " + collision.gameObject.name);
+               // Debug.Log("I hit " + collision.gameObject.name);
             }
         }
         
@@ -72,7 +72,7 @@ public class ProjectileController : MonoBehaviour
 
         if(Timer <= 0.0f)
         {
-            Debug.Log("I hit nothing");
+            //Debug.Log("I hit nothing");
             Destroy(this.gameObject);
         }
     }

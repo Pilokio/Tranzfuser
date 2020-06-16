@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7947351605689868471}
   - component: {fileID: 7947351605689868456}
   m_Layer: 12
-  m_Name: NPC Ladder Test
+  m_Name: NavMeshedLadder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7947351606482027010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.5, z: 2}
+  m_LocalPosition: {x: 0, y: -0.5, z: 3.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7947351605689868468}
@@ -165,7 +165,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7947351606915375625}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -2}
+  m_LocalPosition: {x: -0, y: 0.5, z: 0.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7947351605689868468}
@@ -180,7 +180,7 @@ OffMeshLink:
   m_GameObject: {fileID: 7947351606915375625}
   m_Enabled: 1
   serializedVersion: 3
-  m_AreaIndex: 0
+  m_AreaIndex: 2
   m_AgentTypeID: 0
   m_Start: {fileID: 7947351606915375624}
   m_End: {fileID: 7947351606482027013}
