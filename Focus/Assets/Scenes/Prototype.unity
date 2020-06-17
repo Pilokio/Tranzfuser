@@ -1466,8 +1466,8 @@ GameObject:
   - component: {fileID: 451348749}
   - component: {fileID: 451348746}
   - component: {fileID: 451348744}
-  - component: {fileID: 451348750}
   - component: {fileID: 451348745}
+  - component: {fileID: 451348750}
   - component: {fileID: 451348747}
   - component: {fileID: 451348748}
   m_Layer: 10
@@ -3039,13 +3039,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1006712166}
-  m_LocalRotation: {x: -0, y: 0.99923265, z: -0, w: -0.03916874}
-  m_LocalPosition: {x: -73.809, y: 11.94, z: -91.54}
+  m_LocalRotation: {x: -0, y: 0.7342607, z: -0, w: 0.6788677}
+  m_LocalPosition: {x: 0.7199989, y: -0.052999973, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 1868150843}
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_Father: {fileID: 1710023241}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 184.48999, z: 0}
 --- !u!1001 &1059280794
 PrefabInstance:
@@ -4144,12 +4144,12 @@ GameObject:
   - component: {fileID: 1564139280}
   - component: {fileID: 1564139281}
   - component: {fileID: 1564139282}
-  - component: {fileID: 720082708}
   - component: {fileID: 1564139279}
+  - component: {fileID: 720082708}
   - component: {fileID: 1564139278}
   - component: {fileID: 1564139284}
-  - component: {fileID: 1564139283}
   - component: {fileID: 1564139285}
+  - component: {fileID: 1564139283}
   m_Layer: 11
   m_Name: PlayerContainer (updated)
   m_TagString: Player
@@ -4164,15 +4164,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1564139276}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4, y: 22.12, z: -7}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -61.128143, y: 7.19, z: -47.45506}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 749893866}
   - {fileID: 963194228}
   m_Father: {fileID: 0}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1564139278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4200,12 +4200,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4084b382069b9b14688b464a7db65718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LookSensitivityKeyboardAndMouse: 75
+  LookSensitivityKeyboardAndMouse: 25
   LookSensitivityController: 150
   WalkSpeed: 17
   SprintSpeed: 24
   ClimbSpeed: 2
-  grounded: 0
   maxSlopeAngle: 35
   whatIsGround:
     serializedVersion: 2
@@ -4620,7 +4619,8 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.391, y: 2.553, z: 1.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1006712167}
   m_Father: {fileID: 451348749}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}

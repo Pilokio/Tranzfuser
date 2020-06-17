@@ -7,6 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(CharacterStats))]
 [RequireComponent(typeof(TimeManager))]
+
 public class PlayerController : MonoBehaviour
 {
     PlayerMovement MyMovement;
