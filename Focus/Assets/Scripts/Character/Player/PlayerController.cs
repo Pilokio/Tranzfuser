@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
             }
 
             //Use the equipped weapon
-            MyWeaponController.UseWeapon();
+            MyWeaponController.UseWeapon(transform.forward);
         }
 
 
