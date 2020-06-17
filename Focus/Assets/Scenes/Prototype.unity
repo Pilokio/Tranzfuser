@@ -4716,8 +4716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AmmoDisplayText: {fileID: 1870430615}
   HealthBar: {fileID: 1660353324}
-  AimDownSightsPosition: {fileID: 1242955715}
-  GunHolderPosition: {fileID: 1616361671}
+  AimDownSightsPos: {fileID: 1242955715}
+  GunHolder: {fileID: 1616361671}
   IsClimbing: 0
 --- !u!114 &1564139283
 MonoBehaviour:
@@ -5456,7 +5456,7 @@ GameObject:
   - component: {fileID: 1833191244}
   - component: {fileID: 1833191243}
   - component: {fileID: 1833191242}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

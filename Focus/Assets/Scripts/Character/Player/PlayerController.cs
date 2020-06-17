@@ -22,6 +22,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Slider HealthBar;
 #pragma warning restore 0649
 
+    public Transform AimDownSightsPos;
+    public Transform GunHolder;
+
+
 
     public bool IsClimbing = false;
 
@@ -66,9 +70,14 @@ public class PlayerController : MonoBehaviour
 
         //Slow time for the player
         //using either RMB, L2, or LT depending on input device
-        if (CustomInputManager.GetAxisAsButton("LeftTrigger"))
+        if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
-            MyTimeManager.DoSlowmotion();
+            MyWeaponController.CurrentGun.transform.position = AimDownSightsPos.position;
+            //MyTimeManager.DoSlowmotion();
+        }
+        else
+        {
+            MyWeaponController.CurrentGun.transform.position = GunHolder.position;
         }
 
         //Reload the currently equipped weapon
