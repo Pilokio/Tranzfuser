@@ -76,6 +76,9 @@ public class EnemyController : MonoBehaviour
     //Used for debug
     public bool CanMove = false;
 
+    public bool IsClimbing = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,6 +88,7 @@ public class EnemyController : MonoBehaviour
         Target = PlayerManager.Instance.Player.transform;
         //Store the navmesh agent component for movement through the level
         Agent = GetComponent<NavMeshAgent>();
+
     }
 
     private void Awake()
@@ -102,11 +106,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-         Gizmos.color = Color.red;
-        foreach(Transform target in PatrolPoints)
-        {
-            Gizmos.DrawWireSphere(target.position, 2.0f);
-        }
+      
 
         if(ConeOfVisionDebugMesh == null)
         {
@@ -124,8 +124,18 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach (Transform target in PatrolPoints)
+        {
+            Gizmos.DrawWireSphere(target.position, 2.0f);
+        }
+    }
 
-   private bool DetectPlayer()
+    public float Threshold = 50;
+    float MaxVelocity = 100.0f;
+    private bool DetectPlayer()
     {
         //Calculate the direction of the player in relation to the enemy
         Heading = Target.position - (transform.position + EyePosition);
@@ -159,6 +169,8 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+   
         //If the player is detected, move straight to the hostile state
         TargetSighted = DetectPlayer();
 
@@ -166,8 +178,6 @@ public class EnemyController : MonoBehaviour
         {
             AlertStatus = AlertState.Hostile;
         }
-
-
 
         switch (AlertStatus)
         {
@@ -204,11 +214,15 @@ public class EnemyController : MonoBehaviour
                 //Investigate disturbances.
                 Debug.Log("I am Suspicious");
 
-                //If hostile was in combat and is no longer seen
-                //Go to last known location and search
+               //Get Search location (ie player last known location, origin of gunfire, dead body)
+               //Pick a random position in a radius around the disturbance location
+               //Move to this location.
+               //Repeat until search timer is 0 or hostile found
+               //Return to idle if not found in time limit, move to hostile if found
 
-                //If dead body is found or gunfire is heard
-                //Move to disturbance location and search
+
+
+
                 break;
             case AlertState.Hostile:
                 Debug.Log("I am Hostile");
@@ -222,7 +236,10 @@ public class EnemyController : MonoBehaviour
                 break;
         }
 
+        int TakeCover = 0;
+        int Attack = 0;
 
+     
 
 
 
@@ -247,7 +264,6 @@ public class EnemyController : MonoBehaviour
         }
 
         // Determine what action should be taken here.
-
         switch (EnemyType)
         {
             case CombatType.Grunt:
@@ -288,17 +304,6 @@ public class EnemyController : MonoBehaviour
                 //else hide behind cover
                 break;
         }
-
-
-
-      
-    
-
-      
-
-
-     
-  
     }
 
 
@@ -313,6 +318,13 @@ public class EnemyController : MonoBehaviour
 
 
     float MinAttackDistance = 5.0f;
+
+
+    void TakeCover()
+    {
+        Debug.Log("Taking Cover");
+    }
+
 
     /// <summary>
     /// This function tells the enemy to move towards the player and attack when in range
