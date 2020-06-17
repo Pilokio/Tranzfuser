@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public static class ControllerBindings
@@ -68,14 +67,14 @@ public static class ControllerBindings
                 CtrlType == ControlType.RightTrigger)
             {
                 IsAxis = true;
-               
+
             }
             else
             {
                 IsAxis = false;
             }
-            
-            
+
+
             XB1Neutral = 0;
             XB360Neutral = 0;
             PS4Neutral = 0;
@@ -84,7 +83,7 @@ public static class ControllerBindings
             Ps4Name = ps4;
             Xbox1Name = xbox1;
             Xbox360Name = xbox360;
-            
+
             Ps4Key = ps4K;
             Xbox1Key = xbox1K;
             Xbox360Key = xbox360k;
@@ -110,7 +109,7 @@ public static class ControllerBindings
                 IsAxis = false;
             }
 
-           
+
             XB1Neutral = xb1N;
             XB360Neutral = xb360N;
             PS4Neutral = ps4N;
@@ -299,7 +298,7 @@ public static class ControllerBindings
     };
 
 
-   
+
 
     public static Binding GetBinding(PlayerNumber numb, ControlType type)
     {

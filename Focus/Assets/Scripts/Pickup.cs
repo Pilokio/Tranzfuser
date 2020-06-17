@@ -21,7 +21,7 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       
+
         if (other.transform.tag == "Player")
         {
             Debug.Log("The player is touching the object");

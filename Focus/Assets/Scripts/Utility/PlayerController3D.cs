@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController3D : CharacterController3D
 {
-    enum CamType {  FirstPerson, ThirdPerson};
+    enum CamType { FirstPerson, ThirdPerson };
     [SerializeField] CamType CameraType = CamType.FirstPerson;
 
     //Stores the transform the main camera should be moved to 
@@ -53,7 +51,7 @@ public class PlayerController3D : CharacterController3D
             case CamType.FirstPerson:
                 InitFirstPersonCamera();
 
-                if(CanChangeCamType)
+                if (CanChangeCamType)
                 {
                     InitThirdPersonCamera();
                 }
@@ -72,8 +70,8 @@ public class PlayerController3D : CharacterController3D
                 Debug.LogError("Invalid Camera Type Selected in Player Controller 3D component.");
                 break;
         }
-      
-      
+
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -187,12 +185,12 @@ public class PlayerController3D : CharacterController3D
         //(ie convert camera holder to list of transforms and set camera count dynamically)
         CameraIndex++;
 
-        if(CameraIndex >= CameraCount)
+        if (CameraIndex >= CameraCount)
         {
             CameraIndex = 0;
         }
 
-        switch(CameraIndex)
+        switch (CameraIndex)
         {
             case 0:
                 CameraType = CamType.FirstPerson;
@@ -223,7 +221,7 @@ public class PlayerController3D : CharacterController3D
             }
         }
 
-        if(CustomInputManager.GetButtonDown("ActionButton1"))
+        if (CustomInputManager.GetButtonDown("ActionButton1"))
         {
             Jump = true;
         }
@@ -232,11 +230,11 @@ public class PlayerController3D : CharacterController3D
         {
             ChangeCamera();
         }
-        
+
 
         MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
         LookDirection = new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")) * LookSensitivity * Time.deltaTime;
-    
+
 
     }
 
@@ -245,11 +243,11 @@ public class PlayerController3D : CharacterController3D
     void Update()
     {
         //Update the player character if it was successfully initialised and is being controlled
-        if(SuccessfullyInitialised && IsControlling)
+        if (SuccessfullyInitialised && IsControlling)
         {
             HandleInput();
 
-            switch(CameraType)
+            switch (CameraType)
             {
                 case CamType.FirstPerson:
                     UpdateFirstPersonLookAt();

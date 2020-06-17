@@ -98,11 +98,11 @@ public class PlayerController : MonoBehaviour
         // Crouch using X
         if (ControllerSupport.ActionButton5.GetCustomButtonDown())
         {
-           // MyMovement.StartCrouch();
+            // MyMovement.StartCrouch();
         }
         else if (ControllerSupport.ActionButton5.GetCustomButtonUp())
         {
-           // MyMovement.StopCrouch();
+            // MyMovement.StopCrouch();
         }
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
@@ -141,13 +141,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Check for all player input
+        // Check for all player input
         HandleInput();
 
 
 
 
-        //Update for wall running
+        // Update for wall running
         MyWallRunning.WallChecker();
         MyWallRunning.RestoreCamera();
 
@@ -166,17 +166,35 @@ public class PlayerController : MonoBehaviour
     {
 
         Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
+
         //Core Player movement
         if (!IsClimbing)
         {
-            GetComponent<Rigidbody>().useGravity = true;
+            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
             MyMovement.Move(MoveDirection);
         }
         else
         {
-            GetComponent<Rigidbody>().useGravity = false;
+            //GetComponent<Rigidbody>().useGravity = false;
             MyMovement.Move(new Vector2(MoveDirection.x, 0));
             MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
+    }
+
+    // Fixes for the gravity
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+        {
+            GetComponent<Rigidbody>().useGravity = false;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+        {
+            GetComponent<Rigidbody>().useGravity = true;
         }
     }
 

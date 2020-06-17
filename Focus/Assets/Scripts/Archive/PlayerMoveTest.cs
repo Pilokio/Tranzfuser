@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMoveTest : MonoBehaviour
 {
@@ -40,7 +38,7 @@ public class PlayerMoveTest : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
+
     public void Move(Vector2 MoveDirection)
     {
 

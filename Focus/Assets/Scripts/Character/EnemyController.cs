@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -89,13 +88,13 @@ public class EnemyController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-         Gizmos.color = Color.red;
-        foreach(Transform target in PatrolPoints)
+        Gizmos.color = Color.red;
+        foreach (Transform target in PatrolPoints)
         {
             Gizmos.DrawWireSphere(target.position, 2.0f);
         }
 
-        if(ConeOfVisionDebugMesh == null)
+        if (ConeOfVisionDebugMesh == null)
         {
             ConeOfVisionDebugMesh = CreateViewCone(VisionConeAngle, DetectionRange, 10);
         }
@@ -103,20 +102,20 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawWireMesh(ConeOfVisionDebugMesh, 0, transform.position + EyePosition, transform.rotation);
 
         Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection( EyePosition), 0.5f);
+        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection(EyePosition), 0.5f);
 
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position + EyePosition, Heading * DetectionRange);
 
     }
-   
+
     // Update is called once per frame
     void Update()
-    {   
+    {
         //Calculate the distance between the player and the enemy
         float distance = Vector3.Distance(Target.position, transform.position);
-        
+
         //Calculate the direction of the player in relation to the enemy
         Heading = Target.position - (transform.position + EyePosition);
         //Using the heading, calculate the angle between it and the current Look Direction (the forward vector)
@@ -124,12 +123,12 @@ public class EnemyController : MonoBehaviour
 
         //If the calculated angle is less than the defined threshold
         //Then the player is within the edges of the cone of vision
-        if(angle < VisionConeAngle)
+        if (angle < VisionConeAngle)
         {
             //Raycast to determine if the enemy can see the player from its current position
             //This accounts for the detection range and line of sight
             if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
-            {  
+            {
                 //If the raycast hits the player then they must be in range, with a clear line of sight
                 if (hit.transform.tag == "Player")
                 {
@@ -150,13 +149,13 @@ public class EnemyController : MonoBehaviour
         switch (CurrentState)
         {
             case EnemyState.Patrol: //move between the different patrol points until a target is detected
-                if(PatrolPoints.Count > 1)
+                if (PatrolPoints.Count > 1)
                 {
                     //Move to the current target patrol point
                     Agent.SetDestination(PatrolPoints[TargetPatrolPoint].position);
 
                     //If the enemy arrives at the patrol point, move to the next one
-                    if(Vector3.Distance(transform.position, PatrolPoints[TargetPatrolPoint].position) < Agent.stoppingDistance)
+                    if (Vector3.Distance(transform.position, PatrolPoints[TargetPatrolPoint].position) < Agent.stoppingDistance)
                     {
                         TargetPatrolPoint++;
                         if (TargetPatrolPoint >= PatrolPoints.Count)
@@ -171,7 +170,7 @@ public class EnemyController : MonoBehaviour
                 }
 
                 //If the player is seen while patrolling, chase them
-                if(TargetSighted)
+                if (TargetSighted)
                 {
                     CurrentState = EnemyState.Run;
                 }
@@ -181,13 +180,13 @@ public class EnemyController : MonoBehaviour
                 //Move to the player 
                 Agent.SetDestination(Target.position);
 
-                if(!TargetSighted)
+                if (!TargetSighted)
                 {
                     LineOfSightTimer -= Time.deltaTime;
                 }
 
 
-                if(LineOfSightTimer <= 0.0f)
+                if (LineOfSightTimer <= 0.0f)
                 {
                     CurrentState = EnemyState.Patrol;
                 }

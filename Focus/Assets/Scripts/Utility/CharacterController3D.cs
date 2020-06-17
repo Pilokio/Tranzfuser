@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharacterController3D : MonoBehaviour
 {
@@ -16,7 +14,7 @@ public class CharacterController3D : MonoBehaviour
 
     //Flag tracking whether the character should jump or not
     public bool Jump { get; set; }
-    
+
     public bool RotatePlayerObject { get; set; }
 
     public void MoveCharacter(Vector2 MoveDirection, Vector2 LookDirection)
@@ -55,5 +53,5 @@ public class CharacterController3D : MonoBehaviour
         GetComponent<CharacterController>().Move(move * Time.deltaTime);
     }
 
-  
+
 }
