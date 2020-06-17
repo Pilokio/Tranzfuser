@@ -7,6 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(CharacterStats))]
 [RequireComponent(typeof(TimeManager))]
+
 public class PlayerController : MonoBehaviour
 {
     PlayerMovement MyMovement;
@@ -19,10 +20,6 @@ public class PlayerController : MonoBehaviour
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
-
-    [SerializeField] Transform AimDownSightsPosition;
-    [SerializeField] Transform GunHolderPosition;
-
 #pragma warning restore 0649
 
 
@@ -32,7 +29,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 120;
-
 
         //Init the custom input manager and only track controllers connected on start
         CustomInputManager.InitialiseCustomInputManager();
@@ -57,26 +53,20 @@ public class PlayerController : MonoBehaviour
         //Using either LMB, R2, or RT depending on input device
         if (CustomInputManager.GetAxisAsButton("RightTrigger"))
         {
-            //Use the equipped weapon
-            MyWeaponController.UseWeapon(Camera.main.ScreenToWorldPoint(new Vector3(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical"), 1)));
-        }
+            //If using a controller, activate cooldown as Fire1 and 2 are axis being treated like buttons
+            if (!ControllerSupport.NoControllersConnected)
+            {
+                StartCoroutine(ControllerSupport.Fire1.ResetAxisButton());
+            }
 
-        if(CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
-        {
-            Debug.Log("Aiming");
-            //Move gun in to aim
-            //Make Use weapon more precise by positioning the barrel end in line with the reticle
-            MyWeaponController.CurrentGun.transform.position = AimDownSightsPosition.position;
-        }
-        else
-        {
-            MyWeaponController.CurrentGun.transform.position = GunHolderPosition.position;
+            //Use the equipped weapon
+            MyWeaponController.UseWeapon();
         }
 
 
         //Slow time for the player
         //using either RMB, L2, or LT depending on input device
-        if (CustomInputManager.GetButtonDown("RightStick"))
+        if (CustomInputManager.GetAxisAsButton("LeftTrigger"))
         {
             MyTimeManager.DoSlowmotion();
         }
@@ -106,7 +96,15 @@ public class PlayerController : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////
 
- 
+        // Crouch using X
+        if (ControllerSupport.ActionButton5.GetCustomButtonDown())
+        {
+            // MyMovement.StartCrouch();
+        }
+        else if (ControllerSupport.ActionButton5.GetCustomButtonUp())
+        {
+            // MyMovement.StopCrouch();
+        }
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
         if (CustomInputManager.GetButtonDown("ActionButton1"))
@@ -114,17 +112,12 @@ public class PlayerController : MonoBehaviour
             MyMovement.Jump();
         }
 
-        if (CustomInputManager.GetButtonDown("ActionButton2"))
-        {
-            //Toggle Crouch here
-        }
-
         if (CustomInputManager.GetButtonDown("Menu"))
         {
             MyStats.TakeDamage(25);
         }
 
-        if (CustomInputManager.GetButtonDown("LeftStick"))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             MyMovement.IsSprinting = true;
         }
@@ -149,13 +142,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Check for all player input
+        // Check for all player input
         HandleInput();
 
 
 
 
-        //Update for wall running
+        // Update for wall running
         MyWallRunning.WallChecker();
         MyWallRunning.RestoreCamera();
 
@@ -174,17 +167,35 @@ public class PlayerController : MonoBehaviour
     {
 
         Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
+
         //Core Player movement
         if (!IsClimbing)
         {
-            GetComponent<Rigidbody>().useGravity = true;
+            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
             MyMovement.Move(MoveDirection);
         }
         else
         {
-            GetComponent<Rigidbody>().useGravity = false;
+            //GetComponent<Rigidbody>().useGravity = false;
             MyMovement.Move(new Vector2(MoveDirection.x, 0));
             MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
+    }
+
+    // Fixes for the gravity
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+        {
+            GetComponent<Rigidbody>().useGravity = false;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+        {
+            GetComponent<Rigidbody>().useGravity = true;
         }
     }
 

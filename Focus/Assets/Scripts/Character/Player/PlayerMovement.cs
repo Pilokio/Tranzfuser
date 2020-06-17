@@ -1,10 +1,7 @@
-using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
-
 
     // Movement
     public float XRotation { get; set; }
@@ -47,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
     }
 
-    public void Move(Vector2 MoveDirection)
+    public void Move(Vector3 MoveDirection)
     {
 
         if (MoveDirection.x < 0.25 && MoveDirection.x > -0.25)
@@ -127,7 +124,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void ClimbLadder(Vector3 Direction)
     {
-        Direction *= ClimbSpeed * Time.deltaTime;   
+        GetComponent<Rigidbody>().useGravity = false;
+        Direction *= ClimbSpeed * Time.deltaTime;
         rb.MovePosition(rb.position + Direction);
     }
 

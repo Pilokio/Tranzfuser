@@ -21,7 +21,7 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       
+
         if (other.transform.tag == "Player")
         {
             if (other.gameObject.GetComponent<CharacterStats>() == null)

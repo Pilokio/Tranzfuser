@@ -18,7 +18,7 @@ public class Ladder : MonoBehaviour
         //Useful for if the player is to be instantiated into the scene at runtime
         player = PlayerManager.Instance.Player;
     }
-  
+
     private void OnCollisionEnter(Collision collision)
     {
         //Check the collider belongs to the player and not the enemy etc
@@ -32,7 +32,7 @@ public class Ladder : MonoBehaviour
             target.y += 180;
             player.transform.rotation = Quaternion.Euler(target);
 
-            
+
             //Set the x and z position of the player to match the ladder climbing positions
             player.transform.position = new Vector3(Bottom.position.x, player.transform.position.y, Bottom.position.z);
 
@@ -54,7 +54,7 @@ public class Ladder : MonoBehaviour
             }
 
             //If the player is near or above the top of the ladder and still moving up
-            if(player.transform.position.y > Top.position.y - 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") > 0)
+            if (player.transform.position.y > Top.position.y - 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") > 0)
             {
                 //Apply slight push to ensure they clear the top of the ladder
                 player.transform.position += Vector3.up + (player.transform.forward * 2.0f);
@@ -65,7 +65,7 @@ public class Ladder : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
-         //Check that the exiting collider is the enemy
+        //Check that the exiting collider is the enemy
         if (collision.transform.tag == "Player")
         {
             //Resume normal player movement
