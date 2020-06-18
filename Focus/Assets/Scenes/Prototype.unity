@@ -1717,10 +1717,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 451348749}
+  - component: {fileID: 451348745}
   - component: {fileID: 451348746}
   - component: {fileID: 451348744}
   - component: {fileID: 451348750}
-  - component: {fileID: 451348745}
   - component: {fileID: 451348747}
   - component: {fileID: 451348748}
   - component: {fileID: 451348751}
@@ -2772,7 +2772,7 @@ MonoBehaviour:
     ProjectileForce: 1000000
     IsRanged: 1
     CoolDownBetweenShots: 0
-    Damage: 0
+    Damage: 25
   - WeaponName: Tester Pistol
     WeaponID: 001
     Type: 0

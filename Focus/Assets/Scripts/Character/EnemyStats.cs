@@ -1,5 +1,17 @@
-﻿public class EnemyStats : CharacterStats
+﻿using System.Diagnostics;
+
+public class EnemyStats : CharacterStats
 {
+    
+    private void Update()
+    {
+        
+        if(IsDead == true)
+        {
+            Die();
+        }
+    }
+
     public override void Die()
     {
         base.Die();
