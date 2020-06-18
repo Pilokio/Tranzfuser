@@ -24,10 +24,11 @@ public class PlayerController : MonoBehaviour
 
     public Transform AimDownSightsPos;
     public Transform GunHolder;
-
-
+    public Transform OriginalGunPos;
 
     public bool IsClimbing = false;
+
+    private float smoothFactor = 10.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -72,12 +73,13 @@ public class PlayerController : MonoBehaviour
         //using either RMB, L2, or LT depending on input device
         if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
-            MyWeaponController.CurrentGun.transform.position = AimDownSightsPos.position;
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
+
             //MyTimeManager.DoSlowmotion();
         }
         else
         {
-            MyWeaponController.CurrentGun.transform.position = GunHolder.position;
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * smoothFactor);
         }
 
         //Reload the currently equipped weapon
