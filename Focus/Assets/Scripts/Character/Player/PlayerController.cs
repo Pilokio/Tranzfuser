@@ -20,15 +20,32 @@ public class PlayerController : MonoBehaviour
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
+    [SerializeField] private Transform debugHitPointTransform;
 #pragma warning restore 0649
 
     public Transform AimDownSightsPos;
     public Transform GunHolder;
     public Transform OriginalGunPos;
 
+    private Camera playerCamera;
+
     public bool IsClimbing = false;
 
     private float smoothFactor = 10.0f;
+
+    private State state;
+    private Vector3 hookshotPosition;
+    private enum State
+    {
+        Normal,
+        HookShotFlyingPlayer,
+    }
+
+    private void Awake()
+    {
+        playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
+        state = State.Normal;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +64,62 @@ public class PlayerController : MonoBehaviour
         MyWeaponController = GetComponent<WeaponController>();
         MyStats = GetComponent<CharacterStats>();
         MyTimeManager = GetComponent<TimeManager>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        switch (state)
+        {
+            default:
+            case State.Normal:
+                // Check for all player input
+                HandleInput();
+                HandleHookshotStart();
+
+                // Update for wall running
+                MyWallRunning.WallChecker();
+                MyWallRunning.RestoreCamera();
+                break;
+
+            case State.HookShotFlyingPlayer:
+                HandleHookshotMovement();
+                break;
+
+        }
+
+
+
+        if (!IsClimbing)
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
+
+
+
+
+        UpdateUI();
+    }
+
+    private void FixedUpdate()
+    {
+
+        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
+
+        //Core Player movement
+        if (!IsClimbing)
+        {
+            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
+            MyMovement.Move(MoveDirection);
+        }
+        else
+        {
+            //GetComponent<Rigidbody>().useGravity = false;
+            MyMovement.Move(new Vector2(MoveDirection.x, 0));
+            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
     }
 
     void HandleInput()
@@ -149,50 +222,6 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Check for all player input
-        HandleInput();
-
-
-
-
-        // Update for wall running
-        MyWallRunning.WallChecker();
-        MyWallRunning.RestoreCamera();
-
-        if (!IsClimbing)
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else
-            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
-
-
-
-
-        UpdateUI();
-    }
-
-    private void FixedUpdate()
-    {
-
-        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
-
-        //Core Player movement
-        if (!IsClimbing)
-        {
-            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
-            MyMovement.Move(MoveDirection);
-        }
-        else
-        {
-            //GetComponent<Rigidbody>().useGravity = false;
-            MyMovement.Move(new Vector2(MoveDirection.x, 0));
-            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
-        }
-    }
-
     // Fixes for the gravity
     void OnCollisionEnter(Collision collision)
     {
@@ -213,5 +242,30 @@ public class PlayerController : MonoBehaviour
     private void LateUpdate()
     {
 
+    }
+
+    /// <summary>
+    /// WIP - Hook mechanic
+    /// </summary>
+    private void HandleHookshotStart()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
+            {
+                // Hit something
+                debugHitPointTransform.position = raycastHit.point;
+                hookshotPosition = raycastHit.point;
+                state = State.HookShotFlyingPlayer;
+            }
+        }
+    }
+
+    private void HandleHookshotMovement()
+    {
+        Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
+        // FIXEME Not working
+        float hookshotSpeed = 15f;
+        MyMovement.Move(hookshotDir * hookshotSpeed * Time.deltaTime);
     }
 }
