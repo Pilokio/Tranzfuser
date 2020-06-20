@@ -56,7 +56,6 @@ public class PlayerMovement : MonoBehaviour
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y).normalized;
 
-
         if (IsSprinting)
         {
             Move *= SprintSpeed * Time.fixedDeltaTime;
