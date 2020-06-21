@@ -10,11 +10,16 @@ public class ProjectileController : MonoBehaviour
 
     private Rigidbody rb;
 
+    public float Lifespan = 5.0f;
+    private float Timer;
+    public float DamageAmount = 0.0f;
+    public bool BelongsToPlayer = false;
     // Start is called before the first frame update
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = true;
+        Timer = Lifespan;
     }
 
     /// <summary>
@@ -30,11 +35,45 @@ public class ProjectileController : MonoBehaviour
         //TODO
         //Check the tag of the object it collides with and respond accordingly before destroying itself
         //ie Enemy would be ragdolled, surfaces would have an impact decal spawned, etc.
+       
+        if(!BelongsToPlayer)
+        {
+            if (collision.gameObject.tag == "Player" && collision.gameObject.GetComponent<CharacterStats>() != null)
+            {
+                Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
 
-
-        if (collision.gameObject.tag != "Player" || collision.gameObject.layer != 9)
+                collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+            }
+            else
+            {
+               // Debug.Log("I hit " + collision.gameObject.name);
+            }
+        }
+        
+        if (collision.gameObject.tag == "Enemy" )
         {
             Debug.Log("I hit " + collision.gameObject.name);
+
+            if(collision.gameObject.GetComponent<CharacterStats>() != null)
+            {
+                Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
+                collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+                collision.gameObject.GetComponent<EnemyStats>().TakeDamage((int)DamageAmount);
+            }
+
+            Destroy(this.gameObject);
+        }
+
+       
+    }
+
+    private void Update()
+    {
+        Timer -= Time.deltaTime;
+
+        if(Timer <= 0.0f)
+        {
+            //Debug.Log("I hit nothing");
             Destroy(this.gameObject);
         }
     }

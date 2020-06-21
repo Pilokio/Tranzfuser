@@ -88,7 +88,7 @@ public static class CustomInputManager
         InputManager.Add("Menu",          new CustomInput(PlayerNumber, KeyCode.P,           ControllerBindings.ControlType.MenuButton));  
         InputManager.Add("Share",         new CustomInput(PlayerNumber, KeyCode.L,           ControllerBindings.ControlType.ShareButton)); 
         InputManager.Add("LeftStick",     new CustomInput(PlayerNumber, KeyCode.LeftShift,   ControllerBindings.ControlType.LStickButton));
-        InputManager.Add("RightStick",    new CustomInput(PlayerNumber, KeyCode.CapsLock,    ControllerBindings.ControlType.RStickButton));
+        InputManager.Add("RightStick",    new CustomInput(PlayerNumber, KeyCode.Z,    ControllerBindings.ControlType.RStickButton));
 
         InputManager.Add("LeftStickHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultHorizontal, ControllerBindings.ControlType.LeftJoystickX)); 
         InputManager.Add("LeftStickVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultVertical, ControllerBindings.ControlType.LeftJoystickY, true));       
@@ -454,6 +454,17 @@ public static class CustomInputManager
                         case SupportedController.ControllerType.KEYANDMOUSE:
                             if (input.AxisName != "")
                                 return Input.GetAxis(input.AxisName);
+                            else if (input.Key != KeyCode.None)
+                            {
+                                if(Input.GetKey(input.Key))
+                                {
+                                    return 1.0f;
+                                }
+                                else
+                                {
+                                    return 0.0f;
+                                }
+                            }
                             else
                                 Debug.LogError("Axis Name is null");
                             break;
@@ -707,6 +718,64 @@ public static class CustomInputManager
             Debug.LogError(AxisName + " does not exist in the CustomInputManager");
         }
         return false;
+    }
+
+    public static float GetAxisNeutralPosition(string AxisName)
+    {
+        if (!InputManager.ContainsKey(AxisName))
+        {
+            Debug.LogError(AxisName + " is not present in the custom input manager");
+            return 0.0f;
+        }
+
+        CustomInput input = InputManager[AxisName];
+
+        if (input != null)
+        {
+            if (input.ControllerBinding.IsAxis)
+            {
+                if (ActiveControllers.ContainsKey(input._PlayerNumber))
+                {
+                    switch (ActiveControllers[input._PlayerNumber].ControllerType_)
+                    {
+                        case SupportedController.ControllerType.PS4:
+                            if (input.ControllerBinding.Ps4Name != "")
+                            {
+                                return input.ControllerBinding.PS4Neutral;
+                            }
+                            break;
+                        case SupportedController.ControllerType.XBOX1:
+                            if (input.ControllerBinding.Xbox1Name != "")
+                            {
+                                return input.ControllerBinding.XB1Neutral;
+                            }
+                            break;
+                        case SupportedController.ControllerType.XBOX360:
+                            if (input.ControllerBinding.Xbox360Name != "")
+                            {
+                                return input.ControllerBinding.XB360Neutral;
+                            }
+                            break;
+                        case SupportedController.ControllerType.KEYANDMOUSE:
+                            if (input.AxisName != "")
+                            {
+
+                                return 0.0f;
+                            }
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError(AxisName + " is a button, not an axis. Use GetButton() instead");
+            }
+        }
+        else
+        {
+            Debug.LogError(AxisName + " does not exist in the CustomInputManager");
+        }
+        return 0.0f;
     }
 }
 

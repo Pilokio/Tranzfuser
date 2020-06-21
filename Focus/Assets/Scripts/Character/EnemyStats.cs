@@ -1,9 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Diagnostics;
 
 public class EnemyStats : CharacterStats
 {
+    
+    private void Update()
+    {
+        
+        if(IsDead == true)
+        {
+            Die();
+        }
+    }
+
     public override void Die()
     {
         base.Die();

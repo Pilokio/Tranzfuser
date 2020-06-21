@@ -7,6 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(CharacterStats))]
 [RequireComponent(typeof(TimeManager))]
+
 public class PlayerController : MonoBehaviour
 {
     PlayerMovement MyMovement;
@@ -14,15 +15,47 @@ public class PlayerController : MonoBehaviour
     WallRunning MyWallRunning;
     CharacterStats MyStats;
     TimeManager MyTimeManager;
+    CameraFov cameraFov;
 
+    private const float NORMAL_FOV = 60f;
+    private const float HOOKSHOT_FOV = 100f;
 #pragma warning disable 0649
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
     [SerializeField] Slider HealthBar;
+    [SerializeField] private Transform debugHitPointTransform;
+    [SerializeField] private Transform hookshotTransform;
 #pragma warning restore 0649
 
+    public Transform AimDownSightsPos;
+    public Transform GunHolder;
+    public Transform OriginalGunPos;
+    public Vector3 characterVelocityMomentum;
+
+    private Camera playerCamera;
 
     public bool IsClimbing = false;
+
+    private float smoothFactor = 10.0f;
+
+    private State state;
+    private Vector3 hookshotPosition;
+    private float hookshotSize;
+
+    private enum State
+    {
+        Normal,
+        HookshotThrown,
+        HookShotFlyingPlayer
+    }
+
+    private void Awake()
+    {
+        playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
+        cameraFov = playerCamera.GetComponent<CameraFov>();
+        state = State.Normal;
+        hookshotTransform.gameObject.SetActive(false);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +76,69 @@ public class PlayerController : MonoBehaviour
         MyTimeManager = GetComponent<TimeManager>();
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        // When the hook fires, grant the player some access to movement such as looking around, jumping etc
+        switch (state)
+        {
+            default:
+            case State.Normal:
+                // Check for all player input
+                HandleInput();
+                HandleLook();
+                HandleHookshotStart();
+
+                MyWallRunning.WallChecker();
+                MyWallRunning.RestoreCamera();
+                break;
+
+            case State.HookshotThrown:
+                HandleHookshotThrow();
+                HandleInput();
+                break;
+
+            case State.HookShotFlyingPlayer:
+                HandleLook();
+                HandleHookshotMovement();
+                break;
+        }
+
+        UpdateUI();
+    }
+
+    private void FixedUpdate()
+    {
+        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
+
+        //Core Player movement
+        if (!IsClimbing)
+        {
+            // Apply momentum
+            MyMovement.Move(characterVelocityMomentum);
+
+            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
+            MyMovement.Move(MoveDirection);
+
+            // Dampen momentum
+            if (characterVelocityMomentum.magnitude >= 0f)
+            {
+                float momentumDrag = 3f;
+                characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
+                if (characterVelocityMomentum.magnitude < .0f)
+                {
+                    characterVelocityMomentum = Vector3.zero;
+                }
+            }
+        }
+        else
+        {
+            //GetComponent<Rigidbody>().useGravity = false;
+            MyMovement.Move(new Vector2(MoveDirection.x, 0));
+            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
+    }
+
     void HandleInput()
     {
         //Weapon Handling
@@ -59,15 +155,21 @@ public class PlayerController : MonoBehaviour
             }
 
             //Use the equipped weapon
-            MyWeaponController.UseWeapon();
+            MyWeaponController.UseWeapon(transform.forward);
         }
 
 
         //Slow time for the player
         //using either RMB, L2, or LT depending on input device
-        if (CustomInputManager.GetAxisAsButton("LeftTrigger"))
+        if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
-            MyTimeManager.DoSlowmotion();
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
+
+            //MyTimeManager.DoSlowmotion();
+        }
+        else
+        {
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * smoothFactor);
         }
 
         //Reload the currently equipped weapon
@@ -98,11 +200,11 @@ public class PlayerController : MonoBehaviour
         // Crouch using X
         if (ControllerSupport.ActionButton5.GetCustomButtonDown())
         {
-           // MyMovement.StartCrouch();
+            // MyMovement.StartCrouch();
         }
         else if (ControllerSupport.ActionButton5.GetCustomButtonUp())
         {
-           // MyMovement.StopCrouch();
+            // MyMovement.StopCrouch();
         }
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
@@ -127,6 +229,14 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void HandleLook()
+    {
+        if (!IsClimbing)
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
+    }
+
     void UpdateUI()
     {
         AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
@@ -137,51 +247,110 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-
-    // Update is called once per frame
-    void Update()
+    // Fixes for the gravity
+    void OnCollisionEnter(Collision collision)
     {
-        //Check for all player input
-        HandleInput();
-
-
-
-
-        //Update for wall running
-        MyWallRunning.WallChecker();
-        MyWallRunning.RestoreCamera();
-
-        if (!IsClimbing)
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else
-            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
-
-
-
-
-        UpdateUI();
-    }
-
-    private void FixedUpdate()
-    {
-
-        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
-        //Core Player movement
-        if (!IsClimbing)
-        {
-            GetComponent<Rigidbody>().useGravity = true;
-            MyMovement.Move(MoveDirection);
-        }
-        else
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
         {
             GetComponent<Rigidbody>().useGravity = false;
-            MyMovement.Move(new Vector2(MoveDirection.x, 0));
-            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
         }
     }
 
-    private void LateUpdate()
+    void OnCollisionExit(Collision collision)
     {
-
+        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+        {
+            GetComponent<Rigidbody>().useGravity = true;
+        }
     }
+
+    /// <summary>
+    /// WIP - Hook mechanic, press Q to fire hook
+    /// </summary>
+    private void HandleHookshotStart()
+    {
+        if (TestInputDownHookshot())
+        {
+           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
+            {
+                // Hit something
+                debugHitPointTransform.position = raycastHit.point;
+                hookshotPosition = raycastHit.point;
+                hookshotSize = 0f;
+                hookshotTransform.gameObject.SetActive(true);
+                hookshotTransform.localScale = Vector3.zero;
+                state = State.HookshotThrown;
+            }
+        }
+    }
+
+    private void HandleHookshotThrow()
+    {
+        hookshotTransform.LookAt(hookshotPosition);
+
+        float hookshotThrowSpeed = 500f;
+        hookshotSize += hookshotThrowSpeed * Time.deltaTime;
+        hookshotTransform.localScale = new Vector3(1, 1, hookshotSize);
+
+        if (hookshotSize >= Vector3.Distance(transform.position, hookshotPosition))
+        {
+            state = State.HookShotFlyingPlayer;
+            cameraFov.SetCameraFov(HOOKSHOT_FOV); 
+        }
+    }
+     
+    private void HandleHookshotMovement()
+    {
+        hookshotTransform.LookAt(hookshotTransform);
+
+        Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
+
+        // FIXEME Not working - probably the cause of the weird movement
+        float hookshotSpeedMin = 10f;
+        float hookshotSpeedMax = 40f;
+        float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
+        float hookshotSpeedMultiplier = 2f;
+
+        MyMovement.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
+
+        float reachedHookshotPositionDistance = 1f;
+        if (Vector3.Distance(transform.position, hookshotPosition) < reachedHookshotPositionDistance)
+        {
+            StopHookshot();
+        }
+
+        if (TestInputDownHookshot())
+        {
+            StopHookshot();
+        }
+
+        if (TestInputJump())
+        {
+            float momentumExtraSpeed = 7f;
+            characterVelocityMomentum = hookshotDir * hookshotSpeed * momentumExtraSpeed;
+            float jumpSpeed = 40f;
+            characterVelocityMomentum += Vector3.up * jumpSpeed;
+            StopHookshot();
+        }
+    }
+
+    private void StopHookshot()
+    {
+        state = State.Normal;
+        hookshotTransform.gameObject.SetActive(false);
+        cameraFov.SetCameraFov(NORMAL_FOV);
+    }
+
+    private bool TestInputDownHookshot()
+    {
+        return Input.GetKeyDown(KeyCode.Q);
+    }
+
+    private bool TestInputJump()
+    {
+        return CustomInputManager.GetButtonDown("ActionButton1");
+    }
+    ///
+    // End of hook mechanic
+    ///
 }

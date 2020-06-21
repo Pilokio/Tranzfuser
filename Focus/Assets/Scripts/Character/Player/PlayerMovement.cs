@@ -1,10 +1,7 @@
-using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
-
 
     // Movement
     public float XRotation { get; set; }
@@ -34,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 normalVector = Vector3.up;
 
 
-
     // Other
     private Rigidbody rb;
 
@@ -47,9 +43,8 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
     }
 
-    public void Move(Vector2 MoveDirection)
+    public void Move(Vector3 MoveDirection)
     {
-
         if (MoveDirection.x < 0.25 && MoveDirection.x > -0.25)
             MoveDirection.x = 0.0f;
 
@@ -58,7 +53,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Create a Vector3 for the 3D move direction, making use of the inputs in relation to the transform
         Vector3 Move = (transform.right * MoveDirection.x) + (transform.forward * MoveDirection.y).normalized;
-
 
         if (IsSprinting)
         {
@@ -117,17 +111,21 @@ public class PlayerMovement : MonoBehaviour
 
         //Update the x rotation of the camera based on the new Look Direction
         XRotation -= LookDirection.y;
+
         //Clamp to prevent full 360 rotation around the x-axis
         XRotation = Mathf.Clamp(XRotation, -90, 90);
+
         //Update the camera's x rotation
         Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, Camera.main.transform.localRotation.eulerAngles.z);
+
         //Rotate the entire player container transform around the y-axis based on the look direction
         transform.Rotate(transform.up * LookDirection.x);
     }
 
     public void ClimbLadder(Vector3 Direction)
     {
-        Direction *= ClimbSpeed * Time.deltaTime;   
+        GetComponent<Rigidbody>().useGravity = false;
+        Direction *= ClimbSpeed * Time.deltaTime;
         rb.MovePosition(rb.position + Direction);
     }
 
@@ -175,38 +173,4 @@ public class PlayerMovement : MonoBehaviour
     {
         grounded = false;
     }
-
-    //[Header("Bullet Cleanup Parameters")]
-    //[SerializeField] private float TimeForBulletCheck = 1.0f;
-    //[SerializeField] private int MaxBulletsInSceneCount = 10;
-
-
-    ////Coroutine for optimisation by removing bullets if there are too many in the scene
-    ////Currently just for debug as bullets will typically destroy themselves and spawn an impact decal or something?
-    ////Could be adapted for shell casings later on though?
-    //IEnumerator CheckForBullets()
-    //{
-    //    while (true)
-    //    {
-    //        yield return new WaitForSeconds(TimeForBulletCheck);
-
-    //        // Debug.Log("Checking Bullets");
-
-    //        //Find all the bullets in the scene
-    //        GameObject[] AllBulletsInScene = GameObject.FindGameObjectsWithTag("Bullet");
-
-    //        //If there are more than the set number of bullets in the scene
-    //        if (AllBulletsInScene.Length > MaxBulletsInSceneCount)
-    //        {
-    //            // Debug.Log("Too many Bullets. Removing some.");
-    //            //Delete the bullets found up to the desired amount
-    //            for (int i = 0; i < AllBulletsInScene.Length - MaxBulletsInSceneCount; i++)
-    //            {
-    //                Destroy(AllBulletsInScene[i]);
-    //            }
-    //        }
-    //    }
-    //}
-
-
 }

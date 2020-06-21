@@ -21,11 +21,9 @@ public class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       
+
         if (other.transform.tag == "Player")
         {
-            Debug.Log("The player is touching the object");
-
             if (other.gameObject.GetComponent<CharacterStats>() == null)
             {
                 Debug.Log("The player does not have the character stats component");

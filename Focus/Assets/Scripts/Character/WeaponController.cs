@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -19,10 +20,12 @@ public class WeaponController : MonoBehaviour
     public int CurrentWeaponIndex { get; private set; }
 
     //The currently equipped gun, stored after instantiation to allow for deletion on weapon change
-    private GameObject CurrentGun;
+    public GameObject CurrentGun { get; private set; }
 
     //Reference to the character's stats which are used to determine if reloading is possible
     CharacterStats MyStats;
+
+    private bool CanFire = true;
 
     // Start is called before the first frame update
     void Start()
@@ -96,7 +99,7 @@ public class WeaponController : MonoBehaviour
     /// <summary>
     /// This function is called to use the currently equipped weapon if possible
     /// </summary>    
-    public void UseWeapon()
+    public void UseWeapon(Vector3 Target)
     {
         // Error handling for if required parameters are null or invalid
 
@@ -116,19 +119,33 @@ public class WeaponController : MonoBehaviour
         if (WeaponsList[CurrentWeaponIndex].IsRanged)
         {
             //If there is still ammo in the magazine and a suitable weapon is equipped
-            if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0)
+            if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0 && CanFire)
             {
+                CanFire = false;
                 //Find the tip of the gun's barrel
                 Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
                 //Instantiate the bullet at the tip of the gun
-                GameObject projectile = Instantiate(WeaponsList[CurrentWeaponIndex].ProjectilePrefab, BarrelEnd.position, BarrelEnd.rotation);
+                GameObject projectile = Instantiate(WeaponsList[CurrentWeaponIndex].ProjectilePrefab, BarrelEnd.position, Quaternion.Euler(Target - BarrelEnd.position));
                 //Set its projectile force based on the stats in the weaponList and its direction based on the forward vector of the barrel tip
                 projectile.GetComponent<ProjectileController>().Force = Vector3.one * WeaponsList[CurrentWeaponIndex].ProjectileForce;
                 projectile.GetComponent<ProjectileController>().Direction = BarrelEnd.forward;
+
+                if(transform.tag == "Player")
+                {
+                    projectile.GetComponent<ProjectileController>().BelongsToPlayer = true;
+                }
+                else
+                {
+                    projectile.GetComponent<ProjectileController>().BelongsToPlayer = false;
+                }
+
+                projectile.GetComponent<ProjectileController>().DamageAmount = WeaponsList[CurrentWeaponIndex].Damage;
+
                 //Fire the projectile
                 projectile.GetComponent<ProjectileController>().Fire();
                 //Decrement the ammo count
                 WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
+                StartCoroutine(StartWeaponCooldown());
             }
             else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > 0)
             {
@@ -190,6 +207,12 @@ public class WeaponController : MonoBehaviour
     {
         return WeaponsList[CurrentWeaponIndex];
     }
+
+    IEnumerator StartWeaponCooldown()
+    {
+        yield return new WaitForSeconds(WeaponsList[CurrentWeaponIndex].CoolDownBetweenShots);
+        CanFire = true;
+    }
 }
 
 /// <summary>
@@ -212,6 +235,8 @@ public class Weapon
     public int AmmoInCLip;
     public float ProjectileForce;
     public bool IsRanged;
+    public float CoolDownBetweenShots;
+    public float Damage;
 }
 
 [System.Serializable]

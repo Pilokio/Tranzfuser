@@ -52,7 +52,7 @@ public class WallRunning : MonoBehaviour
             distFromRight = Vector3.Distance(transform.position, rightWall.point);
             if (distFromRight < MinWallRunDistance && rightWall.transform.tag == "RunnableWall")
             {
-                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteRight, Time.deltaTime);
+                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteRight, Time.deltaTime * 5);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = true;
                 isLeft = false;
@@ -69,7 +69,7 @@ public class WallRunning : MonoBehaviour
 
             if (distFromLeft < MinWallRunDistance && leftWall.transform.tag == "RunnableWall")
             {
-                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime);
+                float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime * 5);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = false;
                 isLeft = true;
@@ -89,6 +89,13 @@ public class WallRunning : MonoBehaviour
         }
     }
 
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.transform.CompareTag("RunnableWall"))
+        {
+            rb.useGravity = true;
+        }
+    }
 
     //TODO move this calculation into seperate function for use in the player manager
     //private void OnCollisionStay(Collision collision)
@@ -111,11 +118,5 @@ public class WallRunning : MonoBehaviour
     //    }
     //}
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.transform.CompareTag("RunnableWall"))
-        {
-            rb.useGravity = true;
-        }
-    }
+
 }
