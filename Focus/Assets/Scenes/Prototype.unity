@@ -1805,6 +1805,7 @@ MonoBehaviour:
     IsRanged: 1
     CoolDownBetweenShots: 2
     Damage: 0
+    Range: 0
   GunHolder: {fileID: 1710023240}
 --- !u!4 &451348749
 Transform:
@@ -1835,10 +1836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AlertStatus: 0
-  AttackRange: 25
-  Aggresiveness: 1
-  Bravery: 1
-  EnemyType: 2
+  EnemyType: 0
   DetectionRange: 50
   VisionConeAngle: 45
   DetectionMask:
@@ -1850,10 +1848,16 @@ MonoBehaviour:
   PatrolPoints:
   - {fileID: 2053716993}
   - {fileID: 399853495}
+  - {fileID: 983075754}
+  - {fileID: 291915860}
   TargetPatrolPoint: 0
+  Bravery: 1
+  Aggresiveness: 1
+  Determination: 1
   CanMove: 1
   IsClimbing: 0
   Threshold: 50
+  StopWhenInRange: 1
 --- !u!114 &451348751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2741,6 +2745,7 @@ MonoBehaviour:
     IsRanged: 1
     CoolDownBetweenShots: 0
     Damage: 0
+    Range: 0
   - WeaponName: Tester Pistol
     WeaponID: 001
     Type: 0
@@ -2755,6 +2760,7 @@ MonoBehaviour:
     IsRanged: 1
     CoolDownBetweenShots: 0
     Damage: 0
+    Range: 0
   GunHolder: {fileID: 1616361670}
 --- !u!1 &749893865
 GameObject:
