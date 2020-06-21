@@ -31,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 normalVector = Vector3.up;
 
 
-
     // Other
     private Rigidbody rb;
 
@@ -46,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Vector3 MoveDirection)
     {
-
         if (MoveDirection.x < 0.25 && MoveDirection.x > -0.25)
             MoveDirection.x = 0.0f;
 
@@ -113,10 +111,13 @@ public class PlayerMovement : MonoBehaviour
 
         //Update the x rotation of the camera based on the new Look Direction
         XRotation -= LookDirection.y;
+
         //Clamp to prevent full 360 rotation around the x-axis
         XRotation = Mathf.Clamp(XRotation, -90, 90);
+
         //Update the camera's x rotation
         Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, Camera.main.transform.localRotation.eulerAngles.z);
+
         //Rotate the entire player container transform around the y-axis based on the look direction
         transform.Rotate(transform.up * LookDirection.x);
     }
@@ -172,8 +173,4 @@ public class PlayerMovement : MonoBehaviour
     {
         grounded = false;
     }
-
-   
-
-
 }

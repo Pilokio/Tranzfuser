@@ -4969,10 +4969,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LookSensitivityKeyboardAndMouse: 25
   LookSensitivityController: 150
-  WalkSpeed: 20
-  SprintSpeed: 30
+  WalkSpeed: 14
+  SprintSpeed: 20
   ClimbSpeed: 2
-  maxSlopeAngle: 35
+  maxSlopeAngle: 25
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256

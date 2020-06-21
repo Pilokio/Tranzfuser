@@ -86,9 +86,9 @@ public class PlayerController : MonoBehaviour
             case State.Normal:
                 // Check for all player input
                 HandleInput();
+                HandleLook();
                 HandleHookshotStart();
 
-                // Update for wall running
                 MyWallRunning.WallChecker();
                 MyWallRunning.RestoreCamera();
                 break;
@@ -99,18 +99,10 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case State.HookShotFlyingPlayer:
-                //HandleInput();
+                HandleLook();
                 HandleHookshotMovement();
                 break;
         }
-
-
-
-        if (!IsClimbing)
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else
-            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
-
 
         UpdateUI();
     }
@@ -237,6 +229,14 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void HandleLook()
+    {
+        if (!IsClimbing)
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
+    }
+
     void UpdateUI()
     {
         AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
@@ -262,11 +262,6 @@ public class PlayerController : MonoBehaviour
         {
             GetComponent<Rigidbody>().useGravity = true;
         }
-    }
-
-    private void LateUpdate()
-    {
-
     }
 
     /// <summary>
