@@ -301,17 +301,21 @@ public class PlayerController : MonoBehaviour
      
     private void HandleHookshotMovement()
     {
-        hookshotTransform.LookAt(hookshotTransform);
+        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 0.5f);
 
-        Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
 
-        // FIXEME Not working - probably the cause of the weird movement
-        float hookshotSpeedMin = 10f;
-        float hookshotSpeedMax = 40f;
-        float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
-        float hookshotSpeedMultiplier = 2f;
 
-        MyMovement.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
+        //hookshotTransform.LookAt(hookshotTransform);
+
+        //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
+
+        //// FIXEME Not working - probably the cause of the weird movement
+        //float hookshotSpeedMin = 10f;
+        //float hookshotSpeedMax = 40f;
+        //float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
+        //float hookshotSpeedMultiplier = 2f;
+
+        //MyMovement.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
 
         float reachedHookshotPositionDistance = 1f;
         if (Vector3.Distance(transform.position, hookshotPosition) < reachedHookshotPositionDistance)
@@ -324,14 +328,14 @@ public class PlayerController : MonoBehaviour
             StopHookshot();
         }
 
-        if (TestInputJump())
-        {
-            float momentumExtraSpeed = 7f;
-            characterVelocityMomentum = hookshotDir * hookshotSpeed * momentumExtraSpeed;
-            float jumpSpeed = 40f;
-            characterVelocityMomentum += Vector3.up * jumpSpeed;
-            StopHookshot();
-        }
+        //if (TestInputJump())
+        //{
+        //    float momentumExtraSpeed = 7f;
+        //    characterVelocityMomentum = hookshotDir * hookshotSpeed * momentumExtraSpeed;
+        //    float jumpSpeed = 40f;
+        //    characterVelocityMomentum += Vector3.up * jumpSpeed;
+        //    StopHookshot();
+        //}
     }
 
     private void StopHookshot()

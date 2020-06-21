@@ -94,6 +94,7 @@ public class EnemyController : MonoBehaviour
         //Store the navmesh agent component for movement through the level
         Agent = GetComponent<NavMeshAgent>();
 
+        Init();
         //Debug.Log("Enemy health is:" + EnemyStats.Health);
 
     }
@@ -176,38 +177,12 @@ public class EnemyController : MonoBehaviour
 
    private void Init()
     {
-        // Determine what action should be taken here.
-        switch (EnemyType)
-        {
-            case CombatType.Grunt:
-                //Set appropriate weapon type here
 
-                //Randomly assign a retreat distance
-                RetreatDistance = Random.Range(10, 15);
-                break;
-            case CombatType.Aggressor:
-                //Set appropriate weapon type here
-
-                //Randomly assign a retreat distance
-                RetreatDistance = Random.Range(5, 10);
-                break;
-            case CombatType.Tank:
-                //Set appropriate weapon type here
-
-                //Randomly assign a retreat distance
-                RetreatDistance = Random.Range(5, 15);
-
-                break;
-            case CombatType.Sniper:
-                //Set appropriate weapon type here
-
-                //Randomly assign a retreat distance
-                RetreatDistance = Random.Range(15, 25);
-
-
-                break;
-        }
-
+        float minRetreatDist = 10 + (((3 - Bravery)-1) * 5);
+        float maxRetreatDist = 15 + (((3 - Bravery)-1) * 5);
+        //Randomly assign a retreat distance
+        RetreatDistance = Random.Range(minRetreatDist, maxRetreatDist);
+        Debug.Log(RetreatDistance);
         //Set the attack range to the currently equipped weapon's range
         AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().Range;
 
@@ -262,13 +237,8 @@ public class EnemyController : MonoBehaviour
                //Move to this location.
                //Repeat until search timer is 0 or hostile found
                //Return to idle if not found in time limit, move to hostile if found
-
-
-
-
                 break;
             case AlertState.Hostile:
-
                 //Attack the target until they are dead, or line of sight is lost
                 Combat();
                 break;
