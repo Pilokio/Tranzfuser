@@ -65,6 +65,8 @@ public class EnemyController : MonoBehaviour
     //Store the weapon controller to allow the enemy to use their weapons
     WeaponController MyWeaponController;
 
+    CharacterStats EnemyStats;
+
     //Determine if a hostile has been sighted
     private bool TargetSighted = false;
 
@@ -91,6 +93,8 @@ public class EnemyController : MonoBehaviour
         Target = PlayerManager.Instance.Player.transform;
         //Store the navmesh agent component for movement through the level
         Agent = GetComponent<NavMeshAgent>();
+
+        //Debug.Log("Enemy health is:" + EnemyStats.Health);
 
     }
 

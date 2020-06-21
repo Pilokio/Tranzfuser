@@ -40,6 +40,7 @@ public class CharacterStats : MonoBehaviour
         StartCoroutine(HealthRegen());
 
         StartCoroutine(StaminaRegen());
+
     }
 
     public void TakeDamage(int dmg)

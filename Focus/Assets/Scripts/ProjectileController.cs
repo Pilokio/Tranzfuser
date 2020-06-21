@@ -58,6 +58,7 @@ public class ProjectileController : MonoBehaviour
             {
                 Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
                 collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+                collision.gameObject.GetComponent<EnemyStats>().TakeDamage((int)DamageAmount);
             }
 
             Destroy(this.gameObject);
