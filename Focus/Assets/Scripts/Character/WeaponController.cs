@@ -237,6 +237,7 @@ public class Weapon
     public bool IsRanged;
     public float CoolDownBetweenShots;
     public float Damage;
+    public float Range;
 }
 
 [System.Serializable]

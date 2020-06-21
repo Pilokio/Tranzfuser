@@ -15,11 +15,8 @@ public class EnemyController : MonoBehaviour
     
     [Header("Combat Settings")]
     //The minimum attack range
-    [SerializeField] float AttackRange = 5.0f;
-    [Range(1, 3)]
-    [SerializeField] int Aggresiveness = 1;
-    [Range(1, 3)]
-    [SerializeField] int Bravery = 1;
+    float AttackRange = 5.0f;
+    float RetreatDistance = 2.5f;
     [SerializeField] CombatType EnemyType = 0;
 
     [Header("Detection Settings")]
@@ -40,10 +37,16 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int TargetPatrolPoint = 0;
 
 
-   
+   [Header("Enemy B.A.D. Stats")]
+    [Range(1, 3)]
+    [SerializeField] int Bravery = 1; //Determines how close the enemy can be before retreating
+    [Range(1, 3)]
+    [SerializeField] int Aggresiveness = 1; //Determines whether the enemy will prioritise attacking over self preservation
+    [Range(1, 3)]
+    [SerializeField] int Determination = 1; //Determines how long the enemy will search for before giving up
 
 
-  
+
     //The timer for losing a hostile after LOS is lost
     float LineOfSightTimer = 0.0f;
 
@@ -91,6 +94,7 @@ public class EnemyController : MonoBehaviour
         //Store the navmesh agent component for movement through the level
         Agent = GetComponent<NavMeshAgent>();
 
+        Init();
         //Debug.Log("Enemy health is:" + EnemyStats.Health);
 
     }
@@ -170,11 +174,23 @@ public class EnemyController : MonoBehaviour
 
         return false;
     }
-    // Update is called once per frame
-    void Update()
+
+   private void Init()
     {
 
-   
+        float minRetreatDist = 10 + (((3 - Bravery)-1) * 5);
+        float maxRetreatDist = 15 + (((3 - Bravery)-1) * 5);
+        //Randomly assign a retreat distance
+        RetreatDistance = Random.Range(minRetreatDist, maxRetreatDist);
+        Debug.Log(RetreatDistance);
+        //Set the attack range to the currently equipped weapon's range
+        AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().Range;
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {   
         //If the player is detected, move straight to the hostile state
         TargetSighted = DetectPlayer();
 
@@ -187,7 +203,6 @@ public class EnemyController : MonoBehaviour
         {
             case AlertState.Idle:
 
-                Debug.Log("I am Idle");
                 // Patrol the designated patrol points
 
                 if(PatrolPoints.Count > 1)
@@ -216,21 +231,14 @@ public class EnemyController : MonoBehaviour
                 break;
             case AlertState.Suspicious:
                 //Investigate disturbances.
-                Debug.Log("I am Suspicious");
 
                //Get Search location (ie player last known location, origin of gunfire, dead body)
                //Pick a random position in a radius around the disturbance location
                //Move to this location.
                //Repeat until search timer is 0 or hostile found
                //Return to idle if not found in time limit, move to hostile if found
-
-
-
-
                 break;
             case AlertState.Hostile:
-                Debug.Log("I am Hostile");
-
                 //Attack the target until they are dead, or line of sight is lost
                 Combat();
                 break;
@@ -240,8 +248,6 @@ public class EnemyController : MonoBehaviour
                 break;
         }
 
-        int TakeCover = 0;
-        int Attack = 0;
 
      
 
@@ -250,7 +256,7 @@ public class EnemyController : MonoBehaviour
 
     }
 
-
+    public bool StopWhenInRange = true;
     void Combat()
     {
         //Calculate the distance between the player and the enemy
@@ -263,51 +269,93 @@ public class EnemyController : MonoBehaviour
 
             if (LineOfSightTimer <= 0.0f)
             {
-                AlertStatus = AlertState.Suspicious;
+                AlertStatus = AlertState.Idle; //Change to suspicious for stealth gameplay
             }
         }
 
-        // Determine what action should be taken here.
-        switch (EnemyType)
+
+        //If target is out of range
+        if (distance > AttackRange)
         {
-            case CombatType.Grunt:
-                //Take cover
-                //Calc % chance to move or fire
-                //move to new pos if compromised
-                //take fire if desired
-                //reload when necessary, behind cover
-                break;
-            case CombatType.Aggressor:
-                //Move towards hostile
-                //Open fire when possible
-                //Reload if necessary
-                //Take cover if low on health
+            MoveToTarget();
+        }//If target is between the attack range and retreat distance and the enemy should stop when in range
+        else if (distance < AttackRange && distance > RetreatDistance)
+        {
+            if(StopWhenInRange)
+                StopMoving();
 
-
-                MoveInAndAttack(distance, false, true);
-
-
-
-
-
-                break;
-            case CombatType.Tank:
-                //Move towards hostile
-                //Open fire if possible
-                //reload when necessary
-
-                MoveInAndAttack(distance, true, true);
-
-                break;
-            case CombatType.Sniper:
-                //Find a suitable vantage point
-                //Move to vantage point
-                //If hostile can be seen and you can shoot, open fire
-                    //Calc %hit chance
-                        //Either hit or miss
-                //else hide behind cover
-                break;
+            Attack();
         }
+        else if(distance < RetreatDistance)
+        { 
+            TakeCover();
+        }
+
+
+        //// Determine what action should be taken here.
+        //switch (EnemyType)
+        //{
+        //    case CombatType.Grunt:
+        //        //Take cover
+        //        //Calc % chance to move or fire
+        //        //move to new pos if compromised
+        //        //take fire if desired
+        //        //reload when necessary, behind cover
+
+
+
+        //        break;
+        //    case CombatType.Aggressor:
+        //        //Move towards hostile
+        //        //Open fire when possible
+        //        //Reload if necessary
+        //        //Take cover if low on health
+
+        //        if (distance <= RetreatDistance)
+        //        {
+        //            TakeCover();
+        //        }
+        //        else
+        //        {
+        //            MoveInAndAttack(distance, false, true);
+        //        }
+
+
+
+
+        //        break;
+        //    case CombatType.Tank:
+        //        //Move towards hostile
+        //        //Open fire if possible
+        //        //reload when necessary
+
+        //        if (distance <= RetreatDistance)
+        //        {
+        //            TakeCover();
+        //        }
+        //        else
+        //        {
+        //            MoveInAndAttack(distance, false, true);
+        //        }
+        //        break;
+        //    case CombatType.Sniper:
+        //        //Find a suitable vantage point
+        //        //Move to vantage point
+        //        //If hostile can be seen and you can shoot, open fire
+        //        //Calc %hit chance
+        //        //Either hit or miss
+        //        //else hide behind cover
+
+        //        if (distance <= RetreatDistance)
+        //        {
+        //            TakeCover();
+        //        }
+        //        else
+        //        {
+        //            MoveInAndAttack(distance, false, true);
+        //        }
+        //        break;
+        //}
     }
 
 
@@ -326,34 +374,41 @@ public class EnemyController : MonoBehaviour
 
     void TakeCover()
     {
-        Debug.Log("Taking Cover");
+        Agent.SetDestination(transform.position - (5 * transform.forward));
+        Debug.Log("Retreating");
     }
 
 
-    /// <summary>
-    /// This function tells the enemy to move towards the player and attack when in range
-    /// </summary>
-    void MoveInAndAttack(float distance, bool stopWhenInRange, bool SuccessfulHit)
+    void MoveToTarget()
     {
+        Debug.Log("Chasing");
         //Move to the player 
-        if(CanMove)
+        if (CanMove)
             Agent.SetDestination(Target.position);
+    }
+
+    void StopMoving()
+    {
+        Debug.Log("Stopping");
+        //Stop moving
+        if (CanMove)
+            Agent.SetDestination(transform.position);
+    }
 
 
-        //If the target is within attack range, stop moving & attack
-        if (distance <= AttackRange && TargetSighted)
-        {
-            if (stopWhenInRange || distance < MinAttackDistance)
-            {
-                //Stop moving
-                if(CanMove)
-                    Agent.SetDestination(transform.position);
-            }
-
-            Debug.Log("Bang");
+    void Attack()
+    {
+        Debug.Log("Attacking");
             FaceTarget();
 
-            //Calculate % chance of a successful hit
+        //Calculate % chance of a successful hit
+        float chance = Random.Range(0, 100);
+        bool SuccessfulHit = false;
+
+        if (chance % 2 == 0)
+        {
+            SuccessfulHit = true;
+        }
 
             //If hit is successful, fire at the hostile
             if (SuccessfulHit)
@@ -366,7 +421,7 @@ public class EnemyController : MonoBehaviour
             }
             //Else, fire try to miss
             //MyWeaponController.UseWeapon(Target.position + Small random vector);
-        }
+        
     }
 
 

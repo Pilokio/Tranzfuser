@@ -96,12 +96,10 @@ public class Ladder : MonoBehaviour
 
             if (distanceTop > distanceBottom)
             {
-                Debug.Log("NPC is climbing up");
                 StartCoroutine(UseLadderNPC(other.gameObject, true));
             }
             else
             {
-                Debug.Log("NPC is climbing down");
                 StartCoroutine(UseLadderNPC(other.gameObject, false));
             }
 
