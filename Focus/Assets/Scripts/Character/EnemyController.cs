@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     private NavMeshAgent Agent;
 
     [Header("General Settings")]
-    [SerializeField] AlertState AlertStatus = 0;
+     AlertState AlertStatus = 0;
     
     [Header("Combat Settings")]
     //The minimum attack range
@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviour
 
     [Header("Detection Settings")]
     //The range at which hostiles can be seen
-    [SerializeField] float DetectionRange = 10.0f;
+    float DetectionRange = 10.0f;
     //The field of view angle
     [SerializeField] float VisionConeAngle = 45;
     //Layer mask outlining what can block the raycast. (Typically everything apart from itself)
@@ -29,22 +29,33 @@ public class EnemyController : MonoBehaviour
     //The position of the "eye". Where the cone of vision comes to a point. 
     [SerializeField] Vector3 EyePosition = new Vector3();
     //The amount of time before a hostiles will be "lost" after losing line of sight
-    [SerializeField] float TimeToLose = 2.0f;
-    [SerializeField] float SearchTime = 2.0f;
+     float TimeToLose = 2.0f;
+     float SearchTime = 2.0f;
 
-    [Header("Patrol Settings")]
-    [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
-    [SerializeField] int TargetPatrolPoint = 0;
+   
 
 
-   [Header("Enemy B.A.D. Stats")]
+   [Header("Enemy B.A.D.A.S.S. Stats")]
     [Range(1, 3)]
     [SerializeField] int Bravery = 1; //Determines how close the enemy can be before retreating
     [Range(1, 3)]
     [SerializeField] int Aggresiveness = 1; //Determines whether the enemy will prioritise attacking over self preservation
     [Range(1, 3)]
     [SerializeField] int Determination = 1; //Determines how long the enemy will search for before giving up
+    [Range(1, 3)]
+    [SerializeField] int Awareness = 1; //Controls how well the enemy can see players (ie detection range)
+    [Range(1, 3)]
+    [SerializeField] int Swiftness = 1; //Controls the speed of the enemy (ie movement, climbing, etc.)
+    [Range(1, 3)]
+    [SerializeField] int SuccessChance = 1; //Determines how likely is the enemy to be successful in their actions
+    
+    [Header("Patrol Settings")]
+    [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
+    [SerializeField] int TargetPatrolPoint = 0;
 
+
+
+    private int PercentageHitChance = 100;
 
 
     //The timer for losing a hostile after LOS is lost
@@ -95,8 +106,6 @@ public class EnemyController : MonoBehaviour
         Agent = GetComponent<NavMeshAgent>();
 
         Init();
-        //Debug.Log("Enemy health is:" + EnemyStats.Health);
-
     }
 
     private void Awake()
@@ -109,6 +118,16 @@ public class EnemyController : MonoBehaviour
 
     private void OnValidate()
     {
+        //DEBUG ONLY
+        //
+        //float minRetreatDist = 10 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
+        //float maxRetreatDist = 15 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
+        //result = (AttackRange / 4) + Random.Range(minRetreatDist, maxRetreatDist);
+        //TimeToLose = Determination * Random.Range(5, 10);
+        //DetectionRange = AttackRange * Awareness;
+        //if(Agent != null)
+        //    Agent.speed = Swiftness * 1.5f;
+
         ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
     }
 
@@ -141,8 +160,6 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public float Threshold = 50;
-    float MaxVelocity = 100.0f;
     private bool DetectPlayer()
     {
         //Calculate the direction of the player in relation to the enemy
@@ -177,20 +194,35 @@ public class EnemyController : MonoBehaviour
 
    private void Init()
     {
-
-        float minRetreatDist = 10 + (((3 - Bravery)-1) * 5);
-        float maxRetreatDist = 15 + (((3 - Bravery)-1) * 5);
-        //Randomly assign a retreat distance
-        RetreatDistance = Random.Range(minRetreatDist, maxRetreatDist);
-        Debug.Log(RetreatDistance);
+        
         //Set the attack range to the currently equipped weapon's range
         AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().Range;
+        
+        //Using the aggressiveness and bravery stat, determine a suitable range of values for the retreat distance
+        float minRetreatDist = 10 + (((3 - Bravery)-1) * 5) - ((Aggresiveness - 1) * 2);
+        float maxRetreatDist = 15 + (((3 - Bravery)-1) * 5) - ((Aggresiveness - 1) * 2);
+        //Use a quarter of the weapon range combined with a random value within the calculated range
+        //to determine the retreat distance
+        RetreatDistance = (AttackRange / 4) + Random.Range(minRetreatDist, maxRetreatDist);
 
+        //Use the sight quality attribute to determine the detection range
+        DetectionRange = AttackRange * Awareness;
+
+        //Use the swiftness attribute to determine the enemy's move speed
+        //TODO use this to alter climb speed/ weapons reload speed etc.
+        Agent.speed = Swiftness * 1.5f;
+
+
+        PercentageHitChance = SuccessChance * Random.Range(20, 30);
+
+
+        TimeToLose = Determination * Random.Range(5, 10);
+       
     }
 
     // Update is called once per frame
     void Update()
-    {   
+    {
         //If the player is detected, move straight to the hostile state
         TargetSighted = DetectPlayer();
 
@@ -369,7 +401,6 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    float MinAttackDistance = 5.0f;
 
 
     void TakeCover()
@@ -399,29 +430,30 @@ public class EnemyController : MonoBehaviour
     void Attack()
     {
         Debug.Log("Attacking");
-            FaceTarget();
+        FaceTarget();
 
         //Calculate % chance of a successful hit
         float chance = Random.Range(0, 100);
         bool SuccessfulHit = false;
 
-        if (chance % 2 == 0)
+        if (chance <= PercentageHitChance)
         {
             SuccessfulHit = true;
         }
 
-            //If hit is successful, fire at the hostile
-            if (SuccessfulHit)
-            {
-                MyWeaponController.UseWeapon(Target.position);
-            }
-            else
-            {
-                Debug.Log("I missed");
-            }
-            //Else, fire try to miss
-            //MyWeaponController.UseWeapon(Target.position + Small random vector);
-        
+        //If hit is successful, fire at the hostile
+        if (SuccessfulHit)
+        {
+            Debug.Log("Successful Hit. Yay!");
+            MyWeaponController.UseWeapon(Target.position);
+        }
+        else
+        {
+            Debug.Log("I missed");
+        }
+        //Else, fire try to miss
+        //MyWeaponController.UseWeapon(Target.position + Small random vector);
+
     }
 
 
