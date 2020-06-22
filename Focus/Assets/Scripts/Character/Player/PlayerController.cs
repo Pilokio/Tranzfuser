@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     CharacterStats MyStats;
     TimeManager MyTimeManager;
     CameraFov cameraFov;
+    private ParticleSystem speedLinesParticleSystem;
 
     private const float NORMAL_FOV = 60f;
     private const float HOOKSHOT_FOV = 100f;
@@ -53,6 +54,8 @@ public class PlayerController : MonoBehaviour
     {
         playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
         cameraFov = playerCamera.GetComponent<CameraFov>();
+        speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
+        speedLinesParticleSystem.Stop();
         state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
     }
@@ -295,7 +298,8 @@ public class PlayerController : MonoBehaviour
         if (hookshotSize >= Vector3.Distance(transform.position, hookshotPosition))
         {
             state = State.HookShotFlyingPlayer;
-            cameraFov.SetCameraFov(HOOKSHOT_FOV); 
+            cameraFov.SetCameraFov(HOOKSHOT_FOV);
+            speedLinesParticleSystem.Play();
         }
     }
      
@@ -343,6 +347,7 @@ public class PlayerController : MonoBehaviour
         state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
         cameraFov.SetCameraFov(NORMAL_FOV);
+        speedLinesParticleSystem.Stop();
     }
 
     private bool TestInputDownHookshot()
