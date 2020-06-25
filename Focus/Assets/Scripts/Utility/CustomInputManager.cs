@@ -33,21 +33,21 @@ public static class CustomInputManager
         ActiveControllers.Clear();
         InputManager.Clear();
         //Loop through the array provided by Unity's built in Input system
-        for(int i = 0; i < Input.GetJoystickNames().Length; i++)
+        for (int i = 0; i < Input.GetJoystickNames().Length; i++)
         {
             //If the entry is not empty, add to the list
             //This will allow only the controllers connected at the time of this function call to be tracked
-            if(Input.GetJoystickNames()[i] != "")
+            if (Input.GetJoystickNames()[i] != "")
             {
                 ConnectedJoysticks.Add(new ConnectedJoystickData(i, Input.GetJoystickNames()[i]));
             }
         }
 
-      
+
 
         GetControllers();
     }
-    
+
     /// <summary>
     /// How frequently (in seconds realtime) will a check for controllers be carried out
     /// </summary>
@@ -79,25 +79,25 @@ public static class CustomInputManager
             PlayerNumber = ControllerBindings.PlayerNumber.Player1;
 
 
-        InputManager.Add("ActionButton1", new CustomInput( PlayerNumber, KeyCode.Space,       ControllerBindings.ControlType.ActionButton1));
-        InputManager.Add("ActionButton2", new CustomInput(PlayerNumber, KeyCode.LeftControl, ControllerBindings.ControlType.ActionButton2)); 
-        InputManager.Add("ActionButton3", new CustomInput(PlayerNumber, KeyCode.Tab,         ControllerBindings.ControlType.ActionButton3)); 
-        InputManager.Add("ActionButton4", new CustomInput(PlayerNumber, KeyCode.R,           ControllerBindings.ControlType.ActionButton4)); 
-        InputManager.Add("LeftBumper",    new CustomInput(PlayerNumber, KeyCode.Q,           ControllerBindings.ControlType.LeftBumper));
-        InputManager.Add("RightBumper",   new CustomInput(PlayerNumber, KeyCode.E,           ControllerBindings.ControlType.RightBumper)); 
-        InputManager.Add("Menu",          new CustomInput(PlayerNumber, KeyCode.P,           ControllerBindings.ControlType.MenuButton));  
-        InputManager.Add("Share",         new CustomInput(PlayerNumber, KeyCode.L,           ControllerBindings.ControlType.ShareButton)); 
-        InputManager.Add("LeftStick",     new CustomInput(PlayerNumber, KeyCode.LeftShift,   ControllerBindings.ControlType.LStickButton));
-        InputManager.Add("RightStick",    new CustomInput(PlayerNumber, KeyCode.Z,    ControllerBindings.ControlType.RStickButton));
+        InputManager.Add("ActionButton1", new CustomInput(PlayerNumber, KeyCode.Space, ControllerBindings.ControlType.ActionButton1));
+        InputManager.Add("ActionButton2", new CustomInput(PlayerNumber, KeyCode.LeftControl, ControllerBindings.ControlType.ActionButton2));
+        InputManager.Add("ActionButton3", new CustomInput(PlayerNumber, KeyCode.Tab, ControllerBindings.ControlType.ActionButton3));
+        InputManager.Add("ActionButton4", new CustomInput(PlayerNumber, KeyCode.R, ControllerBindings.ControlType.ActionButton4));
+        InputManager.Add("LeftBumper", new CustomInput(PlayerNumber, KeyCode.Q, ControllerBindings.ControlType.LeftBumper));
+        InputManager.Add("RightBumper", new CustomInput(PlayerNumber, KeyCode.E, ControllerBindings.ControlType.RightBumper));
+        InputManager.Add("Menu", new CustomInput(PlayerNumber, KeyCode.P, ControllerBindings.ControlType.MenuButton));
+        InputManager.Add("Share", new CustomInput(PlayerNumber, KeyCode.L, ControllerBindings.ControlType.ShareButton));
+        InputManager.Add("LeftStick", new CustomInput(PlayerNumber, KeyCode.LeftShift, ControllerBindings.ControlType.LStickButton));
+        InputManager.Add("RightStick", new CustomInput(PlayerNumber, KeyCode.Z, ControllerBindings.ControlType.RStickButton));
 
-        InputManager.Add("LeftStickHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultHorizontal, ControllerBindings.ControlType.LeftJoystickX)); 
-        InputManager.Add("LeftStickVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultVertical, ControllerBindings.ControlType.LeftJoystickY, true));       
-        InputManager.Add("RightStickHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.MouseX, ControllerBindings.ControlType.RightJoystickX));            
-        InputManager.Add("RightStickVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.MouseY, ControllerBindings.ControlType.RightJoystickY, true));              
-        InputManager.Add("DPadHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.SecondaryHorizontal, ControllerBindings.ControlType.DPadX));              
-        InputManager.Add("DPadVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.SecondaryVertical, ControllerBindings.ControlType.DPadY));                  
-        InputManager.Add("LeftTrigger", new CustomInput(PlayerNumber, KeyCode.Mouse1, ControllerBindings.ControlType.LeftTrigger));                                                 
-        InputManager.Add("RightTrigger", new CustomInput(PlayerNumber, KeyCode.Mouse0, ControllerBindings.ControlType.RightTrigger));                                               
+        InputManager.Add("LeftStickHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultHorizontal, ControllerBindings.ControlType.LeftJoystickX));
+        InputManager.Add("LeftStickVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.DefaultVertical, ControllerBindings.ControlType.LeftJoystickY, true));
+        InputManager.Add("RightStickHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.MouseX, ControllerBindings.ControlType.RightJoystickX));
+        InputManager.Add("RightStickVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.MouseY, ControllerBindings.ControlType.RightJoystickY, true));
+        InputManager.Add("DPadHorizontal", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.SecondaryHorizontal, ControllerBindings.ControlType.DPadX));
+        InputManager.Add("DPadVertical", new CustomInput(PlayerNumber, CustomInput.KeyboardAndMouseAxis.SecondaryVertical, ControllerBindings.ControlType.DPadY));
+        InputManager.Add("LeftTrigger", new CustomInput(PlayerNumber, KeyCode.Mouse1, ControllerBindings.ControlType.LeftTrigger));
+        InputManager.Add("RightTrigger", new CustomInput(PlayerNumber, KeyCode.Mouse0, ControllerBindings.ControlType.RightTrigger));
     }
 
     public static void SetKeyBinding(string InputName, KeyCode key)
@@ -113,7 +113,7 @@ public static class CustomInputManager
     public static void CreateDefaultMultiPlayerInputManager(int PlayerCount)
     {
         string playerName = "";
-        for(int i = 0; i < Mathf.Min(ConnectedJoysticks.Count, PlayerCount); i++)
+        for (int i = 0; i < Mathf.Min(ConnectedJoysticks.Count, PlayerCount); i++)
         {
             playerName = "Player" + (i + 1).ToString();
 
@@ -123,18 +123,18 @@ public static class CustomInputManager
             InputManager.Add(playerName + "ActionButton4", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.R, ControllerBindings.ControlType.ActionButton4));
             InputManager.Add(playerName + "LeftBumper", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.Q, ControllerBindings.ControlType.LeftBumper));
             InputManager.Add(playerName + "RightBumper", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.E, ControllerBindings.ControlType.RightBumper));
-            InputManager.Add(playerName + "Menu", new CustomInput( (ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.P, ControllerBindings.ControlType.MenuButton));
+            InputManager.Add(playerName + "Menu", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.P, ControllerBindings.ControlType.MenuButton));
             InputManager.Add(playerName + "Share", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.L, ControllerBindings.ControlType.ShareButton));
-            InputManager.Add(playerName + "LeftStick", new CustomInput( (ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.LeftShift, ControllerBindings.ControlType.LStickButton));
+            InputManager.Add(playerName + "LeftStick", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.LeftShift, ControllerBindings.ControlType.LStickButton));
             InputManager.Add(playerName + "RightStick", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.CapsLock, ControllerBindings.ControlType.RStickButton));
-          
+
             InputManager.Add(playerName + "LeftStickHorizontal", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.DefaultHorizontal, ControllerBindings.ControlType.LeftJoystickX));
             InputManager.Add(playerName + "LeftStickVertical", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.DefaultVertical, ControllerBindings.ControlType.LeftJoystickY));
             InputManager.Add(playerName + "RightStickHorizontal", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.MouseX, ControllerBindings.ControlType.RightJoystickX));
             InputManager.Add(playerName + "RightStickVertical", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.MouseY, ControllerBindings.ControlType.RightJoystickY));
             InputManager.Add(playerName + "DPadHorizontal", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.SecondaryHorizontal, ControllerBindings.ControlType.DPadX));
             InputManager.Add(playerName + "DPadVertical", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, CustomInput.KeyboardAndMouseAxis.SecondaryVertical, ControllerBindings.ControlType.DPadY));
-            InputManager.Add(playerName + "LeftTrigger", new CustomInput( (ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.Mouse1, ControllerBindings.ControlType.LeftTrigger));
+            InputManager.Add(playerName + "LeftTrigger", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.Mouse1, ControllerBindings.ControlType.LeftTrigger));
             InputManager.Add(playerName + "RightTrigger", new CustomInput((ControllerBindings.PlayerNumber)ConnectedJoysticks[i].JoystickIndex, KeyCode.Mouse0, ControllerBindings.ControlType.RightTrigger));
         }
     }
@@ -183,9 +183,9 @@ public static class CustomInputManager
         //Handle if no controllers are connected
         if (ConnectedJoysticks.Count == 0 && !ActiveControllers.ContainsKey(ControllerBindings.PlayerNumber.Player1))
         {
-            Debug.Log("No Controllers Connected"); 
+            Debug.Log("No Controllers Connected");
             ControllersConnected = false;
-             ActiveControllers.Add(ControllerBindings.PlayerNumber.Player1, new ActiveController(ControllerBindings.PlayerNumber.Player1, SupportedController.ControllerType.KEYANDMOUSE));
+            ActiveControllers.Add(ControllerBindings.PlayerNumber.Player1, new ActiveController(ControllerBindings.PlayerNumber.Player1, SupportedController.ControllerType.KEYANDMOUSE));
             return;
         }
 
@@ -201,7 +201,7 @@ public static class CustomInputManager
             Debug.LogWarning("Too many controllers detected. Only the first 8 will be accepted.");
         }
 
-     
+
         string[] joysticksConnected = Input.GetJoystickNames();
 
 
@@ -268,22 +268,22 @@ public static class CustomInputManager
     /// This function detects the type of controller type (if any) is being used by each connected player
     /// </summary>
     static void DetectControllers()
-    { 
+    {
         //Handle if no controllers are connected
-        if (ConnectedJoysticks.Count ==0 && !ActiveControllers.ContainsKey(ControllerBindings.PlayerNumber.Player1))
+        if (ConnectedJoysticks.Count == 0 && !ActiveControllers.ContainsKey(ControllerBindings.PlayerNumber.Player1))
         {
             Debug.Log("No Controllers Connected");
             ActiveControllers.Add(ControllerBindings.PlayerNumber.Player1, new ActiveController(ControllerBindings.PlayerNumber.Player1, SupportedController.ControllerType.KEYANDMOUSE));
             return;
         }
-        foreach(ConnectedJoystickData data in ConnectedJoysticks)
+        foreach (ConnectedJoystickData data in ConnectedJoysticks)
         {
             //Debug.Log("Index: " + data.JoystickIndex + ", Name: " + data.JoystickName);
         }
-     
 
-            //Debug warning if too many controllers are connected
-            if (ConnectedJoysticks.Count > 8)
+
+        //Debug warning if too many controllers are connected
+        if (ConnectedJoysticks.Count > 8)
         {
             Debug.LogWarning("Too many controllers detected. Only the first 8 will be accepted.");
         }
@@ -291,9 +291,9 @@ public static class CustomInputManager
         //Update the active controller list
         for (int i = 0; i < Mathf.Min(ConnectedJoysticks.Count, 8); i++)
         {
-           // GetController(i);
+            // GetController(i);
         }
-        return; 
+        return;
     }
 
     /// <summary>
@@ -441,7 +441,7 @@ public static class CustomInputManager
         {
             if (input.ControllerBinding.IsAxis)
             {
-                if (ActiveControllers.ContainsKey(input._PlayerNumber) )
+                if (ActiveControllers.ContainsKey(input._PlayerNumber))
                 {
                     switch (ActiveControllers[input._PlayerNumber].ControllerType_)
                     {
@@ -456,7 +456,7 @@ public static class CustomInputManager
                                 return Input.GetAxis(input.AxisName);
                             else if (input.Key != KeyCode.None)
                             {
-                                if(Input.GetKey(input.Key))
+                                if (Input.GetKey(input.Key))
                                 {
                                     return 1.0f;
                                 }
@@ -623,7 +623,7 @@ public static class CustomInputManager
                         case SupportedController.ControllerType.PS4:
                             if (input.ControllerBinding.Ps4Name != "")
                             {
-                                if(Input.GetAxisRaw(input.ControllerBinding.Ps4Name) != input.ControllerBinding.PS4Neutral)
+                                if (Input.GetAxisRaw(input.ControllerBinding.Ps4Name) != input.ControllerBinding.PS4Neutral)
                                 {
                                     return true;
                                 }
@@ -890,7 +890,7 @@ public class CustomInput
         _PlayerNumber = playerNumber;
         AxisType = kmAxisType;
 
-        switch(AxisType)
+        switch (AxisType)
         {
             case KeyboardAndMouseAxis.DefaultHorizontal:
                 AxisName = "Horizontal";

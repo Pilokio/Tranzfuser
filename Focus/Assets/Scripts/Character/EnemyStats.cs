@@ -1,12 +1,10 @@
-﻿using System.Diagnostics;
-
-public class EnemyStats : CharacterStats
+﻿public class EnemyStats : CharacterStats
 {
-    
+
     private void Update()
     {
-        
-        if(IsDead == true)
+
+        if (IsDead == true)
         {
             Die();
         }

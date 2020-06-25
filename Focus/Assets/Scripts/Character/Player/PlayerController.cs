@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Chronos;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -161,14 +162,10 @@ public class PlayerController : MonoBehaviour
             MyWeaponController.UseWeapon(transform.forward);
         }
 
-
-        //Slow time for the player
         //using either RMB, L2, or LT depending on input device
         if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
             GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
-
-            //MyTimeManager.DoSlowmotion();
         }
         else
         {
@@ -230,6 +227,12 @@ public class PlayerController : MonoBehaviour
             MyMovement.IsSprinting = false;
         }
 
+        // Slow down time
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            MyTimeManager.DoSlowmotion();
+        }
+
     }
 
     void HandleLook()
@@ -274,7 +277,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TestInputDownHookshot())
         {
-           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
             {
                 // Hit something
                 debugHitPointTransform.position = raycastHit.point;
@@ -302,7 +305,7 @@ public class PlayerController : MonoBehaviour
             speedLinesParticleSystem.Play();
         }
     }
-     
+
     private void HandleHookshotMovement()
     {
         transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 0.5f);

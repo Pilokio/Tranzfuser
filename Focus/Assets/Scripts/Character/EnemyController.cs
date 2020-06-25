@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,8 +10,8 @@ public class EnemyController : MonoBehaviour
     private NavMeshAgent Agent;
 
     [Header("General Settings")]
-     AlertState AlertStatus = 0;
-    
+    AlertState AlertStatus = 0;
+
     [Header("Combat Settings")]
     //The minimum attack range
     float AttackRange = 5.0f;
@@ -29,13 +28,13 @@ public class EnemyController : MonoBehaviour
     //The position of the "eye". Where the cone of vision comes to a point. 
     [SerializeField] Vector3 EyePosition = new Vector3();
     //The amount of time before a hostiles will be "lost" after losing line of sight
-     float TimeToLose = 2.0f;
-     float SearchTime = 2.0f;
-
-   
+    float TimeToLose = 2.0f;
+    float SearchTime = 2.0f;
 
 
-   [Header("Enemy B.A.D.A.S.S. Stats")]
+
+
+    [Header("Enemy B.A.D.A.S.S. Stats")]
     [Range(1, 3)]
     [SerializeField] int Bravery = 1; //Determines how close the enemy can be before retreating
     [Range(1, 3)]
@@ -48,7 +47,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int Swiftness = 1; //Controls the speed of the enemy (ie movement, climbing, etc.)
     [Range(1, 3)]
     [SerializeField] int SuccessChance = 1; //Determines how likely is the enemy to be successful in their actions
-    
+
     [Header("Patrol Settings")]
     [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
     [SerializeField] int TargetPatrolPoint = 0;
@@ -63,7 +62,7 @@ public class EnemyController : MonoBehaviour
 
     //The timer tracking how long the enemy has been searching for
     float SearchTimer;
-   
+
     //Stores the hit from the raycase. 
     //If it is not the player then LOS is lost
     RaycastHit hit;
@@ -133,9 +132,9 @@ public class EnemyController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-      
 
-        if(ConeOfVisionDebugMesh == null)
+
+        if (ConeOfVisionDebugMesh == null)
         {
             ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
         }
@@ -143,7 +142,7 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawWireMesh(ConeOfVisionDebugMesh, 0, transform.position + EyePosition, transform.rotation);
 
         Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection( EyePosition), 0.5f);
+        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection(EyePosition), 0.5f);
 
 
         Gizmos.color = Color.blue;
@@ -192,15 +191,15 @@ public class EnemyController : MonoBehaviour
         return false;
     }
 
-   private void Init()
+    private void Init()
     {
-        
+
         //Set the attack range to the currently equipped weapon's range
         AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().Range;
-        
+
         //Using the aggressiveness and bravery stat, determine a suitable range of values for the retreat distance
-        float minRetreatDist = 10 + (((3 - Bravery)-1) * 5) - ((Aggresiveness - 1) * 2);
-        float maxRetreatDist = 15 + (((3 - Bravery)-1) * 5) - ((Aggresiveness - 1) * 2);
+        float minRetreatDist = 10 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
+        float maxRetreatDist = 15 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
         //Use a quarter of the weapon range combined with a random value within the calculated range
         //to determine the retreat distance
         RetreatDistance = (AttackRange / 4) + Random.Range(minRetreatDist, maxRetreatDist);
@@ -217,7 +216,7 @@ public class EnemyController : MonoBehaviour
 
 
         TimeToLose = Determination * Random.Range(5, 10);
-       
+
     }
 
     // Update is called once per frame
@@ -237,14 +236,14 @@ public class EnemyController : MonoBehaviour
 
                 // Patrol the designated patrol points
 
-                if(PatrolPoints.Count > 1)
+                if (PatrolPoints.Count > 1)
                 {
                     //Move to the current target patrol point
-                    if(CanMove)
+                    if (CanMove)
                         Agent.SetDestination(PatrolPoints[TargetPatrolPoint].position);
 
                     //If the enemy arrives at the patrol point, move to the next one
-                    if(Vector3.Distance(transform.position, PatrolPoints[TargetPatrolPoint].position) < Agent.stoppingDistance)
+                    if (Vector3.Distance(transform.position, PatrolPoints[TargetPatrolPoint].position) < Agent.stoppingDistance)
                     {
                         TargetPatrolPoint++;
                         if (TargetPatrolPoint >= PatrolPoints.Count)
@@ -264,11 +263,11 @@ public class EnemyController : MonoBehaviour
             case AlertState.Suspicious:
                 //Investigate disturbances.
 
-               //Get Search location (ie player last known location, origin of gunfire, dead body)
-               //Pick a random position in a radius around the disturbance location
-               //Move to this location.
-               //Repeat until search timer is 0 or hostile found
-               //Return to idle if not found in time limit, move to hostile if found
+                //Get Search location (ie player last known location, origin of gunfire, dead body)
+                //Pick a random position in a radius around the disturbance location
+                //Move to this location.
+                //Repeat until search timer is 0 or hostile found
+                //Return to idle if not found in time limit, move to hostile if found
                 break;
             case AlertState.Hostile:
                 //Attack the target until they are dead, or line of sight is lost
@@ -279,13 +278,6 @@ public class EnemyController : MonoBehaviour
                 Debug.LogError("Invalid alert status on enemy :" + transform.name);
                 break;
         }
-
-
-     
-
-
-
-
     }
 
     public bool StopWhenInRange = true;
@@ -313,13 +305,13 @@ public class EnemyController : MonoBehaviour
         }//If target is between the attack range and retreat distance and the enemy should stop when in range
         else if (distance < AttackRange && distance > RetreatDistance)
         {
-            if(StopWhenInRange)
+            if (StopWhenInRange)
                 StopMoving();
 
             Attack();
         }
-        else if(distance < RetreatDistance)
-        { 
+        else if (distance < RetreatDistance)
+        {
             TakeCover();
         }
 
@@ -476,10 +468,10 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     enum CombatType
     {
-        Grunt       = 0,  //Standard enemy. Medium range. Move somewhat frequently at standard speed. Takes cover just as much as they attack. Medium HP and DMG.
-        Aggressor   = 1,  //Berserker-type enemy. Close range. Charge at the hostiles - Fast moving, doesnt take cover. Low DMG. Medium HP.
-        Tank        = 2,  //High HP. Medium DMG. Medium - Close range. Doesnt take cover, but moves slowly.
-        Sniper      = 3,  //Low HP. High DMG. Long range. Rarely moves from vantage point, almost always in cover.
+        Grunt = 0,  //Standard enemy. Medium range. Move somewhat frequently at standard speed. Takes cover just as much as they attack. Medium HP and DMG.
+        Aggressor = 1,  //Berserker-type enemy. Close range. Charge at the hostiles - Fast moving, doesnt take cover. Low DMG. Medium HP.
+        Tank = 2,  //High HP. Medium DMG. Medium - Close range. Doesnt take cover, but moves slowly.
+        Sniper = 3,  //Low HP. High DMG. Long range. Rarely moves from vantage point, almost always in cover.
     }
 
 }
