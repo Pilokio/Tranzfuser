@@ -225,5 +225,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   gunTip: {fileID: 4186418237122211633}
-  camera: {fileID: 0}
+  DepthCam: {fileID: 0}
   player: {fileID: 0}
