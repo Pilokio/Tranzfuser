@@ -9,6 +9,7 @@ TagManager:
   - GunHolder
   - Enemy
   - CameraHolder
+  - HookPoint
   layers:
   - Default
   - TransparentFX
