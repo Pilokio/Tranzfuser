@@ -80,29 +80,30 @@ public class Ladder : MonoBehaviour
     {
         if (other.tag == "Enemy")
         {
-
-            other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
-            other.gameObject.GetComponent<Rigidbody>().useGravity = false;
-
-            float distanceTop = Vector3.Distance(other.gameObject.transform.position, LadderPath[0].position);
-            float distanceBottom = Vector3.Distance(other.gameObject.transform.position, LadderPath[2].position);
-
-            //Make the player turn to face the ladder
-            Vector3 target = transform.rotation.eulerAngles;
-            target.x = 0;
-            target.z = 0;
-            target.y += 180;
-            other.transform.rotation = Quaternion.Euler(target);
-
-            if (distanceTop > distanceBottom)
+            if (!other.gameObject.GetComponent<EnemyController>().IsClimbing)
             {
-                StartCoroutine(UseLadderNPC(other.gameObject, true));
-            }
-            else
-            {
-                StartCoroutine(UseLadderNPC(other.gameObject, false));
-            }
+                other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
+                other.gameObject.GetComponent<Rigidbody>().useGravity = false;
 
+                float distanceTop = Vector3.Distance(other.gameObject.transform.position, LadderPath[0].position);
+                float distanceBottom = Vector3.Distance(other.gameObject.transform.position, LadderPath[2].position);
+
+                //Make the player turn to face the ladder
+                Vector3 target = transform.rotation.eulerAngles;
+                target.x = 0;
+                target.z = 0;
+                target.y += 180;
+                other.transform.rotation = Quaternion.Euler(target);
+
+                if (distanceTop > distanceBottom)
+                {
+                    StartCoroutine(UseLadderNPC(other.gameObject, true));
+                }
+                else
+                {
+                    StartCoroutine(UseLadderNPC(other.gameObject, false));
+                }
+            }
         }
     }
 
@@ -136,7 +137,6 @@ public class Ladder : MonoBehaviour
             }
             else
             {
-
                 while (NPC.transform.position != LadderPath[0].position)
                 {
                     NPC.transform.position = Vector3.MoveTowards(NPC.transform.position, LadderPath[0].position, speed * Time.deltaTime);
@@ -163,7 +163,6 @@ public class Ladder : MonoBehaviour
         }
         NPC.GetComponent<NavMeshAgent>().enabled = true;
         NPC.GetComponent<EnemyController>().enabled = true;
-        Debug.Log("Finished");
     }
 
 
