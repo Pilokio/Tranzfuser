@@ -196,7 +196,7 @@ public class EnemyController : MonoBehaviour
     {
         
         //Set the attack range to the currently equipped weapon's range
-        AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().Range;
+        AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponRange;
         
         //Using the aggressiveness and bravery stat, determine a suitable range of values for the retreat distance
         float minRetreatDist = 10 + (((3 - Bravery)-1) * 5) - ((Aggresiveness - 1) * 2);
@@ -445,7 +445,7 @@ public class EnemyController : MonoBehaviour
         if (SuccessfulHit)
         {
             Debug.Log("Successful Hit. Yay!");
-            MyWeaponController.UseWeapon(Target.position);
+            MyWeaponController.UseWeapon(transform.position, (Target.position - transform.position));
         }
         else
         {
