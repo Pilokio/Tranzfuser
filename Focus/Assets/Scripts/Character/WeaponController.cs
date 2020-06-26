@@ -94,6 +94,7 @@ public class WeaponController : MonoBehaviour
             }
 
             // Instantiate the new gun object
+           
             CurrentGun = Instantiate(WeaponsList[CurrentWeaponIndex].WeaponObject, GunHolder.transform);
 
             FireDelay = WeaponsList[CurrentWeaponIndex].WeaponFireRate;
@@ -140,7 +141,6 @@ public class WeaponController : MonoBehaviour
             {
                 if (Physics.Raycast(Origin, Direction, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
-                    Debug.Log(hit.transform.name);
                     if (hit.transform.tag == "Enemy")
                     {
                         Debug.Log(transform.name + " hit " + hit.transform.name);
