@@ -25,6 +25,13 @@ public class WeaponController : MonoBehaviour
     //Reference to the character's stats which are used to determine if reloading is possible
     CharacterStats MyStats;
 
+    //The object hit when firing the weapon
+    RaycastHit hit;
+
+   
+    //Timer variables to determine if weapon can be fired again
+    private float FireDelay = 0;
+    private float FireTimer = 0;
     private bool CanFire = true;
 
     // Start is called before the first frame update
@@ -87,8 +94,11 @@ public class WeaponController : MonoBehaviour
             }
 
             // Instantiate the new gun object
+           
             CurrentGun = Instantiate(WeaponsList[CurrentWeaponIndex].WeaponObject, GunHolder.transform);
 
+            FireDelay = WeaponsList[CurrentWeaponIndex].WeaponFireRate;
+            FireTimer = FireDelay;
         }
         else
         {
@@ -96,68 +106,84 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        //Decrement timer
+        FireTimer -= Time.deltaTime;
+
+        //If timer elapses then allow the weapon to be fired
+        if (FireTimer <= 0.0f)
+        {
+            CanFire = true;
+        }
+    }
+
     /// <summary>
     /// This function is called to use the currently equipped weapon if possible
     /// </summary>    
-    public void UseWeapon(Vector3 Target)
+    public void UseWeapon(Vector3 Origin, Vector3 Direction)
     {
-        // Error handling for if required parameters are null or invalid
-
-        if (CurrentGun == null || CurrentGun.transform.childCount == 0)
+        //Don't attempt to use weapon if invalid
+        if (CurrentGun == null || CurrentWeaponIndex == -1)
         {
-            Debug.LogError("Error when trying to use weapon. Check the object is instantiated correctly and a child object for the tip of the barrel is present.");
+            Debug.LogError("Error when firing weapon on " + transform.name + " object.");
             return;
         }
 
-        if (CurrentWeaponIndex == -1)
+        //If the weapon is ready to be fired again
+        if (CanFire)
         {
-            Debug.LogError("Invalid Weapon is equipped. Unable to find suitable ID in WeaponController component of " + transform.name);
-            return;
-        }
+            FireTimer = FireDelay;
+            CanFire = false;
 
-        // Check that the currently equipped weapon is not a melee weapon
-        if (WeaponsList[CurrentWeaponIndex].IsRanged)
-        {
             //If there is still ammo in the magazine and a suitable weapon is equipped
-            if (WeaponsList[CurrentWeaponIndex].AmmoInCLip > 0 && CanFire)
+            if (WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded > 0)
             {
-                CanFire = false;
-                //Find the tip of the gun's barrel
-                Transform BarrelEnd = CurrentGun.transform.GetChild(0).transform;
-                //Instantiate the bullet at the tip of the gun
-                GameObject projectile = Instantiate(WeaponsList[CurrentWeaponIndex].ProjectilePrefab, BarrelEnd.position, Quaternion.Euler(Target - BarrelEnd.position));
-                //Set its projectile force based on the stats in the weaponList and its direction based on the forward vector of the barrel tip
-                projectile.GetComponent<ProjectileController>().Force = Vector3.one * WeaponsList[CurrentWeaponIndex].ProjectileForce;
-                projectile.GetComponent<ProjectileController>().Direction = BarrelEnd.forward;
-
-                if(transform.tag == "Player")
+                if (Physics.Raycast(Origin, Direction, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
-                    projectile.GetComponent<ProjectileController>().BelongsToPlayer = true;
-                }
-                else
-                {
-                    projectile.GetComponent<ProjectileController>().BelongsToPlayer = false;
-                }
+                    if (hit.transform.tag == "Enemy")
+                    {
+                        Debug.Log(transform.name + " hit " + hit.transform.name);
+                        CharacterStats target = hit.transform.GetComponent<CharacterStats>();
 
-                projectile.GetComponent<ProjectileController>().DamageAmount = WeaponsList[CurrentWeaponIndex].Damage;
+                        if (target != null)
+                            target.TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                    }
 
-                //Fire the projectile
-                projectile.GetComponent<ProjectileController>().Fire();
+                    if (WeaponsList[CurrentWeaponIndex].Type == Weapon.WeaponType.Launcher)
+                    {
+                        Vector3 hitLocation = hit.point;
+                        Collider[] cols = Physics.OverlapSphere(hitLocation, 10.0f);
+                        foreach (Collider c in cols)
+                        {
+                            if(c.gameObject.GetComponent<CharacterStats>())
+                            {
+                                c.gameObject.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                            }
+
+                            if (c.gameObject.GetComponent<Rigidbody>())
+                            {
+                                c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(WeaponsList[CurrentWeaponIndex].ImpactForce, hitLocation, 10.0f);
+                            }
+                        }
+                    }
+                    else if (hit.rigidbody != null)
+                    {
+                        hit.rigidbody.AddForce(-hit.normal * WeaponsList[CurrentWeaponIndex].ImpactForce);
+                    }
+
+                }
                 //Decrement the ammo count
-                WeaponsList[CurrentWeaponIndex].AmmoInCLip--;
-                StartCoroutine(StartWeaponCooldown());
+                WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded--;
             }
-            else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > 0)
+            else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
             {
                 //Automatically reload if the player attempts to fire the weapon 
                 //provided they have more ammunition
                 ReloadWeapon();
             }
         }
-        else
-        {
-            //Add Melee stuff here if we decide to add it
-        }
+
     }
 
     /// <summary>
@@ -166,26 +192,26 @@ public class WeaponController : MonoBehaviour
     public void ReloadWeapon()
     {
         //Ensure there is spare ammo to load into the weapon
-        if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > 0)
+        if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
         {
             //Take the ammo from the clip and add it to the spare ammo counter (prevents the current mag being lost in the reload)
 
-            MyStats.AddAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, WeaponsList[CurrentWeaponIndex].AmmoInCLip));
-            WeaponsList[CurrentWeaponIndex].AmmoInCLip = 0;
+            MyStats.AddAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].WeaponAmmoType, WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded));
+            WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded = 0;
 
             //If the player has more ammo than can be loaded into the magazine
             //Add the total magazine capacity to ammo in clip, and subtract it from the spare ammo counter
-            if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType) > WeaponsList[CurrentWeaponIndex].MagazineCapacity)
+            if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > WeaponsList[CurrentWeaponIndex].WeaponMagCapacity)
             {
-                WeaponsList[CurrentWeaponIndex].AmmoInCLip = WeaponsList[CurrentWeaponIndex].MagazineCapacity;
-                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, WeaponsList[CurrentWeaponIndex].MagazineCapacity));
+                WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded = WeaponsList[CurrentWeaponIndex].WeaponMagCapacity;
+                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].WeaponAmmoType, WeaponsList[CurrentWeaponIndex].WeaponMagCapacity));
             }
             else
             {
                 //If the player has less than the magazine capacity, add all their spare ammo into the clip
                 //and set the spare counter to 0
-                WeaponsList[CurrentWeaponIndex].AmmoInCLip = MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType);
-                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].AmmoType, MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].AmmoType)));
+                WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded = MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType);
+                MyStats.ConsumeAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].WeaponAmmoType, MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType)));
             }
         }
         else
@@ -208,49 +234,8 @@ public class WeaponController : MonoBehaviour
         return WeaponsList[CurrentWeaponIndex];
     }
 
-    IEnumerator StartWeaponCooldown()
-    {
-        yield return new WaitForSeconds(WeaponsList[CurrentWeaponIndex].CoolDownBetweenShots);
-        CanFire = true;
-    }
+   
 }
 
-/// <summary>
-/// This class represents the Weapons in the game. 
-/// It contains the relevant information regarding its identifiers, ammo supplies, and usage. 
-/// All of which can be assigned in the editor
-/// </summary>
-[System.Serializable]
-public class Weapon
-{
-    public enum WeaponType { Pistol };
 
-    public string WeaponName;
-    public string WeaponID;
-    public WeaponType Type;
-    public GameObject ProjectilePrefab;
-    public GameObject WeaponObject;
-    public int MagazineCapacity;
-    public AmmunitionType.AmmoType AmmoType;
-    public int AmmoInCLip;
-    public float ProjectileForce;
-    public bool IsRanged;
-    public float CoolDownBetweenShots;
-    public float Damage;
-    public float Range;
-}
 
-[System.Serializable]
-public class AmmunitionType
-{
-    public enum AmmoType { Pistol, SMG, Rifle, Shotgun, Launcher, Grenade };
-
-    public AmmoType Type;
-    public int Amount;
-
-    public AmmunitionType(AmmoType type, int amount)
-    {
-        this.Type = type;
-        this.Amount = amount;
-    }
-}

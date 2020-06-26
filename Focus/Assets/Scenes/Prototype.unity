@@ -217,6 +217,105 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 33378261}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &53606012
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 53606016}
+  - component: {fileID: 53606015}
+  - component: {fileID: 53606014}
+  - component: {fileID: 53606013}
+  - component: {fileID: 53606017}
+  m_Layer: 0
+  m_Name: Timekeeper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &53606013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53606012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0144e3ad8a88947298e2dca62625e6ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localTimeScale: 1
+  _paused: 0
+  _parentKey: Root
+  _parentBlend: 0
+  _key: Enemies
+--- !u!114 &53606014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53606012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0144e3ad8a88947298e2dca62625e6ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localTimeScale: 1
+  _paused: 0
+  _parentKey: 
+  _parentBlend: 0
+  _key: Root
+--- !u!114 &53606015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53606012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10179de595094539a3ca7ba94d6b1c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _debug: 0
+  _maxParticleLoops: 10
+--- !u!4 &53606016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53606012}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &53606017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53606012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0144e3ad8a88947298e2dca62625e6ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localTimeScale: 1
+  _paused: 0
+  _parentKey: Root
+  _parentBlend: 0
+  _key: Player
 --- !u!1 &61196177
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,6 +1637,7 @@ GameObject:
   - component: {fileID: 451348747}
   - component: {fileID: 451348748}
   - component: {fileID: 451348751}
+  - component: {fileID: 451348752}
   m_Layer: 10
   m_Name: Enemy
   m_TagString: Enemy
@@ -1637,21 +1737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WeaponsList:
-  - WeaponName: EnemyPistol
-    WeaponID: 000
-    Type: 0
-    ProjectilePrefab: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
-      type: 3}
-    WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
-      type: 3}
-    MagazineCapacity: 10
-    AmmoType: 0
-    AmmoInCLip: 10
-    ProjectileForce: 1000000
-    IsRanged: 1
-    CoolDownBetweenShots: 2
-    Damage: 0
-    Range: 0
+  - {fileID: 11400000, guid: d49de7666b3a63e43b993dab01b7fa8b, type: 2}
   GunHolder: {fileID: 1710023240}
 --- !u!4 &451348749
 Transform:
@@ -1681,7 +1767,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyType: 2
   VisionConeAngle: 45
   DetectionMask:
     serializedVersion: 2
@@ -1713,6 +1798,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   method: 1
+--- !u!114 &451348752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451348743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6090da511f8374135a15dd8655adcd44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _recordingInterval: 0.5
+  _mode: 1
+  _globalClockKey: Enemies
+  _rewindable: 1
+  _recordingDuration: 30
 --- !u!1 &472512278
 GameObject:
   m_ObjectHideFlags: 0
@@ -2790,36 +2892,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WeaponsList:
-  - WeaponName: Standard Pistol
-    WeaponID: 000
-    Type: 0
-    ProjectilePrefab: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
-      type: 3}
-    WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
-      type: 3}
-    MagazineCapacity: 10
-    AmmoType: 0
-    AmmoInCLip: 10
-    ProjectileForce: 1000000
-    IsRanged: 1
-    CoolDownBetweenShots: 0
-    Damage: 25
-    Range: 0
-  - WeaponName: Tester Pistol
-    WeaponID: 001
-    Type: 0
-    ProjectilePrefab: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
-      type: 3}
-    WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
-      type: 3}
-    MagazineCapacity: 5
-    AmmoType: 0
-    AmmoInCLip: 3
-    ProjectileForce: 1000000
-    IsRanged: 1
-    CoolDownBetweenShots: 0
-    Damage: 0
-    Range: 0
+  - {fileID: 11400000, guid: 38df6bcce4e357b46aacfec8d0cd53bf, type: 2}
+  - {fileID: 11400000, guid: 71b8ad87ae830c94bb24d4266c512132, type: 2}
+  - {fileID: 11400000, guid: 11753eb6e53c81e49b061f7db0e99935, type: 2}
+  - {fileID: 11400000, guid: 18e64627c2c7f8347a99dc04362a561e, type: 2}
+  - {fileID: 11400000, guid: 2e3b4a25ce37b1940b831f3f13963eee, type: 2}
   GunHolder: {fileID: 1616361670}
 --- !u!1 &749893865
 GameObject:
@@ -4826,6 +4903,7 @@ GameObject:
   - component: {fileID: 1564139284}
   - component: {fileID: 1564139283}
   - component: {fileID: 1564139285}
+  - component: {fileID: 1564139286}
   m_Layer: 11
   m_Name: PlayerContainer (updated)
   m_TagString: Player
@@ -4994,6 +5072,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxStepHeight: 0.5
   stepSearchOvershoot: 0.01
+--- !u!114 &1564139286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564139276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6090da511f8374135a15dd8655adcd44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _recordingInterval: 0.5
+  _mode: 1
+  _globalClockKey: Player
+  _rewindable: 1
+  _recordingDuration: 30
 --- !u!1 &1587757384
 GameObject:
   m_ObjectHideFlags: 0
@@ -10691,6 +10786,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2016260286}
   - component: {fileID: 2016260285}
+  - component: {fileID: 2016260287}
   m_Layer: 0
   m_Name: TImeManager
   m_TagString: Untagged
@@ -10726,6 +10822,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2016260287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016260284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6160b0935e69844d84925944fad9a0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2039500028
 GameObject:
   m_ObjectHideFlags: 0

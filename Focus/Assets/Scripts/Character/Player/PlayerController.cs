@@ -149,16 +149,10 @@ public class PlayerController : MonoBehaviour
 
         //Fire the players currently equipped weapon 
         //Using either LMB, R2, or RT depending on input device
-        if (CustomInputManager.GetAxisAsButton("RightTrigger"))
+        if (CustomInputManager.GetAxis("RightTrigger") != CustomInputManager.GetAxisNeutralPosition("RightTrigger"))
         {
-            //If using a controller, activate cooldown as Fire1 and 2 are axis being treated like buttons
-            if (!ControllerSupport.NoControllersConnected)
-            {
-                StartCoroutine(ControllerSupport.Fire1.ResetAxisButton());
-            }
-
             //Use the equipped weapon
-            MyWeaponController.UseWeapon(transform.forward);
+            MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward);
         }
 
 
@@ -243,8 +237,8 @@ public class PlayerController : MonoBehaviour
     void UpdateUI()
     {
         AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
-            + MyWeaponController.GetCurrentlyEquippedWeapon().AmmoInCLip + "/"
-            + MyStats.GetAmmoCount(MyWeaponController.GetCurrentlyEquippedWeapon().AmmoType);
+            + MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded + "/"
+            + MyStats.GetAmmoCount(MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoType);
 
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
