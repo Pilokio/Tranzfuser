@@ -130,7 +130,7 @@ public class WeaponController : MonoBehaviour
                 projectile.GetComponent<ProjectileController>().Force = Vector3.one * WeaponsList[CurrentWeaponIndex].ProjectileForce;
                 projectile.GetComponent<ProjectileController>().Direction = BarrelEnd.forward;
 
-                if (transform.tag == "Player")
+                if(transform.tag == "Player")
                 {
                     projectile.GetComponent<ProjectileController>().BelongsToPlayer = true;
                 }

@@ -158,7 +158,7 @@ public class Ladder : MonoBehaviour
 
             }
 
-
+           
             NPC.GetComponent<EnemyController>().IsClimbing = false;
         }
         NPC.GetComponent<NavMeshAgent>().enabled = true;

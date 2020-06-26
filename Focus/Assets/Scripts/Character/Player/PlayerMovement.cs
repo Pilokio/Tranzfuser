@@ -1,7 +1,6 @@
 using UnityEngine;
-using Chronos;
 
-public class PlayerMovement : BaseBehaviour
+public class PlayerMovement : MonoBehaviour
 {
 
     // Movement
