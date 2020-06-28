@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     WeaponController MyWeaponController;
     WallRunning MyWallRunning;
     CharacterStats MyStats;
-    TimeManager MyTimeManager;
+    TimeControl MyTimeController;
     CameraFov cameraFov;
     private ParticleSystem speedLinesParticleSystem;
 
@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
         MyWallRunning = GetComponent<WallRunning>();
         MyWeaponController = GetComponent<WeaponController>();
         MyStats = GetComponent<CharacterStats>();
-        MyTimeManager = GetComponent<TimeManager>();
+        MyTimeController = GetComponent<TimeControl>();
     }
 
     // Update is called once per frame
@@ -223,6 +223,14 @@ public class PlayerController : MonoBehaviour
         {
             MyMovement.IsSprinting = false;
         }
+
+
+        if(Input.GetKeyDown(KeyCode.Z))
+        {
+            MyTimeController.ToggleSlowMo();
+        }
+
+
 
     }
 

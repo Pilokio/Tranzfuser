@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Chronos;
+
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyStats))]
 [RequireComponent(typeof(WeaponController))]
-public class EnemyController : MonoBehaviour
+public class EnemyController : BaseBehaviour
 {
     private NavMeshAgent Agent;
 
@@ -221,7 +223,6 @@ public class EnemyController : MonoBehaviour
 
 
         PercentageHitChance = SuccessChance * Random.Range(20, 30);
-
 
         TimeToLose = Determination * Random.Range(5, 10);
 

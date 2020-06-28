@@ -1,24 +1,14 @@
-﻿using UnityEngine;
+﻿using Chronos;
+using System.Linq;
+using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
-    // Attributes
-    public float slowdownFactor = 0.1f;
-    public float slowdownLength = 2f;
-
-    void Update()
-    {
-        Time.timeScale += (1.0f / slowdownLength) * Time.unscaledDeltaTime;
-        Time.timeScale = Mathf.Clamp(Time.timeScale, 0f, 1f);
-        if (Time.timeScale == 1.0f)
-        {
-            Time.fixedDeltaTime = Time.deltaTime;
-        }
-    }
+    private float DefaultEnemyTimeScale = 1.0f;
+    private float SlowMoEnemyTimescale = 0.5f;
 
     public void DoSlowmotion()
     {
-        Time.timeScale = slowdownFactor;
-        Time.fixedDeltaTime = Time.timeScale * .02f;
+        //Timekeeper.instance.clocks.Where(x => x.name == "Enemies").First().t = SlowMoEnemyTimescale;
     }
 }
