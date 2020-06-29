@@ -139,15 +139,13 @@ public class WeaponController : MonoBehaviour
             //If there is still ammo in the magazine and a suitable weapon is equipped
             if (WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded > 0)
             {
-                if (Physics.Raycast(Origin, Direction, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
+                Ray ray = new Ray(Origin, Direction);
+                
+                if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
                     if (hit.transform.tag == "Enemy")
                     {
-                        Debug.Log(transform.name + " hit " + hit.transform.name);
-                        CharacterStats target = hit.transform.GetComponent<CharacterStats>();
-
-                        if (target != null)
-                            target.TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                        hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
 
                     if (WeaponsList[CurrentWeaponIndex].Type == Weapon.WeaponType.Launcher)

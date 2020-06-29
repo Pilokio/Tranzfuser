@@ -16,7 +16,7 @@ MonoBehaviour:
   Type: 0
   WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
     type: 3}
-  WeaponDamage: 100
+  WeaponDamage: 15
   WeaponRange: 100
   ImpactForce: 500
   WeaponFireRate: 0.5

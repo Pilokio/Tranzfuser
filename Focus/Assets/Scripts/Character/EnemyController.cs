@@ -5,6 +5,10 @@ using UnityEngine.AI;
 using Chronos;
 
 
+//Debug Only Remove later
+using UnityEngine.UI;
+
+
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyStats))]
 [RequireComponent(typeof(WeaponController))]
@@ -34,6 +38,9 @@ public class EnemyController : BaseBehaviour
     float TimeToLose = 2.0f;
     float SearchTime = 2.0f;
 
+
+    //Debug Only Remove later
+    public Slider DebugSlider;
 
 
 
@@ -97,6 +104,11 @@ public class EnemyController : BaseBehaviour
     public bool IsClimbing = false;
 
 
+    Collider HeadCollider;
+    Collider BodyCollider;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -108,6 +120,14 @@ public class EnemyController : BaseBehaviour
         Agent = GetComponent<NavMeshAgent>();
 
         Init();
+
+        HeadCollider = GetComponents<BoxCollider>()[0];
+        BodyCollider = GetComponents<BoxCollider>()[1];
+
+
+        //Debug Only Remove later
+        DebugSlider.maxValue = GetComponent<CharacterStats>().MaxHealth;
+        DebugSlider.value = GetComponent<CharacterStats>().Health;
     }
 
     private void Awake()
@@ -120,23 +140,11 @@ public class EnemyController : BaseBehaviour
 
     private void OnValidate()
     {
-        //DEBUG ONLY
-        //
-        //float minRetreatDist = 10 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
-        //float maxRetreatDist = 15 + (((3 - Bravery) - 1) * 5) - ((Aggresiveness - 1) * 2);
-        //result = (AttackRange / 4) + Random.Range(minRetreatDist, maxRetreatDist);
-        //TimeToLose = Determination * Random.Range(5, 10);
-        //DetectionRange = AttackRange * Awareness;
-        //if(Agent != null)
-        //    Agent.speed = Swiftness * 1.5f;
-
         ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
     }
 
     private void OnDrawGizmosSelected()
     {
-
-
         if (ConeOfVisionDebugMesh == null)
         {
             ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
@@ -230,6 +238,12 @@ public class EnemyController : BaseBehaviour
 
     private void Update()
     {
+        //Debug Only Remove later
+        DebugSlider.value = GetComponent<CharacterStats>().Health;
+
+
+
+
         TargetSighted = DetectPlayer();
 
         switch (AlertStatus)
@@ -458,6 +472,26 @@ public class EnemyController : BaseBehaviour
             // MyWeaponController.UseWeapon(EyePosition, (Target.position - EyePosition) + Small random offset to fire near the target);
         }
     }
+
+
+    float HeadshotDamagePercentage = 1.0f;
+    float BodyShotDamagePercentage = 0.75f;
+
+    public void IsHit(Ray ray, int damageAmount)
+    {
+        if(HeadCollider.bounds.IntersectRay(ray))
+        {
+            Debug.Log("Ow my head");
+            GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
+        }
+
+        if(BodyCollider.bounds.IntersectRay(ray))
+        {
+            Debug.Log("Ow my body");
+            GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
+        }
+    }
+
 
 
     /// <summary>
