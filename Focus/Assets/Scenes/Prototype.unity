@@ -1857,7 +1857,7 @@ MonoBehaviour:
   Determination: 1
   Awareness: 1
   Swiftness: 1
-  SuccessChance: 1
+  SuccessChance: 3
   PatrolPoints:
   - {fileID: 2053716993}
   - {fileID: 399853495}

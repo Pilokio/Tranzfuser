@@ -32,7 +32,7 @@ public class WeaponController : MonoBehaviour
     //Timer variables to determine if weapon can be fired again
     private float FireDelay = 0;
     private float FireTimer = 0;
-    private bool CanFire = true;
+    public  bool CanFire { get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -147,6 +147,12 @@ public class WeaponController : MonoBehaviour
                     {
                         hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
+
+                    if(hit.transform.tag == "Player")
+                    {
+                        Debug.Log("HitPlayer");
+                    }
+
 
                     if (WeaponsList[CurrentWeaponIndex].Type == Weapon.WeaponType.Launcher)
                     {

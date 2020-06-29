@@ -157,7 +157,14 @@ public class EnemyController : BaseBehaviour
 
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position + EyePosition, Heading * DetectionRange);
+        if(Target != null)
+            Gizmos.DrawLine(transform.position + EyePosition, Target.position);
+
+
+
+        Gizmos.color = Color.red;
+        if(Target != null)
+            Gizmos.DrawSphere(Target.position, 1.0f);
 
     }
 
@@ -177,14 +184,14 @@ public class EnemyController : BaseBehaviour
     private bool DetectPlayer()
     {
         //Calculate the direction of the player in relation to the enemy
-        Heading = Target.position - (transform.position + EyePosition);
+        Heading = (Target.position + Vector3.up) - (transform.position + EyePosition);
         //Using the heading, calculate the angle between it and the current Look Direction (the forward vector)
         float angle = Vector3.Angle(transform.forward, Heading);
-
         //If the calculated angle is less than the defined threshold
         //Then the player is within the edges of the cone of vision
         if (angle < VisionConeAngle)
         {
+
             //Raycast to determine if the enemy can see the player from its current position
             //This accounts for the detection range and line of sight
             if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
@@ -192,6 +199,7 @@ public class EnemyController : BaseBehaviour
                 //If the raycast hits the player then they must be in range, with a clear line of sight
                 if (hit.transform.tag == "Player")
                 {
+                    Debug.Log("LOS to player");
                     //Reset line of sight timer
                     LineOfSightTimer = TimeToLose;
                     return true;
@@ -453,23 +461,30 @@ public class EnemyController : BaseBehaviour
     {
         FaceTarget();
 
-        //Calculate % chance of a successful hit
-        float chance = Random.Range(0, 100);
-        bool SuccessfulHit = false;
+        if (MyWeaponController.CanFire)
+        {
+            //Calculate % chance of a successful hit
+            float chance = Random.Range(0, 100);
+            bool SuccessfulHit = false;
 
-        if (chance <= PercentageHitChance)
-        {
-            SuccessfulHit = true;
-        }
+            if (chance <= PercentageHitChance)
+            {
+                SuccessfulHit = true;
+            }
 
-        //If hit is successful, fire at the hostile
-        if (SuccessfulHit)
-        {
-            // MyWeaponController.UseWeapon(EyePosition, (Target.position - EyePosition));
-        }
-        else
-        {
-            // MyWeaponController.UseWeapon(EyePosition, (Target.position - EyePosition) + Small random offset to fire near the target);
+            //If hit is successful, fire at the hostile
+            if (SuccessfulHit)
+            {
+                Debug.Log("Hit");
+                //PlayerManager.Instance.Player.GetComponent<CharacterStats>().TakeDamage(10);
+                MyWeaponController.UseWeapon(transform.position + EyePosition, Heading);
+            }
+            else
+            {
+                Vector3 Offset = new Vector3(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2));
+                Debug.Log("Miss");
+                MyWeaponController.UseWeapon(EyePosition, ((Target.position + Offset) - EyePosition).normalized);
+            }
         }
     }
 
