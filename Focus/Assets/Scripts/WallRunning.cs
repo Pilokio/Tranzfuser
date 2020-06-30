@@ -19,9 +19,12 @@ public class WallRunning : MonoBehaviour
     private float distFromLeft;
     private float distFromRight;
 
+    float defaultMass = 1.0f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        defaultMass = rb.mass;
     }
 
 
@@ -85,7 +88,8 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
-            rb.useGravity = false;
+            //rb.useGravity = false;
+            rb.mass = 0;
         }
     }
 
@@ -93,7 +97,8 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
-            rb.useGravity = true;
+            rb.mass = defaultMass;
+          //  rb.useGravity = true;
         }
     }
 

@@ -143,14 +143,14 @@ public class WeaponController : MonoBehaviour
                 
                 if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
-                    if (hit.transform.tag == "Enemy")
+                    if (hit.transform.tag == "Enemy" && transform.tag != "Enemy")
                     {
                         hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
 
-                    if(hit.transform.tag == "Player")
+                    if(hit.transform.tag == "Player" && transform.tag != "Player")
                     {
-                        Debug.Log("HitPlayer");
+                        hit.transform.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
 
 

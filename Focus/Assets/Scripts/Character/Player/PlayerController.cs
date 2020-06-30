@@ -3,10 +3,8 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
-[RequireComponent(typeof(WallRunning))]
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(CharacterStats))]
-[RequireComponent(typeof(TimeManager))]
 
 public class PlayerController : MonoBehaviour
 {

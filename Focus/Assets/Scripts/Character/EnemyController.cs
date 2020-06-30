@@ -106,6 +106,7 @@ public class EnemyController : BaseBehaviour
 
     Collider HeadCollider;
     Collider BodyCollider;
+    Collider DetectionSphere;
 
 
 
@@ -123,7 +124,7 @@ public class EnemyController : BaseBehaviour
 
         HeadCollider = GetComponents<BoxCollider>()[0];
         BodyCollider = GetComponents<BoxCollider>()[1];
-
+        DetectionSphere = GetComponent<SphereCollider>();
 
         //Debug Only Remove later
         DebugSlider.maxValue = GetComponent<CharacterStats>().MaxHealth;
@@ -199,7 +200,6 @@ public class EnemyController : BaseBehaviour
                 //If the raycast hits the player then they must be in range, with a clear line of sight
                 if (hit.transform.tag == "Player")
                 {
-                    Debug.Log("LOS to player");
                     //Reset line of sight timer
                     LineOfSightTimer = TimeToLose;
                     return true;
@@ -494,16 +494,25 @@ public class EnemyController : BaseBehaviour
 
     public void IsHit(Ray ray, int damageAmount)
     {
+        if(DetectionSphere.bounds.IntersectRay(ray))
+        {
+            Debug.Log("What was that?!");
+            AlertStatus = AlertState.Hostile;
+        }
+
+
         if(HeadCollider.bounds.IntersectRay(ray))
         {
             Debug.Log("Ow my head");
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
+            return;
         }
 
         if(BodyCollider.bounds.IntersectRay(ray))
         {
             Debug.Log("Ow my body");
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
+            return;
         }
     }
 
