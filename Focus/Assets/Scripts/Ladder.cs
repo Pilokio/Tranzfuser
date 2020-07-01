@@ -5,9 +5,8 @@ using UnityEngine.AI;
 
 public class Ladder : MonoBehaviour
 {
-    //Transforms for the top and bottom of the ladder
-    public Transform Top;
-    public Transform Bottom;
+    public bool IsOccupied = false;
+    bool PlayerOccupied = false;
 
     //The player gameobject
     private GameObject player;
@@ -19,70 +18,75 @@ public class Ladder : MonoBehaviour
         player = PlayerManager.Instance.Player;
     }
 
+
     private void OnCollisionEnter(Collision collision)
     {
         //Check the collider belongs to the player and not the enemy etc
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Player" && !player.GetComponent<PlayerController>().IsClimbing && !IsOccupied)
         {
-
-            //Make the player turn to face the ladder
-            Vector3 target = transform.rotation.eulerAngles;
+            PlayerOccupied = true;
+            IsOccupied = true;
+           //Make the player turn to face the ladder
+           Vector3 target = transform.rotation.eulerAngles;
             target.x = 0;
             target.z = 0;
             target.y += 180;
             player.transform.rotation = Quaternion.Euler(target);
 
-
             //Set the x and z position of the player to match the ladder climbing positions
-            player.transform.position = new Vector3(Bottom.position.x, player.transform.position.y, Bottom.position.z);
+            player.transform.position = new Vector3(LadderPath[1].position.x, player.transform.position.y, LadderPath[1].position.z);
 
             //Set the player to climb
-            player.GetComponent<PlayerController>().IsClimbing = true;
+            player.GetComponent<PlayerController>().SetIsClimbing(true);
         }
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void Update()
     {
-        //Check the collider belongs to the player and not the enemy etc
-        if (collision.transform.tag == "Player")
+        if (PlayerOccupied)
         {
-            //If the player is close to the bottom of the ladder and still moving down
-            if (Vector3.Distance(player.transform.position, Bottom.position) < 1 && CustomInputManager.GetAxisRaw("LeftStickVertical") < 0)
+
+            if (CustomInputManager.GetAxisRaw("LeftStickHorizontal") < CustomInputManager.GetAxisNeutralPosition("LeftStickHorizontal"))
             {
+                player.GetComponent<PlayerController>().SetIsClimbing(false);
+                IsOccupied = false;
+                PlayerOccupied = false;
+            }
+
+
+            //If the player is close to the bottom of the ladder and still moving down
+            if (Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") < CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
+            {
+                IsOccupied = false;
+                PlayerOccupied = false;
                 //Stop climbing and resume normal movement
-                player.GetComponent<PlayerController>().IsClimbing = false;
+                player.GetComponent<PlayerController>().SetIsClimbing(false);
             }
 
             //If the player is near or above the top of the ladder and still moving up
-            if (player.transform.position.y > Top.position.y - 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") > 0)
+            if (player.transform.position.y > LadderPath[1].position.y && CustomInputManager.GetAxisRaw("LeftStickVertical") > CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
             {
+                IsOccupied = false;
+                PlayerOccupied = false;
                 //Apply slight push to ensure they clear the top of the ladder
-                player.transform.position += Vector3.up + (player.transform.forward * 2.0f);
-                //Stop climbing and resume normal movement
-                player.GetComponent<PlayerController>().IsClimbing = false;
+                player.transform.position = LadderPath[0].position;//+= Vector3.up + (player.transform.forward * 2.0f);
+                                                                                //Stop climbing and resume normal movement
+                player.GetComponent<PlayerController>().SetIsClimbing(false);
             }
-        }
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        //Check that the exiting collider is the enemy
-        if (collision.transform.tag == "Player")
-        {
-            //Resume normal player movement
-            player.GetComponent<PlayerController>().IsClimbing = false;
+
         }
     }
 
-    //The path the NPC will follow when using the ladder
     public List<Transform> LadderPath = new List<Transform>();
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy" && !IsOccupied)
         {
             if (!other.gameObject.GetComponent<EnemyController>().IsClimbing)
             {
-                other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
+                IsOccupied = true;
+               other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
                 other.gameObject.GetComponent<Rigidbody>().useGravity = false;
 
                 float distanceTop = Vector3.Distance(other.gameObject.transform.position, LadderPath[0].position);
@@ -158,7 +162,7 @@ public class Ladder : MonoBehaviour
 
             }
 
-           
+            IsOccupied = false;
             NPC.GetComponent<EnemyController>().IsClimbing = false;
         }
         NPC.GetComponent<NavMeshAgent>().enabled = true;

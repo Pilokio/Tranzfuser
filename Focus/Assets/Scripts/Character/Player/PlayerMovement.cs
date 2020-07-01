@@ -1,3 +1,4 @@
+using Chronos;
 using UnityEngine;
 
 public class PlayerMovement : BaseBehaviour
@@ -124,7 +125,7 @@ public class PlayerMovement : BaseBehaviour
 
     public void ClimbLadder(Vector3 Direction)
     {
-        GetComponent<Rigidbody>().useGravity = false;
+        GetComponent<Timeline>().rigidbody.useGravity = false;
         Direction *= ClimbSpeed * Time.deltaTime;
         rb.MovePosition(rb.position + Direction);
     }

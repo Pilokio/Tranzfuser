@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Chronos;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -31,9 +32,24 @@ public class PlayerController : MonoBehaviour
     public Transform OriginalGunPos;
     public Vector3 characterVelocityMomentum;
 
+
     private Camera playerCamera;
 
-    public bool IsClimbing = false;
+    public bool IsClimbing { get; private set; }
+
+    public void SetIsClimbing(bool Param)
+    {
+        IsClimbing = Param;
+
+        if (Param)
+        {
+            GetComponent<Timeline>().rigidbody.useGravity = false;
+        }
+        else
+        {
+            GetComponent<Timeline>().rigidbody.useGravity = true;
+        }
+    }
 
     private float smoothFactor = 10.0f;
 
@@ -250,22 +266,24 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-    // Fixes for the gravity
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-        {
-            GetComponent<Rigidbody>().useGravity = false;
-        }
-    }
+    //// Fixes for the gravity
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+    //    {
+    //        Debug.Log("Climbing");
+    //        GetComponent<Timeline>().rigidbody.useGravity = false;
+    //    }
+    //}
 
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-        {
-            GetComponent<Rigidbody>().useGravity = true;
-        }
-    }
+    //void OnCollisionExit(Collision collision)
+    //{
+    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
+    //    {
+    //        Debug.Log("Not Climbing");
+    //        GetComponent<Timeline>().rigidbody.useGravity = true;
+    //    }
+    //}
 
     /// <summary>
     /// WIP - Hook mechanic, press Q to fire hook

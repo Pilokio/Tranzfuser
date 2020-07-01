@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Chronos;
 
 public class WallRunning : MonoBehaviour
 {
@@ -88,8 +89,10 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
+            GetComponent<Timeline>().rigidbody.useGravity = false;
+
             //rb.useGravity = false;
-            rb.mass = 0;
+            //rb.mass = 0;
         }
     }
 
@@ -97,8 +100,10 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
-            rb.mass = defaultMass;
-          //  rb.useGravity = true;
+            GetComponent<Timeline>().rigidbody.useGravity = true;
+
+            //rb.mass = defaultMass;
+            //  rb.useGravity = true;
         }
     }
 

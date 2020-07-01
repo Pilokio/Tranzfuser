@@ -1724,7 +1724,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &451348744
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5553,7 +5553,6 @@ MonoBehaviour:
   GunHolder: {fileID: 1616361671}
   OriginalGunPos: {fileID: 881788132}
   characterVelocityMomentum: {x: 0, y: 0, z: 0}
-  IsClimbing: 0
 --- !u!65 &1564139283
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12560,8 +12559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622a7c8958e9c1943b9c947995923700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Top: {fileID: 7947351605378344457}
-  Bottom: {fileID: 7947351604940441092}
+  IsOccupied: 0
   LadderPath:
   - {fileID: 1751706662}
   - {fileID: 1587757385}

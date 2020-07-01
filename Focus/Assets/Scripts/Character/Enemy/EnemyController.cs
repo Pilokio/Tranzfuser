@@ -139,45 +139,6 @@ public class EnemyController : BaseBehaviour
         SearchTimer = SearchTime;
     }
 
-    private void OnValidate()
-    {
-        ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (ConeOfVisionDebugMesh == null)
-        {
-            ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
-        }
-
-        Gizmos.DrawWireMesh(ConeOfVisionDebugMesh, 0, transform.position + EyePosition, transform.rotation);
-
-        Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection(EyePosition), 0.5f);
-
-
-        Gizmos.color = Color.blue;
-        if(Target != null)
-            Gizmos.DrawLine(transform.position + EyePosition, Target.position);
-
-
-
-        Gizmos.color = Color.red;
-        if(Target != null)
-            Gizmos.DrawSphere(Target.position, 1.0f);
-
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        foreach (Transform target in PatrolPoints)
-        {
-            Gizmos.DrawWireSphere(target.position, 2.0f);
-        }
-    }
-
     /// <summary>
     /// This function returns true if the player can be seen within the enemy's cone of vision
     /// </summary>
@@ -492,6 +453,11 @@ public class EnemyController : BaseBehaviour
     float HeadshotDamagePercentage = 1.0f;
     float BodyShotDamagePercentage = 0.75f;
 
+    /// <summary>
+    /// This function determines which hitbox the player raycast intersects
+    /// </summary>
+    /// <param name="ray"></param>
+    /// <param name="damageAmount"></param>
     public void IsHit(Ray ray, int damageAmount)
     {
         if(DetectionSphere.bounds.IntersectRay(ray))
@@ -516,6 +482,49 @@ public class EnemyController : BaseBehaviour
         }
     }
 
+
+
+
+
+
+    private void OnValidate()
+    {
+        ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (ConeOfVisionDebugMesh == null)
+        {
+            ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
+        }
+
+        Gizmos.DrawWireMesh(ConeOfVisionDebugMesh, 0, transform.position + EyePosition, transform.rotation);
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireSphere(transform.position + transform.TransformDirection(EyePosition), 0.5f);
+
+
+        Gizmos.color = Color.blue;
+        if (Target != null)
+            Gizmos.DrawLine(transform.position + EyePosition, Target.position);
+
+
+
+        Gizmos.color = Color.red;
+        if (Target != null)
+            Gizmos.DrawSphere(Target.position, 1.0f);
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach (Transform target in PatrolPoints)
+        {
+            Gizmos.DrawWireSphere(target.position, 2.0f);
+        }
+    }
 
 
     /// <summary>
