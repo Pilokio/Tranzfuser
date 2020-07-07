@@ -112,6 +112,7 @@ public class PlayerController : MonoBehaviour
 
             case State.HookshotThrown:
                 HandleHookshotThrow();
+                HandleLook();
                 HandleInput();
                 break;
 
@@ -243,9 +244,6 @@ public class PlayerController : MonoBehaviour
         {
             MyTimeController.ToggleSlowMo();
         }
-
-
-
     }
 
     void HandleLook()
@@ -309,7 +307,7 @@ public class PlayerController : MonoBehaviour
     {
         hookshotTransform.LookAt(hookshotPosition);
 
-        float hookshotThrowSpeed = 500f;
+        float hookshotThrowSpeed = 70f;
         hookshotSize += hookshotThrowSpeed * Time.deltaTime;
         hookshotTransform.localScale = new Vector3(1, 1, hookshotSize);
 
@@ -323,11 +321,10 @@ public class PlayerController : MonoBehaviour
      
     private void HandleHookshotMovement()
     {
+
+        hookshotTransform.LookAt(hookshotPosition);
+
         transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 0.5f);
-
-
-
-        //hookshotTransform.LookAt(hookshotTransform);
 
         //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
 
