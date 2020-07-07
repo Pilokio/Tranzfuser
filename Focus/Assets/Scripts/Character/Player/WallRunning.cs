@@ -54,7 +54,7 @@ public class WallRunning : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.right, out rightWall))
         {
             distFromRight = Vector3.Distance(transform.position, rightWall.point);
-            if (distFromRight < MinWallRunDistance && rightWall.transform.tag == "RunnableWall")
+            if (distFromRight < MinWallRunDistance && rightWall.transform.CompareTag("RunnableWall"))
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteRight, Time.deltaTime * 5);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
@@ -71,7 +71,7 @@ public class WallRunning : MonoBehaviour
         {
             distFromLeft = Vector3.Distance(transform.position, leftWall.point);
 
-            if (distFromLeft < MinWallRunDistance && leftWall.transform.tag == "RunnableWall")
+            if (distFromLeft < MinWallRunDistance && leftWall.transform.CompareTag("RunnableWall"))
             {
                 float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, WallRunRoteLeft, Time.deltaTime * 5);
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);

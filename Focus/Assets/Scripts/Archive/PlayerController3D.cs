@@ -82,7 +82,7 @@ public class PlayerController3D : CharacterController3D
         {
             for (int i = 0; i < transform.childCount; i++)
             {
-                if (transform.GetChild(i).name == "CameraHolder" || transform.GetChild(i).tag == "CameraHolder")
+                if (transform.GetChild(i).name == "CameraHolder" || transform.GetChild(i).CompareTag("CameraHolder"))
                 {
                     FirstPersonCameraHolder = transform.GetChild(i);
                     break;
@@ -135,7 +135,7 @@ public class PlayerController3D : CharacterController3D
         {
             for (int i = 0; i < transform.childCount; i++)
             {
-                if (transform.GetChild(i).name == "CameraTarget" || transform.GetChild(i).tag == "CameraTarget")
+                if (transform.GetChild(i).name == "CameraTarget" || transform.GetChild(i).CompareTag("CameraTarget"))
                 {
                     ThirdPersonCameraTarget = transform.GetChild(i);
                     break;
@@ -158,7 +158,7 @@ public class PlayerController3D : CharacterController3D
         {
             for (int i = 0; i < ThirdPersonCameraTarget.childCount; i++)
             {
-                if (ThirdPersonCameraTarget.GetChild(i).name == "CameraHolder" || ThirdPersonCameraTarget.GetChild(i).tag == "CameraHolder")
+                if (ThirdPersonCameraTarget.GetChild(i).name == "CameraHolder" || ThirdPersonCameraTarget.GetChild(i).CompareTag("CameraHolder"))
                 {
                     ThirdPersonCameraHolder = ThirdPersonCameraTarget.GetChild(i);
                     break;

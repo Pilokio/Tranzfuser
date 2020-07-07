@@ -14,6 +14,17 @@ public class EnemyStats : CharacterStats
         }
     }
 
+    public void SetAllAmmoCounts(int amount)
+    {
+        PistolAmmo = amount;
+        SMGAmmo = amount;
+        RifleAmmo = amount;
+        ShotgunAmmo = amount;
+        LauncherAmmo = amount;
+        GrenadeCount = amount;
+    }
+
+
     public override void Die()
     {
         base.Die();

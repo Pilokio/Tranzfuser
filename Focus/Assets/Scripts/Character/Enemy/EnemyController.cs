@@ -14,37 +14,10 @@ using UnityEngine.UI;
 [RequireComponent(typeof(WeaponController))]
 public class EnemyController : BaseBehaviour
 {
-    private NavMeshAgent Agent;
-
-    [Header("General Settings")]
-    AlertState AlertStatus = 0;
-
-    [Header("Combat Settings")]
-    //The minimum attack range
-    float AttackRange = 5.0f;
-    float RetreatDistance = 2.5f;
-    //[SerializeField] CombatType EnemyType = 0;
-
-    [Header("Detection Settings")]
-    //The range at which hostiles can be seen
-    float DetectionRange = 10.0f;
-    //The field of view angle
-    [SerializeField] float VisionConeAngle = 45;
-    //Layer mask outlining what can block the raycast. (Typically everything apart from itself)
-    [SerializeField] LayerMask DetectionMask = new LayerMask();
-    //The position of the "eye". Where the cone of vision comes to a point. 
-    [SerializeField] Vector3 EyePosition = new Vector3();
-    //The amount of time before a hostiles will be "lost" after losing line of sight
-    float TimeToLose = 2.0f;
-    float SearchTime = 2.0f;
-
-
-    //Debug Only Remove later
-    public Slider DebugSlider;
-
-
-
-    [Header("Enemy B.A.D.A.S.S. Stats")]
+    [Header("Enemy Stats")]
+    [Range(1, 5)]
+    [SerializeField] int Difficulty = 1;
+    [SerializeField] CombatType EnemyType;
     [Range(1, 3)]
     [SerializeField] int Bravery = 1; //Determines how close the enemy can be before retreating
     [Range(1, 3)]
@@ -58,34 +31,62 @@ public class EnemyController : BaseBehaviour
     [Range(1, 3)]
     [SerializeField] int SuccessChance = 1; //Determines how likely is the enemy to be successful in their actions
 
+    [Header("Detection Settings")]
+    [SerializeField] AlertState AlertStatus = 0;
+   
+    //The field of view angle
+    [SerializeField] float VisionConeAngle = 45;
+    //Layer mask outlining what can block the raycast. (Typically everything apart from itself)
+    [SerializeField] LayerMask DetectionMask = new LayerMask();
+    //The position of the "eye". Where the cone of vision comes to a point. 
+    [SerializeField] Vector3 EyePosition = new Vector3();
+    //The amount of time before a hostiles will be "lost" after losing line of sight
+    private float TimeToLose = 2.0f;
+    private float SearchTime = 2.0f;
+    //The timer for losing a hostile after LOS is lost
+    private float LineOfSightTimer = 0.0f; 
+    //The range at which hostiles can be seen
+    float DetectionRange = 10.0f;
+    //The timer tracking how long the enemy has been searching for
+    private float SearchTimer = 0.0f;
+
     [Header("Patrol Settings")]
     [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
     [SerializeField] int TargetPatrolPoint = 0;
+   
+    [Header("Combat Settings")]
+    //The minimum attack range
+    float AttackRange = 5.0f;
+    float RetreatDistance = 2.5f;
+    [Header("Incoming Damage Multipliers")]
+    [SerializeField] float HeadshotDamagePercentage = 1.0f;
+    [SerializeField] float BodyShotDamagePercentage = 0.75f;
+
+    [Header("DEBUG ONLY")]
+    //Debug Only Remove later
+    public Slider DebugSlider;
+    public bool CanMove = false;
 
 
-
+    //The navmesh agent applied to this game object
+    private NavMeshAgent Agent;
+    //Default percentage chance of a successful hit
     private int PercentageHitChance = 100;
-
-
-    //The timer for losing a hostile after LOS is lost
-    float LineOfSightTimer = 0.0f;
-
-    //The timer tracking how long the enemy has been searching for
-    float SearchTimer;
 
     //Stores the hit from the raycase. 
     //If it is not the player then LOS is lost
-    RaycastHit hit;
+    private RaycastHit hit;
 
     //The target direction of the enemy. 
     //Used to determine if the player is in their cone of vision
-    Vector3 Heading = new Vector3();
+    private Vector3 Heading = new Vector3();
 
 
     //Store the weapon controller to allow the enemy to use their weapons
-    WeaponController MyWeaponController;
+    private WeaponController MyWeaponController;
 
-    CharacterStats EnemyStats;
+    //The component storing the health, stamina, ammo, etc. of this enemy
+    private EnemyStats EnemyStats;
 
     //Determine if a hostile has been sighted
     private bool TargetSighted = false;
@@ -97,18 +98,15 @@ public class EnemyController : BaseBehaviour
     //Mesh used for drawing the wireframe gizmo for the cone of vision
     Mesh ConeOfVisionDebugMesh;
 
-
-    //Used for debug
-    public bool CanMove = false;
-
     public bool IsClimbing = false;
-
+    private bool StopWhenInRange = true;
+    float TurnSpeed = 5.0f;
 
     Collider HeadCollider;
     Collider BodyCollider;
     Collider DetectionSphere;
 
-
+   
 
     // Start is called before the first frame update
     void Start()
@@ -119,9 +117,13 @@ public class EnemyController : BaseBehaviour
         Target = PlayerManager.Instance.Player.transform;
         //Store the navmesh agent component for movement through the level
         Agent = GetComponent<NavMeshAgent>();
+        //Get the character stats component
+        EnemyStats = GetComponent<EnemyStats>();
 
+        //Initialise the enemy parameters using the assigned stats
         Init();
 
+        //Store the hitboxes attached to this enemy
         HeadCollider = GetComponents<BoxCollider>()[0];
         BodyCollider = GetComponents<BoxCollider>()[1];
         DetectionSphere = GetComponent<SphereCollider>();
@@ -133,6 +135,7 @@ public class EnemyController : BaseBehaviour
 
     private void Awake()
     {
+        //Default to idle state
         AlertStatus = AlertState.Idle;
         //Init timers
         LineOfSightTimer = TimeToLose;
@@ -140,46 +143,38 @@ public class EnemyController : BaseBehaviour
     }
 
     /// <summary>
-    /// This function returns true if the player can be seen within the enemy's cone of vision
-    /// </summary>
-    /// <returns></returns>
-    private bool DetectPlayer()
-    {
-        //Calculate the direction of the player in relation to the enemy
-        Heading = (Target.position + Vector3.up) - (transform.position + EyePosition);
-        //Using the heading, calculate the angle between it and the current Look Direction (the forward vector)
-        float angle = Vector3.Angle(transform.forward, Heading);
-        //If the calculated angle is less than the defined threshold
-        //Then the player is within the edges of the cone of vision
-        if (angle < VisionConeAngle)
-        {
-
-            //Raycast to determine if the enemy can see the player from its current position
-            //This accounts for the detection range and line of sight
-            if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
-            {
-                //If the raycast hits the player then they must be in range, with a clear line of sight
-                if (hit.transform.tag == "Player")
-                {
-                    //Reset line of sight timer
-                    LineOfSightTimer = TimeToLose;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// This function makes use of the BADASS stats to randomise the enemy's behaviours
+    /// This function makes use of the enemy's stats to randomise the enemy's behaviours
     /// </summary>
     private void Init()
     {
+        switch (EnemyType)
+        {
+            case CombatType.Soldier:
+                EnemyStats.MaxHealth = 100 * Difficulty;
+                EnemyStats.Health = EnemyStats.MaxHealth;
+                StopWhenInRange = true;
+                break;
+            case CombatType.Berzerker:
+                EnemyStats.MaxHealth = 20 * Difficulty;
+                EnemyStats.Health = EnemyStats.MaxHealth;
+                StopWhenInRange = false;
+                break;
+            case CombatType.Tank:
+                EnemyStats.MaxHealth = 500 * Difficulty;
+                EnemyStats.Health = EnemyStats.MaxHealth;
+                StopWhenInRange = false;
+                break;
+            case CombatType.Sniper:
+                EnemyStats.MaxHealth = 50 * Difficulty;
+                EnemyStats.Health = EnemyStats.MaxHealth;
+                StopWhenInRange = true;
+                break;
+            case CombatType.Boss:
+                EnemyStats.MaxHealth = 1000 * Difficulty;
+                EnemyStats.Health = EnemyStats.MaxHealth;
+                StopWhenInRange = false;
+                break;
+        }
 
         //Set the attack range to the currently equipped weapon's range
         AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponRange;
@@ -198,11 +193,18 @@ public class EnemyController : BaseBehaviour
         //TODO use this to alter climb speed/ weapons reload speed etc.
         Agent.speed = Swiftness * 1.5f;
 
-
+        //Use the success chance stat to assign the percentage hit chance 
+        //(ie how likely is it that this enemy's shots will successfully hit the target)
         PercentageHitChance = SuccessChance * Random.Range(20, 30);
 
-        TimeToLose = Determination * Random.Range(5, 10);
+        //Assign how long it will take for the enemy to lose the player after LOS is lost 
+        //using the determination stat
+        TimeToLose = Determination * Random.Range(10, 20);
 
+        
+        EnemyStats.SetAllAmmoCounts(10000);
+
+      
     }
 
     private void Update()
@@ -210,11 +212,10 @@ public class EnemyController : BaseBehaviour
         //Debug Only Remove later
         DebugSlider.value = GetComponent<CharacterStats>().Health;
 
-
-
-
+        //Determine if the enemy has a LOS to the player
         TargetSighted = DetectPlayer();
 
+        //Control this enemy based on the current alert status
         switch (AlertStatus)
         {
             case AlertState.Idle:
@@ -258,81 +259,9 @@ public class EnemyController : BaseBehaviour
         }
     }
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-    //    //If the player is detected, move straight to the hostile state
-    //    TargetSighted = DetectPlayer();
-
-    //    if (TargetSighted)
-    //    {
-    //        Debug.Log("Player found");
-    //        LineOfSightTimer = TimeToLose;
-    //        AlertStatus = AlertState.Hostile;
-    //    }
-    //    else
-    //    {
-    //        LineOfSightTimer -= Time.deltaTime;
-
-    //        if (LineOfSightTimer <= 0.0f)
-    //        {
-    //            Debug.Log("Player Lost");
-    //            LineOfSightTimer = TimeToLose;
-
-    //            AlertStatus = AlertState.Idle; //Change to suspicious for stealth gameplay
-    //        }
-    //    }
-
-    //    switch (AlertStatus)
-    //    {
-    //        case AlertState.Idle:
-
-    //            // Patrol the designated patrol points
-
-    //            if(PatrolPoints.Count > 1)
-    //            {
-    //                //Move to the current target patrol point
-    //                if(CanMove)
-    //                    Agent.SetDestination(PatrolPoints[TargetPatrolPoint].position);
-
-    //                //If the enemy arrives at the patrol point, move to the next one
-    //                if(Vector3.Distance(transform.position, PatrolPoints[TargetPatrolPoint].position) < Agent.stoppingDistance)
-    //                {
-    //                    TargetPatrolPoint++;
-    //                    if (TargetPatrolPoint >= PatrolPoints.Count)
-    //                    {
-    //                        TargetPatrolPoint = 0;
-    //                    }
-    //                }
-    //            }
-    //            else
-    //            {
-    //                Debug.LogWarning("Not enough patrol points for " + transform.name + ". Unable to patrol.");
-    //            }
-
-    //            //This state could also be used to allow the enemies to interact with the world if desired
-    //            //ie sit on chairs, lean on railings/walls, talk to each other
-    //            break;
-    //        case AlertState.Suspicious:
-    //            //Investigate disturbances.
-
-    //           //Get Search location (ie player last known location, origin of gunfire, dead body)
-    //           //Pick a random position in a radius around the disturbance location
-    //           //Move to this location.
-    //           //Repeat until search timer is 0 or hostile found
-    //           //Return to idle if not found in time limit, move to hostile if found
-    //            break;
-    //        case AlertState.Hostile:
-    //            //Attack the target until they are dead, or line of sight is lost
-    //            Combat();
-    //            break;
-    //        default:
-    //            //Unreachable code
-    //            Debug.LogError("Invalid alert status on enemy :" + transform.name);
-    //            break;
-    //    }
-    //}
-
+    /// <summary>
+    /// This function handles the patrol behaviours of the enemy
+    /// </summary>
     void Patrol()
     {
         if (PatrolPoints.Count > 1)
@@ -357,7 +286,9 @@ public class EnemyController : BaseBehaviour
         }
     }
 
-    public bool StopWhenInRange = true;
+    /// <summary>
+    /// This function handles the combat behaviours of the enemy
+    /// </summary>
     void Combat()
     {
         //Calculate the distance between the player and the enemy
@@ -371,7 +302,8 @@ public class EnemyController : BaseBehaviour
         }
         else if (distance < RetreatDistance)
         {
-            TakeCover();
+            if(StopWhenInRange)
+                TakeCover();
         }
         else
         {
@@ -383,7 +315,6 @@ public class EnemyController : BaseBehaviour
     }
 
 
-    float TurnSpeed = 5.0f;
 
     void FaceTarget()
     {
@@ -398,7 +329,7 @@ public class EnemyController : BaseBehaviour
     void TakeCover()
     {
         //This allows the enemy to retreat when the player gets too close
-        //TODO have the option to take cover here
+        //TODO have the option to take cover here also
         Agent.SetDestination(transform.position - (5 * transform.forward));
     }
 
@@ -450,8 +381,7 @@ public class EnemyController : BaseBehaviour
     }
 
 
-    float HeadshotDamagePercentage = 1.0f;
-    float BodyShotDamagePercentage = 0.75f;
+   
 
     /// <summary>
     /// This function determines which hitbox the player raycast intersects
@@ -466,10 +396,10 @@ public class EnemyController : BaseBehaviour
             AlertStatus = AlertState.Hostile;
         }
 
-
         if(HeadCollider.bounds.IntersectRay(ray))
         {
             Debug.Log("Ow my head");
+            AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
             return;
         }
@@ -477,18 +407,98 @@ public class EnemyController : BaseBehaviour
         if(BodyCollider.bounds.IntersectRay(ray))
         {
             Debug.Log("Ow my body");
+            AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
             return;
         }
     }
 
+    /// <summary>
+    /// This function returns true if the player can be seen within the enemy's cone of vision
+    /// </summary>
+    /// <returns></returns>
+    private bool DetectPlayer()
+    {
+        //Calculate the direction of the player in relation to the enemy
+        Heading = (Target.position + Vector3.up) - (transform.position + EyePosition);
+        //Using the heading, calculate the angle between it and the current Look Direction (the forward vector)
+        float angle = Vector3.Angle(transform.forward, Heading);
+        //If the calculated angle is less than the defined threshold
+        //Then the player is within the edges of the cone of vision
+        if (angle < VisionConeAngle)
+        {
+
+            //Raycast to determine if the enemy can see the player from its current position
+            //This accounts for the detection range and line of sight
+            if (Physics.Raycast(transform.position + EyePosition, Heading, out hit, DetectionRange, DetectionMask))
+            {
+                //If the raycast hits the player then they must be in range, with a clear line of sight
+                if (hit.transform.tag == "Player")
+                {
+                    //Reset line of sight timer
+                    LineOfSightTimer = TimeToLose;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
 
 
-
-
-
+    
+    //Debug Only - gizmos for patrol points, cone of vision, etc.
     private void OnValidate()
     {
+        switch (EnemyType)
+        {
+            case CombatType.Soldier:
+                Bravery = 2;
+                Aggresiveness = 2;
+                Determination = 2;
+                Awareness = 2;
+                Swiftness = 2;
+                SuccessChance = 2;
+                break;
+            case CombatType.Berzerker:
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 2;
+                Swiftness = 3;
+                SuccessChance = 2;
+                break;
+            case CombatType.Tank:
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 1;
+                Swiftness = 1;
+                SuccessChance = 1;
+                break;
+            case CombatType.Sniper:
+                Bravery = 1;
+                Aggresiveness = 1;
+                Determination = 3;
+                Awareness = 3;
+                Swiftness = 3;
+                SuccessChance = 3;
+                break;
+            case CombatType.Boss:
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 3;
+                Swiftness = 3;
+                SuccessChance = 3;
+                break;
+        }
+
+
         ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
     }
 
@@ -536,4 +546,17 @@ public class EnemyController : BaseBehaviour
         Suspicious = 1,
         Hostile = 2
     }
+
+    /// <summary>
+    /// This enum determines the type of combat this enemy will perform
+    /// </summary>
+    public enum CombatType
+    {
+    Soldier = 0,
+    Berzerker = 1,
+    Tank = 2,
+    Sniper = 3,
+    Boss = 4
+    }
+
 }
