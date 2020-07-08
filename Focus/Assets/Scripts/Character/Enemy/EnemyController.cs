@@ -33,9 +33,11 @@ public class EnemyController : BaseBehaviour
 
     [Header("Detection Settings")]
     [SerializeField] AlertState AlertStatus = 0;
-   
+
     //The field of view angle
     [SerializeField] float VisionConeAngle = 45;
+    //The minimum detection range of the cone of vision
+    [SerializeField] float MinDetectionRange = 10;
     //Layer mask outlining what can block the raycast. (Typically everything apart from itself)
     [SerializeField] LayerMask DetectionMask = new LayerMask();
     //The position of the "eye". Where the cone of vision comes to a point. 
@@ -111,22 +113,13 @@ public class EnemyController : BaseBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Get the wepon controller component
-        MyWeaponController = GetComponent<WeaponController>();
-        //Store the player transform to determine LOS at any point
-        Target = PlayerManager.Instance.Player.transform;
-        //Store the navmesh agent component for movement through the level
-        Agent = GetComponent<NavMeshAgent>();
-        //Get the character stats component
-        EnemyStats = GetComponent<EnemyStats>();
-
         //Initialise the enemy parameters using the assigned stats
         Init();
 
-        //Store the hitboxes attached to this enemy
-        HeadCollider = GetComponents<BoxCollider>()[0];
-        BodyCollider = GetComponents<BoxCollider>()[1];
-        DetectionSphere = GetComponent<SphereCollider>();
+
+        //Store the player transform to determine LOS at any point
+        Target = PlayerManager.Instance.Player.transform;
+
 
         //Debug Only Remove later
         DebugSlider.maxValue = GetComponent<CharacterStats>().MaxHealth;
@@ -139,7 +132,7 @@ public class EnemyController : BaseBehaviour
         AlertStatus = AlertState.Idle;
         //Init timers
         LineOfSightTimer = TimeToLose;
-        SearchTimer = SearchTime;
+        SearchTimer = SearchTime; 
     }
 
     /// <summary>
@@ -147,32 +140,80 @@ public class EnemyController : BaseBehaviour
     /// </summary>
     private void Init()
     {
+
+        //Get the wepon controller component
+        MyWeaponController = GetComponent<WeaponController>();
+        //Store the navmesh agent component for movement through the level
+        Agent = GetComponent<NavMeshAgent>();
+        //Get the character stats component
+        EnemyStats = GetComponent<EnemyStats>();
+
+        //Store the hitboxes attached to this enemy
+        HeadCollider = GetComponents<BoxCollider>()[0];
+        BodyCollider = GetComponents<BoxCollider>()[1];
+        DetectionSphere = GetComponent<SphereCollider>();
+
         switch (EnemyType)
         {
             case CombatType.Soldier:
                 EnemyStats.MaxHealth = 100 * Difficulty;
                 EnemyStats.Health = EnemyStats.MaxHealth;
                 StopWhenInRange = true;
+
+                Bravery = 2;
+                Aggresiveness = 2;
+                Determination = 2;
+                Awareness = 2;
+                Swiftness = 2;
+                SuccessChance = 2;
                 break;
             case CombatType.Berzerker:
                 EnemyStats.MaxHealth = 20 * Difficulty;
                 EnemyStats.Health = EnemyStats.MaxHealth;
                 StopWhenInRange = false;
+
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 1;
+                Swiftness = 1;
+                SuccessChance = 1;
                 break;
             case CombatType.Tank:
                 EnemyStats.MaxHealth = 500 * Difficulty;
                 EnemyStats.Health = EnemyStats.MaxHealth;
                 StopWhenInRange = false;
+
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 1;
+                Swiftness = 1;
+                SuccessChance = 1;
                 break;
             case CombatType.Sniper:
                 EnemyStats.MaxHealth = 50 * Difficulty;
                 EnemyStats.Health = EnemyStats.MaxHealth;
                 StopWhenInRange = true;
+
+                Bravery = 1;
+                Aggresiveness = 1;
+                Determination = 3;
+                Awareness = 3;
+                Swiftness = 3;
+                SuccessChance = 3;
                 break;
             case CombatType.Boss:
                 EnemyStats.MaxHealth = 1000 * Difficulty;
                 EnemyStats.Health = EnemyStats.MaxHealth;
                 StopWhenInRange = false;
+
+                Bravery = 3;
+                Aggresiveness = 3;
+                Determination = 3;
+                Awareness = 3;
+                Swiftness = 3;
+                SuccessChance = 3;
                 break;
         }
 
@@ -187,7 +228,7 @@ public class EnemyController : BaseBehaviour
         RetreatDistance = Random.Range(minRetreatDist, maxRetreatDist);
 
         //Use the sight quality attribute to determine the detection range
-        DetectionRange = AttackRange * Awareness;
+        DetectionRange = MinDetectionRange + AttackRange * Awareness;
 
         //Use the swiftness attribute to determine the enemy's move speed
         //TODO use this to alter climb speed/ weapons reload speed etc.
@@ -450,54 +491,12 @@ public class EnemyController : BaseBehaviour
     }
 
 
-    
+    private CombatType previous;
     //Debug Only - gizmos for patrol points, cone of vision, etc.
     private void OnValidate()
     {
-        switch (EnemyType)
-        {
-            case CombatType.Soldier:
-                Bravery = 2;
-                Aggresiveness = 2;
-                Determination = 2;
-                Awareness = 2;
-                Swiftness = 2;
-                SuccessChance = 2;
-                break;
-            case CombatType.Berzerker:
-                Bravery = 3;
-                Aggresiveness = 3;
-                Determination = 3;
-                Awareness = 2;
-                Swiftness = 3;
-                SuccessChance = 2;
-                break;
-            case CombatType.Tank:
-                Bravery = 3;
-                Aggresiveness = 3;
-                Determination = 3;
-                Awareness = 1;
-                Swiftness = 1;
-                SuccessChance = 1;
-                break;
-            case CombatType.Sniper:
-                Bravery = 1;
-                Aggresiveness = 1;
-                Determination = 3;
-                Awareness = 3;
-                Swiftness = 3;
-                SuccessChance = 3;
-                break;
-            case CombatType.Boss:
-                Bravery = 3;
-                Aggresiveness = 3;
-                Determination = 3;
-                Awareness = 3;
-                Swiftness = 3;
-                SuccessChance = 3;
-                break;
-        }
 
+        Init();
 
         ConeOfVisionDebugMesh = Utility.CreateViewCone(VisionConeAngle, DetectionRange, 10);
     }
@@ -556,7 +555,8 @@ public class EnemyController : BaseBehaviour
     Berzerker = 1,
     Tank = 2,
     Sniper = 3,
-    Boss = 4
+    Boss = 4,
+    Custom = 5
     }
 
 }

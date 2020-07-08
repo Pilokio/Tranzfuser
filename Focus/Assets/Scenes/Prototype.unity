@@ -2045,7 +2045,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 2
-  m_Speed: 3
+  m_Speed: 1.5
   m_Acceleration: 20
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -2099,21 +2099,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f01a94c5af40584e8896861c12dd892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
+  Health: 1000
   Stamina: 100
-  MaxHealth: 100
+  MaxHealth: 1000
   MaxStamina: 100
   CanPassiveRegen: 0
   HealthRegenRate: 1
   HealthRegenAmount: 5
   StaminaRegenRate: 5
   StaminaRegenAmount: 5
-  PistolAmmo: 100
-  ShotgunAmmo: 10
-  SMGAmmo: 10
-  RifleAmmo: 10
-  LauncherAmmo: 10
-  GrenadeCount: 10
+  PistolAmmo: 10000
+  ShotgunAmmo: 10000
+  SMGAmmo: 10000
+  RifleAmmo: 10000
+  LauncherAmmo: 10000
+  GrenadeCount: 10000
 --- !u!114 &451348748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2157,27 +2157,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VisionConeAngle: 45
-  DetectionMask:
-    serializedVersion: 2
-    m_Bits: 6967
-  EyePosition: {x: 0, y: 3.5, z: 1}
-  DebugSlider: {fileID: 754157676}
+  Difficulty: 1
+  EnemyType: 5
   Bravery: 1
   Aggresiveness: 1
   Determination: 1
   Awareness: 1
   Swiftness: 1
-  SuccessChance: 3
+  SuccessChance: 1
+  AlertStatus: 0
+  VisionConeAngle: 45
+  MinDetectionRange: 100
+  DetectionMask:
+    serializedVersion: 2
+    m_Bits: 6967
+  EyePosition: {x: 0, y: 3.5, z: 1}
   PatrolPoints:
   - {fileID: 2053716993}
   - {fileID: 399853495}
   - {fileID: 983075754}
   - {fileID: 291915860}
   TargetPatrolPoint: 0
+  HeadshotDamagePercentage: 1
+  BodyShotDamagePercentage: 0.75
+  DebugSlider: {fileID: 754157676}
   CanMove: 1
   IsClimbing: 0
-  StopWhenInRange: 1
 --- !u!65 &451348751
 BoxCollider:
   m_ObjectHideFlags: 0
