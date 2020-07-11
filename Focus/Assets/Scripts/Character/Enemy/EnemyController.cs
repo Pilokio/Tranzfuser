@@ -17,7 +17,7 @@ public class EnemyController : BaseBehaviour
     [Header("Enemy Stats")]
     [Range(1, 5)]
     [SerializeField] int Difficulty = 1;
-    [SerializeField] CombatType EnemyType;
+    [SerializeField] CombatType EnemyType = 0;
     [Range(1, 3)]
     [SerializeField] int Bravery = 1; //Determines how close the enemy can be before retreating
     [Range(1, 3)]
@@ -263,7 +263,6 @@ public class EnemyController : BaseBehaviour
 
                 if (TargetSighted)
                 {
-                    Debug.Log("Hostile Located");
                     AlertStatus = AlertState.Hostile;
                 }
 
@@ -277,19 +276,16 @@ public class EnemyController : BaseBehaviour
                 //If visual is regained while still hostile, resume combat and reset timer
                 if (!TargetSighted)
                 {
-                    Debug.Log("Lost Visual of Hostile");
                     LineOfSightTimer -= Time.deltaTime;
 
 
                     if (LineOfSightTimer <= 0.0f)
                     {
-                        Debug.Log("I have lost the hostile.");
                         AlertStatus = AlertState.Idle;
                     }
                 }
                 else if (LineOfSightTimer != TimeToLose)
                 {
-                    Debug.Log("Regained visual. Resetting timer.");
                     LineOfSightTimer = TimeToLose;
                 }
 
@@ -297,6 +293,72 @@ public class EnemyController : BaseBehaviour
 
                 Combat();
                 break;
+        }
+    }
+
+    public float CoverSearchRadius = 50.0f;
+    public LayerMask CoverMask;
+    public float MinCoverThreshold = 10.0f;
+    Vector3 FindCover()
+    {
+        //Find all the possible cover points scattered around the level in the assigned radius
+        Collider[] CoverPoints = Physics.OverlapSphere(transform.position, CoverSearchRadius, CoverMask);
+        int TargetIndex = -1;
+        int CurrentIndex = 0;
+        float MinDistance = Mathf.Infinity;
+
+        foreach (Collider col in CoverPoints)
+        {
+            CoverData Cover = col.gameObject.GetComponent<CoverData>();
+            //Check if cover is already occupied
+            if (!Cover.IsOccupied)
+            {
+                //Determine suitability of cover based on player current position
+                //ie is the player in front of the cover position (will the piece of cover actually provide protection)
+                Vector3 heading = Target.position - Cover.CoverPosition.position;
+                float dot = Vector3.Dot(heading, Cover.CoverPosition.forward);
+
+                //If the dot product is greater than zero, then the player is roughly in front of the cover
+                if (dot > 0)
+                {
+                    //Determine the distance from current position
+                    float CurrentDistance = Vector3.Distance(transform.position, col.transform.position);
+                    //Compare with current target
+                    if (CurrentDistance < MinDistance)
+                    {
+                        //Store the current index
+                        TargetIndex = CurrentIndex;
+                        MinDistance = CurrentDistance;
+
+                        //If the targeted cover distance is below the threshold, 
+                        //then it is 'good enough' and will be used
+                        if (CurrentDistance <= MinCoverThreshold)
+                        {
+                            return Cover.CoverPosition.position;
+                        }
+                    }
+                }
+
+
+            }
+
+            CurrentIndex++;
+        }
+
+        if (TargetIndex < 0)
+        {
+            //If the target index is still its default value of -1
+            //then return the current transform position
+            //This will be checked before assigning a new destination as we dont want the enemy to deviate from its existing
+            //orders if there is no suitable cover 
+            Debug.Log("No cover found");
+            return transform.position;
+        }
+        else
+        {
+            //If all cover points were looked at and the most suitable one is not below the minimum threshold
+            //Use the best one that could be found
+            return CoverPoints[TargetIndex].gameObject.GetComponent<CoverData>().CoverPosition.position;
         }
     }
 
@@ -337,6 +399,14 @@ public class EnemyController : BaseBehaviour
 
         StopMoving();
 
+        if(IsHitCounter > 2)
+        {
+            IsHitCounter = 0;
+            Debug.Log("Taking cover");
+            TakeCover();
+            return;
+        }
+
         if (distance > AttackRange)
         {
             MoveToTarget();
@@ -344,7 +414,7 @@ public class EnemyController : BaseBehaviour
         else if (distance < RetreatDistance)
         {
             if(StopWhenInRange)
-                TakeCover();
+                Retreat();
         }
         else
         {
@@ -367,13 +437,25 @@ public class EnemyController : BaseBehaviour
 
 
 
-    void TakeCover()
+    bool TakeCover()
     {
         //This allows the enemy to retreat when the player gets too close
         //TODO have the option to take cover here also
-        Agent.SetDestination(transform.position - (5 * transform.forward));
+        Vector3 Destination = FindCover();
+
+        if (Destination != transform.position)
+        {
+            Agent.SetDestination(Destination);
+            return true;
+        }
+
+        return false;
     }
 
+    void Retreat()
+    {
+        Agent.SetDestination(transform.position - (5 * transform.forward));
+    }
 
     void MoveToTarget()
     {
@@ -421,25 +503,22 @@ public class EnemyController : BaseBehaviour
         }
     }
 
-
+    private int IsHitCounter = 0;
    
 
     /// <summary>
     /// This function determines which hitbox the player raycast intersects
     /// </summary>
-    /// <param name="ray"></param>
-    /// <param name="damageAmount"></param>
     public void IsHit(Ray ray, int damageAmount)
     {
         if(DetectionSphere.bounds.IntersectRay(ray))
         {
-            Debug.Log("What was that?!");
+            IsHitCounter++;
             AlertStatus = AlertState.Hostile;
         }
 
         if(HeadCollider.bounds.IntersectRay(ray))
         {
-            Debug.Log("Ow my head");
             AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
             return;
@@ -447,7 +526,6 @@ public class EnemyController : BaseBehaviour
 
         if(BodyCollider.bounds.IntersectRay(ray))
         {
-            Debug.Log("Ow my body");
             AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
             return;
