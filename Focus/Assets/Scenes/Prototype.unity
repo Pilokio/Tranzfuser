@@ -2183,6 +2183,11 @@ MonoBehaviour:
   DebugSlider: {fileID: 754157676}
   CanMove: 1
   IsClimbing: 0
+  CoverSearchRadius: 50
+  CoverMask:
+    serializedVersion: 2
+    m_Bits: 0
+  MinCoverThreshold: 10
 --- !u!65 &451348751
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2194,8 +2199,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.25, y: 2.5, z: 1.25}
-  m_Center: {x: 0, y: 1.75, z: 0}
+  m_Size: {x: 1.25, y: 2.5, z: 0.7236481}
+  m_Center: {x: 0, y: 1.75, z: 0.101753235}
 --- !u!114 &451348752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2224,8 +2229,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.25, y: 1, z: 1.25}
-  m_Center: {x: 0, y: 3.5, z: 0}
+  m_Size: {x: 0.80836487, y: 1, z: 0.8914795}
+  m_Center: {x: -0.010108948, y: 3.5, z: -0.04009247}
 --- !u!135 &451348754
 SphereCollider:
   m_ObjectHideFlags: 0
