@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Chronos;
+using UnityEditorInternal;
 
 public class WallRunning : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class WallRunning : MonoBehaviour
     [SerializeField] float MinWallRunDistance = 3.0f;
 
     private Rigidbody rb;
+
+    PlayerController playerController;
 
     private float WallRunRoteLeft = -30.0f;
     private float WallRunRoteRight = 30.0f;

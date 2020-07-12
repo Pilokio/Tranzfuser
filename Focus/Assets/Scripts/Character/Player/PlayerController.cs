@@ -123,6 +123,14 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
+        // if on the wall, remove the player movement controls and give
+        // them a constant forward velocity so they can look around and shoot
+        if (MyWallRunning.isOnWall)
+        {
+            //Debug.Log("accessing from player controller");
+
+        }
+
         UpdateUI();
     }
 
@@ -247,7 +255,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleLook()
+    public void HandleLook()
     {
         if (!IsClimbing)
             MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
