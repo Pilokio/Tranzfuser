@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     private const float NORMAL_FOV = 60f;
     private const float HOOKSHOT_FOV = 100f;
+
 #pragma warning disable 0649
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
@@ -290,7 +291,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TestInputDownHookshot())
         {
-           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
+           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
             {
                 // Hit something
                 debugHitPointTransform.position = raycastHit.point;
