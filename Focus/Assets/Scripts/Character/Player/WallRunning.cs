@@ -13,9 +13,13 @@ public class WallRunning : MonoBehaviour
     private float WallRunRoteLeft = -30.0f;
     private float WallRunRoteRight = 30.0f;
 
+    public float wallJumpForce;
+
     // Is the player touching the wall on the left or the right?
     private bool isLeft;
     private bool isRight;
+
+    public bool isOnWall;
 
     private float distFromLeft;
     private float distFromRight;
@@ -60,6 +64,11 @@ public class WallRunning : MonoBehaviour
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = true;
                 isLeft = false;
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    rb.velocity += wallJumpForce * Vector3.left;
+                }
             }
         }
         else
@@ -77,6 +86,11 @@ public class WallRunning : MonoBehaviour
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
                 isRight = false;
                 isLeft = true;
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    rb.velocity += wallJumpForce * Vector3.right;
+                }
             }
         }
         else
@@ -89,8 +103,8 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
-            GetComponent<Timeline>().rigidbody.useGravity = false;
-
+            //GetComponent<Timeline>().rigidbody.useGravity = false;
+            isOnWall = true;
             //rb.useGravity = false;
             //rb.mass = 0;
         }
@@ -100,11 +114,22 @@ public class WallRunning : MonoBehaviour
     {
         if (collision.transform.CompareTag("RunnableWall"))
         {
-            GetComponent<Timeline>().rigidbody.useGravity = true;
+            //GetComponent<Timeline>().rigidbody.useGravity = true;
+            isOnWall = false;
 
             //rb.mass = defaultMass;
             //  rb.useGravity = true;
         }
+    }
+
+    private void Update()
+    {
+        if (isOnWall)
+        {
+            GetComponent<Timeline>().rigidbody.useGravity = false;
+        }
+        else
+            GetComponent<Timeline>().rigidbody.useGravity = true;
     }
 
     //TODO move this calculation into seperate function for use in the player manager

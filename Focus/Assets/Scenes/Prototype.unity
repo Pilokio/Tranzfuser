@@ -2483,7 +2483,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &484732020
 Transform:
   m_ObjectHideFlags: 0
@@ -5728,7 +5728,7 @@ GameObject:
   - component: {fileID: 1356558074}
   - component: {fileID: 1356558073}
   - component: {fileID: 1356558072}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: RunnableWall
   m_Icon: {fileID: 0}
@@ -6644,15 +6644,15 @@ GameObject:
   - component: {fileID: 1564139277}
   - component: {fileID: 1564139280}
   - component: {fileID: 1564139281}
+  - component: {fileID: 1564139283}
+  - component: {fileID: 1564139286}
   - component: {fileID: 1564139282}
   - component: {fileID: 720082708}
   - component: {fileID: 1564139279}
   - component: {fileID: 1564139284}
   - component: {fileID: 1564139285}
-  - component: {fileID: 1564139286}
   - component: {fileID: 1564139287}
   - component: {fileID: 1564139278}
-  - component: {fileID: 1564139283}
   m_Layer: 11
   m_Name: PlayerContainer
   m_TagString: Player
@@ -6692,6 +6692,8 @@ MonoBehaviour:
   upForce: 0
   sideForce: 0
   MinWallRunDistance: 3
+  wallJumpForce: 27
+  isOnWall: 0
 --- !u!114 &1564139279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6714,7 +6716,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   jumpCooldown: 0.25
-  jumpForce: 550
+  jumpForce: 650
 --- !u!54 &1564139280
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12311,7 +12313,7 @@ GameObject:
   - component: {fileID: 1799948299}
   - component: {fileID: 1799948298}
   - component: {fileID: 1799948297}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: RunnableWall
   m_Icon: {fileID: 0}
