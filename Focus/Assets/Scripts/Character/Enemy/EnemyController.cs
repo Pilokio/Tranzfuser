@@ -135,6 +135,8 @@ public class EnemyController : BaseBehaviour
         SearchTimer = SearchTime; 
     }
 
+    int SelfPreservationThreshold = 50;
+    int ProximityThreshold = 50;
     /// <summary>
     /// This function makes use of the enemy's stats to randomise the enemy's behaviours
     /// </summary>
@@ -217,6 +219,12 @@ public class EnemyController : BaseBehaviour
                 break;
         }
 
+        float temp = ((3.0f - (float)Bravery) + (3.0f - (float)Aggresiveness))/6.0f;
+        SelfPreservationThreshold = (int)(temp * 100);
+
+        float temp2 = ((3.0f - (float)Bravery) + (3.0f - (float)Aggresiveness)) / 6.0f;
+        ProximityThreshold = (int)(temp2 * 100);
+
         //Set the attack range to the currently equipped weapon's range
         AttackRange = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponRange;
 
@@ -248,6 +256,88 @@ public class EnemyController : BaseBehaviour
       
     }
 
+
+    void DecisionMaking()
+    {
+        if (IsHitCounter > 2 || TargetSighted)
+        {
+            IsHitCounter = 0;
+            //decide between take cover and combat
+
+            int combatVotes = 0;
+            int takeCoverVotes = 0;
+
+            float temp = ((float)EnemyStats.Health / (float)EnemyStats.MaxHealth);
+
+            //If the current health % falls below threshold
+            //One vote for take cover
+            if ((int)(temp * 100) < SelfPreservationThreshold)
+            {
+                Debug.Log("Low on health");
+                takeCoverVotes++;
+            }
+            else
+            {
+                Debug.Log("Plenty of health");
+                combatVotes++;
+            }
+
+            float temp2 = Vector3.Distance(transform.position, Target.position) / AttackRange;
+            int DistPercentage = (int)(temp2 * 100);
+
+
+            if (DistPercentage < ProximityThreshold)
+            {
+                Debug.Log("Player too close");
+                takeCoverVotes++;
+            }
+            else
+            {
+                Debug.Log("Player not close enough");
+                combatVotes++;
+            }
+
+            Debug.Log("TCV: " + takeCoverVotes + ", CBV: " + combatVotes);
+
+            if (combatVotes > takeCoverVotes)
+            {
+                if (AlertStatus != AlertState.Hostile)
+                {
+                    AlertStatus = AlertState.Hostile;
+                }
+            }
+            else if (takeCoverVotes > combatVotes)
+            {
+                if (AlertStatus != AlertState.TakingCover)
+                {
+                    TakeCover();
+                    AlertStatus = AlertState.TakingCover;
+                }
+            }
+            else
+            {
+                Debug.Log("50/50");
+                float rand = Random.Range(0, 100);
+                if (rand < 50)
+                {
+                    if (AlertStatus != AlertState.TakingCover)
+                    {
+                        TakeCover();
+                        AlertStatus = AlertState.TakingCover;
+                    }
+                }
+                else
+                {
+                    if (AlertStatus != AlertState.Hostile)
+                    {
+                        AlertStatus = AlertState.Hostile;
+                    }
+                }
+
+            }
+        }
+    }
+
     private void Update()
     {
         //Debug Only Remove later
@@ -255,47 +345,62 @@ public class EnemyController : BaseBehaviour
 
         //Determine if the enemy has a LOS to the player
         TargetSighted = DetectPlayer();
+        DecisionMaking();
+     
+
+
+        //While taking cover or in combat if the target cannot be seen decrement timer
+        //if the timer reaches zero then return to idle state as the hostile has been lost
+        //if LOS is regained or never lost, reset timer
+        if(AlertStatus == AlertState.Hostile || AlertStatus == AlertState.TakingCover)
+        {
+            if (!TargetSighted)
+            {
+                LineOfSightTimer -= Time.deltaTime;
+
+
+                if (LineOfSightTimer <= 0.0f)
+                {
+                    AlertStatus = AlertState.Idle;
+                }
+            }
+            else if (LineOfSightTimer != TimeToLose)
+            {
+                LineOfSightTimer = TimeToLose;
+            }
+        }
+
 
         //Control this enemy based on the current alert status
         switch (AlertStatus)
         {
             case AlertState.Idle:
-
-                if (TargetSighted)
-                {
-                    AlertStatus = AlertState.Hostile;
-                }
-
                 Patrol();
                 break;
             case AlertState.Hostile:
-
-                //If the player cannot be seen while hostile
-                //Start timer
-                //If timer gets below zero, give up and return to idle
-                //If visual is regained while still hostile, resume combat and reset timer
-                if (!TargetSighted)
+                Combat();
+                break;
+            case AlertState.TakingCover:
+                if (Agent.remainingDistance < Agent.stoppingDistance)
                 {
-                    LineOfSightTimer -= Time.deltaTime;
+                    CoverTime -= Time.deltaTime;
 
-
-                    if (LineOfSightTimer <= 0.0f)
+                    if (CoverTime <= 0.0f)
                     {
-                        AlertStatus = AlertState.Idle;
+                        CoverTime = MaxCoverTime;
+                        AlertStatus = AlertState.Hostile;
                     }
                 }
-                else if (LineOfSightTimer != TimeToLose)
-                {
-                    LineOfSightTimer = TimeToLose;
-                }
 
-
-
-                Combat();
+                //wait in cover for x seconds or until circumstances change
+                //weigh up where the player is, if they are looking at me, if they are still in range, etc.
+                //move back to hostile
                 break;
         }
     }
 
+    private float CoverTime = 5.0f;
+    public float MaxCoverTime = 5.0f;
     public float CoverSearchRadius = 50.0f;
     public LayerMask CoverMask;
     public float MinCoverThreshold = 10.0f;
@@ -338,8 +443,6 @@ public class EnemyController : BaseBehaviour
                         }
                     }
                 }
-
-
             }
 
             CurrentIndex++;
@@ -351,7 +454,6 @@ public class EnemyController : BaseBehaviour
             //then return the current transform position
             //This will be checked before assigning a new destination as we dont want the enemy to deviate from its existing
             //orders if there is no suitable cover 
-            Debug.Log("No cover found");
             return transform.position;
         }
         else
@@ -389,6 +491,9 @@ public class EnemyController : BaseBehaviour
         }
     }
 
+   
+
+
     /// <summary>
     /// This function handles the combat behaviours of the enemy
     /// </summary>
@@ -399,13 +504,6 @@ public class EnemyController : BaseBehaviour
 
         StopMoving();
 
-        if(IsHitCounter > 2)
-        {
-            IsHitCounter = 0;
-            Debug.Log("Taking cover");
-            TakeCover();
-            return;
-        }
 
         if (distance > AttackRange)
         {
@@ -490,14 +588,12 @@ public class EnemyController : BaseBehaviour
             //If hit is successful, fire at the hostile
             if (SuccessfulHit)
             {
-                Debug.Log("Hit");
                 //PlayerManager.Instance.Player.GetComponent<CharacterStats>().TakeDamage(10);
                 MyWeaponController.UseWeapon(transform.position + EyePosition, Heading);
             }
             else
             {
                 Vector3 Offset = new Vector3(Random.Range(0, 2), Random.Range(0, 2), Random.Range(0, 2));
-                Debug.Log("Miss");
                 MyWeaponController.UseWeapon(EyePosition, ((Target.position + Offset) - EyePosition).normalized);
             }
         }
@@ -621,7 +717,8 @@ public class EnemyController : BaseBehaviour
     {
         Idle = 0,
         Suspicious = 1,
-        Hostile = 2
+        Hostile = 2,
+        TakingCover = 3
     }
 
     /// <summary>
