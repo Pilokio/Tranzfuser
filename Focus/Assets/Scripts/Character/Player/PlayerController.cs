@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     private const float NORMAL_FOV = 60f;
     private const float HOOKSHOT_FOV = 100f;
+
 #pragma warning disable 0649
     [Header("User Interface")]
     [SerializeField] Text AmmoDisplayText;
@@ -120,6 +121,14 @@ public class PlayerController : MonoBehaviour
                 HandleLook();
                 HandleHookshotMovement();
                 break;
+        }
+
+        // if on the wall, remove the player movement controls and give
+        // them a constant forward velocity so they can look around and shoot
+        if (MyWallRunning.isOnWall)
+        {
+            //Debug.Log("accessing from player controller");
+
         }
 
         UpdateUI();
@@ -246,7 +255,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleLook()
+    public void HandleLook()
     {
         if (!IsClimbing)
             MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
@@ -290,7 +299,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TestInputDownHookshot())
         {
-           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit))
+           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
             {
                 // Hit something
                 debugHitPointTransform.position = raycastHit.point;
