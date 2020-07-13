@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using Chronos;
-using UnityEditorInternal;
 
 public class WallRunning : MonoBehaviour
 {
@@ -35,7 +33,7 @@ public class WallRunning : MonoBehaviour
         defaultMass = rb.mass;
     }
 
-
+    // Restore camera when jumping off wall
     public void RestoreCamera()
     {
         //If not touching a wall, and the camera z-rotation is not 0 then lerp back
@@ -49,6 +47,19 @@ public class WallRunning : MonoBehaviour
             {
                 Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
             }
+        }
+    }
+
+    // This is used for when the player fires a hook while wall running
+    public void WallRunCameraRestore()
+    {
+        float angle = Mathf.LerpAngle(Camera.main.transform.localEulerAngles.z, 0.0f, Time.deltaTime * 5);
+        Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, angle);
+
+        //Snap back to zero when the rotation is "close enough"
+        if (Camera.main.transform.localEulerAngles.z > -0.5f && Camera.main.transform.localEulerAngles.z < 0.5f)
+        {
+            Camera.main.transform.localEulerAngles = new Vector3(Camera.main.transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, 0.0f);
         }
     }
 
@@ -123,16 +134,6 @@ public class WallRunning : MonoBehaviour
             //rb.mass = defaultMass;
             //  rb.useGravity = true;
         }
-    }
-
-    private void Update()
-    {
-        if (isOnWall)
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = false;
-        }
-        else
-            GetComponent<Timeline>().rigidbody.useGravity = true;
     }
 
     //TODO move this calculation into seperate function for use in the player manager

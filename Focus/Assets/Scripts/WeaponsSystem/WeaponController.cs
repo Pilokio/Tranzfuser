@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -28,11 +27,11 @@ public class WeaponController : MonoBehaviour
     //The object hit when firing the weapon
     RaycastHit hit;
 
-   
+
     //Timer variables to determine if weapon can be fired again
     private float FireDelay = 0;
     private float FireTimer = 0;
-    public  bool CanFire { get; private set; }
+    public bool CanFire { get; private set; }
 
     // Start is called before the first frame update
     void Start()
@@ -94,7 +93,7 @@ public class WeaponController : MonoBehaviour
             }
 
             // Instantiate the new gun object
-           
+
             CurrentGun = Instantiate(WeaponsList[CurrentWeaponIndex].WeaponObject, GunHolder.transform);
 
             FireDelay = WeaponsList[CurrentWeaponIndex].WeaponFireRate;
@@ -140,7 +139,7 @@ public class WeaponController : MonoBehaviour
             if (WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded > 0)
             {
                 Ray ray = new Ray(Origin, Direction);
-                
+
                 if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
                     if (hit.transform.tag == "Enemy" && transform.tag != "Enemy")
@@ -148,7 +147,7 @@ public class WeaponController : MonoBehaviour
                         hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
 
-                    if(hit.transform.tag == "Player" && transform.tag != "Player")
+                    if (hit.transform.tag == "Player" && transform.tag != "Player")
                     {
                         hit.transform.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
                     }
@@ -160,7 +159,7 @@ public class WeaponController : MonoBehaviour
                         Collider[] cols = Physics.OverlapSphere(hitLocation, 10.0f);
                         foreach (Collider c in cols)
                         {
-                            if(c.gameObject.GetComponent<CharacterStats>())
+                            if (c.gameObject.GetComponent<CharacterStats>())
                             {
                                 c.gameObject.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
                             }
@@ -238,7 +237,7 @@ public class WeaponController : MonoBehaviour
         return WeaponsList[CurrentWeaponIndex];
     }
 
-   
+
 }
 
 

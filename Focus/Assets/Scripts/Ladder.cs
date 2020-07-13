@@ -26,8 +26,8 @@ public class Ladder : MonoBehaviour
         {
             PlayerOccupied = true;
             IsOccupied = true;
-           //Make the player turn to face the ladder
-           Vector3 target = transform.rotation.eulerAngles;
+            //Make the player turn to face the ladder
+            Vector3 target = transform.rotation.eulerAngles;
             target.x = 0;
             target.z = 0;
             target.y += 180;
@@ -70,7 +70,7 @@ public class Ladder : MonoBehaviour
                 PlayerOccupied = false;
                 //Apply slight push to ensure they clear the top of the ladder
                 player.transform.position = LadderPath[0].position;//+= Vector3.up + (player.transform.forward * 2.0f);
-                                                                                //Stop climbing and resume normal movement
+                                                                   //Stop climbing and resume normal movement
                 player.GetComponent<PlayerController>().SetIsClimbing(false);
             }
 
@@ -86,7 +86,7 @@ public class Ladder : MonoBehaviour
             if (!other.gameObject.GetComponent<EnemyController>().IsClimbing)
             {
                 IsOccupied = true;
-               other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
+                other.gameObject.GetComponent<EnemyController>().IsClimbing = true;
                 other.gameObject.GetComponent<Rigidbody>().useGravity = false;
 
                 float distanceTop = Vector3.Distance(other.gameObject.transform.position, LadderPath[0].position);

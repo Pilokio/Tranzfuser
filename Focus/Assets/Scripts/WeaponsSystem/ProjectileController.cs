@@ -35,8 +35,8 @@ public class ProjectileController : MonoBehaviour
         //TODO
         //Check the tag of the object it collides with and respond accordingly before destroying itself
         //ie Enemy would be ragdolled, surfaces would have an impact decal spawned, etc.
-       
-        if(!BelongsToPlayer)
+
+        if (!BelongsToPlayer)
         {
             if (collision.gameObject.tag == "Player" && collision.gameObject.GetComponent<CharacterStats>() != null)
             {
@@ -46,15 +46,15 @@ public class ProjectileController : MonoBehaviour
             }
             else
             {
-               // Debug.Log("I hit " + collision.gameObject.name);
+                // Debug.Log("I hit " + collision.gameObject.name);
             }
         }
-        
-        if (collision.gameObject.tag == "Enemy" )
+
+        if (collision.gameObject.tag == "Enemy")
         {
             Debug.Log("I hit " + collision.gameObject.name);
 
-            if(collision.gameObject.GetComponent<CharacterStats>() != null)
+            if (collision.gameObject.GetComponent<CharacterStats>() != null)
             {
                 Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
                 collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
@@ -64,14 +64,14 @@ public class ProjectileController : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-       
+
     }
 
     private void Update()
     {
         Timer -= Time.deltaTime;
 
-        if(Timer <= 0.0f)
+        if (Timer <= 0.0f)
         {
             //Debug.Log("I hit nothing");
             Destroy(this.gameObject);

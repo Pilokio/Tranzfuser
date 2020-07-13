@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Chronos;
 
 
 //Debug Only Remove later
@@ -46,7 +44,7 @@ public class EnemyController : BaseBehaviour
     private float TimeToLose = 2.0f;
     private float SearchTime = 2.0f;
     //The timer for losing a hostile after LOS is lost
-    private float LineOfSightTimer = 0.0f; 
+    private float LineOfSightTimer = 0.0f;
     //The range at which hostiles can be seen
     float DetectionRange = 10.0f;
     //The timer tracking how long the enemy has been searching for
@@ -55,7 +53,7 @@ public class EnemyController : BaseBehaviour
     [Header("Patrol Settings")]
     [SerializeField] List<Transform> PatrolPoints = new List<Transform>();
     [SerializeField] int TargetPatrolPoint = 0;
-   
+
     [Header("Combat Settings")]
     //The minimum attack range
     float AttackRange = 5.0f;
@@ -108,7 +106,7 @@ public class EnemyController : BaseBehaviour
     Collider BodyCollider;
     Collider DetectionSphere;
 
-   
+
 
     // Start is called before the first frame update
     void Start()
@@ -132,7 +130,7 @@ public class EnemyController : BaseBehaviour
         AlertStatus = AlertState.Idle;
         //Init timers
         LineOfSightTimer = TimeToLose;
-        SearchTimer = SearchTime; 
+        SearchTimer = SearchTime;
     }
 
     /// <summary>
@@ -242,10 +240,10 @@ public class EnemyController : BaseBehaviour
         //using the determination stat
         TimeToLose = Determination * Random.Range(10, 20);
 
-        
+
         EnemyStats.SetAllAmmoCounts(10000);
 
-      
+
     }
 
     private void Update()
@@ -399,7 +397,7 @@ public class EnemyController : BaseBehaviour
 
         StopMoving();
 
-        if(IsHitCounter > 2)
+        if (IsHitCounter > 2)
         {
             IsHitCounter = 0;
             Debug.Log("Taking cover");
@@ -413,7 +411,7 @@ public class EnemyController : BaseBehaviour
         }
         else if (distance < RetreatDistance)
         {
-            if(StopWhenInRange)
+            if (StopWhenInRange)
                 Retreat();
         }
         else
@@ -504,27 +502,27 @@ public class EnemyController : BaseBehaviour
     }
 
     private int IsHitCounter = 0;
-   
+
 
     /// <summary>
     /// This function determines which hitbox the player raycast intersects
     /// </summary>
     public void IsHit(Ray ray, int damageAmount)
     {
-        if(DetectionSphere.bounds.IntersectRay(ray))
+        if (DetectionSphere.bounds.IntersectRay(ray))
         {
             IsHitCounter++;
             AlertStatus = AlertState.Hostile;
         }
 
-        if(HeadCollider.bounds.IntersectRay(ray))
+        if (HeadCollider.bounds.IntersectRay(ray))
         {
             AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
             return;
         }
 
-        if(BodyCollider.bounds.IntersectRay(ray))
+        if (BodyCollider.bounds.IntersectRay(ray))
         {
             AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
@@ -629,12 +627,12 @@ public class EnemyController : BaseBehaviour
     /// </summary>
     public enum CombatType
     {
-    Soldier = 0,
-    Berzerker = 1,
-    Tank = 2,
-    Sniper = 3,
-    Boss = 4,
-    Custom = 5
+        Soldier = 0,
+        Berzerker = 1,
+        Tank = 2,
+        Sniper = 3,
+        Boss = 4,
+        Custom = 5
     }
 
 }

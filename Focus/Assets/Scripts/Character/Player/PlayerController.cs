@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Chronos;
+using UnityEngine;
 using UnityEngine.UI;
-using Chronos;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
     public Transform GunHolder;
     public Transform OriginalGunPos;
     public Vector3 characterVelocityMomentum;
+
+    public float wallRunSpeed = 8;
 
 
     private Camera playerCamera;
@@ -112,6 +114,8 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case State.HookshotThrown:
+                MyWallRunning.WallRunCameraRestore();
+
                 HandleHookshotThrow();
                 HandleLook();
                 HandleInput();
@@ -123,13 +127,22 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
-        // if on the wall, remove the player movement controls and give
-        // them a constant forward velocity so they can look around and shoot
+        /*
+
+        float transAmount = wallRunSpeed * Time.deltaTime;
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            transform.Translate(0, 0, transAmount);
+        }
+        */
+
         if (MyWallRunning.isOnWall)
         {
-            //Debug.Log("accessing from player controller");
-
+            GetComponent<Timeline>().rigidbody.useGravity = false;
         }
+        else
+            GetComponent<Timeline>().rigidbody.useGravity = true;
 
         UpdateUI();
     }
@@ -248,8 +261,7 @@ public class PlayerController : MonoBehaviour
             MyMovement.IsSprinting = false;
         }
 
-
-        if(Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             MyTimeController.ToggleSlowMo();
         }
@@ -273,24 +285,17 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-    //// Fixes for the gravity
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //    {
-    //        Debug.Log("Climbing");
-    //        GetComponent<Timeline>().rigidbody.useGravity = false;
-    //    }
-    //}
+    private void OnCollisionEnter(Collision collision)
+    {
+        // if on the wall, remove the player movement controls and give
+        // them a constant forward velocity so they can look around and shoot
 
-    //void OnCollisionExit(Collision collision)
-    //{
-    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //    {
-    //        Debug.Log("Not Climbing");
-    //        GetComponent<Timeline>().rigidbody.useGravity = true;
-    //    }
-    //}
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+
+    }
 
     /// <summary>
     /// WIP - Hook mechanic, press Q to fire hook
@@ -299,7 +304,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TestInputDownHookshot())
         {
-           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
             {
                 // Hit something
                 debugHitPointTransform.position = raycastHit.point;
@@ -327,7 +332,7 @@ public class PlayerController : MonoBehaviour
             speedLinesParticleSystem.Play();
         }
     }
-     
+
     private void HandleHookshotMovement()
     {
 

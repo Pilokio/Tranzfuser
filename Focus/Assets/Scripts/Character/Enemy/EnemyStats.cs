@@ -4,11 +4,11 @@ using UnityEngine.AI;
 
 public class EnemyStats : CharacterStats
 {
-    
+
     private void Update()
     {
-        
-        if(IsDead == true)
+
+        if (IsDead == true)
         {
             Die();
         }
