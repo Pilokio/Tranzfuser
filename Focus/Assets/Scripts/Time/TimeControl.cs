@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Chronos;
+using System.Collections;
 using UnityEngine;
-using Chronos;
 using UnityEngine.UI;
 
 public class TimeControl : MonoBehaviour
@@ -66,7 +65,7 @@ public class TimeControl : MonoBehaviour
         StartCoroutine(DrainFocusMeter());
     }
 
- 
+
 
     private void StopSlowMo()
     {
@@ -74,8 +73,8 @@ public class TimeControl : MonoBehaviour
 
         //Restore the player and enemies to the default time scale
         PlayerClock.localTimeScale = DefaultPlayerTimescale;
-        EnemyClock.localTimeScale = DefaultEnemyTimescale; 
-        
+        EnemyClock.localTimeScale = DefaultEnemyTimescale;
+
         //Stop draining and start restoring
         StopAllCoroutines();
         StartCoroutine(RestoreFocus());

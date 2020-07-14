@@ -1,9 +1,9 @@
 namespace Chronos
 {
-	public enum Severity
-	{
-		Ignore,
-		Warn,
-		Error
-	}
+    public enum Severity
+    {
+        Ignore,
+        Warn,
+        Error
+    }
 }

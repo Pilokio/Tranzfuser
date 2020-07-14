@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Chronos;
+using UnityEngine;
 using UnityEngine.UI;
-using Chronos;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -33,10 +33,29 @@ public class PlayerController : MonoBehaviour
     public Transform OriginalGunPos;
     public Vector3 characterVelocityMomentum;
 
+    public float wallRunSpeed = 8;
+
 
     private Camera playerCamera;
 
+    private float smoothFactor = 10.0f;
+
+    private State state;
+    private Vector3 hookshotPosition;
+    private float hookshotSize;
+
+    private enum State
+    {
+        Normal,
+        HookshotThrown,
+        HookShotFlyingPlayer
+    }
+
+    // Is the player using a ladder?
     public bool IsClimbing { get; private set; }
+
+    // Is the player wall running?
+    public bool IsWallRunning { get; private set; }
 
     public void SetIsClimbing(bool Param)
     {
@@ -52,17 +71,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private float smoothFactor = 10.0f;
-
-    private State state;
-    private Vector3 hookshotPosition;
-    private float hookshotSize;
-
-    private enum State
+    public void SetIsWallRunning(bool Param)
     {
-        Normal,
-        HookshotThrown,
-        HookShotFlyingPlayer
+        IsWallRunning = Param;
+
+        if (Param)
+        {
+            GetComponent<Timeline>().rigidbody.useGravity = false;
+        }
+        else
+        {
+            GetComponent<Timeline>().rigidbody.useGravity = true;
+        }
     }
 
     private void Awake()
@@ -112,6 +132,8 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case State.HookshotThrown:
+                MyWallRunning.WallRunCameraRestore();
+
                 HandleHookshotThrow();
                 HandleLook();
                 HandleInput();
@@ -121,14 +143,6 @@ public class PlayerController : MonoBehaviour
                 HandleLook();
                 HandleHookshotMovement();
                 break;
-        }
-
-        // if on the wall, remove the player movement controls and give
-        // them a constant forward velocity so they can look around and shoot
-        if (MyWallRunning.isOnWall)
-        {
-            //Debug.Log("accessing from player controller");
-
         }
 
         UpdateUI();
@@ -144,7 +158,6 @@ public class PlayerController : MonoBehaviour
             // Apply momentum
             MyMovement.Move(characterVelocityMomentum);
 
-            //GetComponent<Rigidbody>().useGravity = true; // This line was causing the wall run to not work
             MyMovement.Move(MoveDirection);
 
             // Dampen momentum
@@ -163,6 +176,12 @@ public class PlayerController : MonoBehaviour
             //GetComponent<Rigidbody>().useGravity = false;
             MyMovement.Move(new Vector2(MoveDirection.x, 0));
             MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+        }
+
+        if (IsWallRunning)
+        {
+            Debug.Log("You are wall running.");
+            //MyMovement.WallRun(new Vector3(0, 0, MoveDirection.x));
         }
     }
 
@@ -248,8 +267,7 @@ public class PlayerController : MonoBehaviour
             MyMovement.IsSprinting = false;
         }
 
-
-        if(Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             MyTimeController.ToggleSlowMo();
         }
@@ -261,6 +279,13 @@ public class PlayerController : MonoBehaviour
             MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
         else
             MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
+
+        if (!IsWallRunning)
+        
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
+        else
+            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), 0.0f));
+        
     }
 
     void UpdateUI()
@@ -273,25 +298,6 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-    //// Fixes for the gravity
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //    {
-    //        Debug.Log("Climbing");
-    //        GetComponent<Timeline>().rigidbody.useGravity = false;
-    //    }
-    //}
-
-    //void OnCollisionExit(Collision collision)
-    //{
-    //    if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //    {
-    //        Debug.Log("Not Climbing");
-    //        GetComponent<Timeline>().rigidbody.useGravity = true;
-    //    }
-    //}
-
     /// <summary>
     /// WIP - Hook mechanic, press Q to fire hook
     /// </summary>
@@ -299,7 +305,7 @@ public class PlayerController : MonoBehaviour
     {
         if (TestInputDownHookshot())
         {
-           if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
             {
                 // Hit something
                 debugHitPointTransform.position = raycastHit.point;
@@ -327,7 +333,7 @@ public class PlayerController : MonoBehaviour
             speedLinesParticleSystem.Play();
         }
     }
-     
+
     private void HandleHookshotMovement()
     {
 

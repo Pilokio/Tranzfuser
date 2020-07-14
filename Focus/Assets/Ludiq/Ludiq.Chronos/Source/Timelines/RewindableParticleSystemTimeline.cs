@@ -3,448 +3,448 @@ using UnityEngine;
 
 namespace Chronos
 {
-	// Currently bugged in Unity 5.5 due to a bug in the Simulate method at times higher than the system's duration
-	// https://fogbugz.unity3d.com/default.asp?854431_5mmt5ltn2q6nuseh
+    // Currently bugged in Unity 5.5 due to a bug in the Simulate method at times higher than the system's duration
+    // https://fogbugz.unity3d.com/default.asp?854431_5mmt5ltn2q6nuseh
 
-	public class RewindableParticleSystemTimeline : ComponentTimeline<ParticleSystem>, IParticleSystemTimeline
-	{
-		#region Fields
+    public class RewindableParticleSystemTimeline : ComponentTimeline<ParticleSystem>, IParticleSystemTimeline
+    {
+        #region Fields
 
-		private float absoluteSimulationTime;
-		private float loopedSimulationTime;
-		private float relativeStartTime;
+        private float absoluteSimulationTime;
+        private float loopedSimulationTime;
+        private float relativeStartTime;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		public float playbackSpeed { get; set; }
+        public float playbackSpeed { get; set; }
 
-		public float time
-		{
-			get { return (loopedSimulationTime - relativeStartTime) % component.main.duration; }
-			set { loopedSimulationTime = relativeStartTime + value; }
-		}
+        public float time
+        {
+            get { return (loopedSimulationTime - relativeStartTime) % component.main.duration; }
+            set { loopedSimulationTime = relativeStartTime + value; }
+        }
 
-		public bool isPlaying
-		{
-			get { return state == State.Playing || state == State.Stopping; }
-		}
+        public bool isPlaying
+        {
+            get { return state == State.Playing || state == State.Stopping; }
+        }
 
-		public bool isPaused
-		{
-			get { return state == State.Paused; }
-		}
+        public bool isPaused
+        {
+            get { return state == State.Paused; }
+        }
 
-		public bool isStopped
-		{
-			get { return state == State.Stopped; }
-		}
+        public bool isStopped
+        {
+            get { return state == State.Stopped; }
+        }
 
-		#endregion
+        #endregion
 
-		#region State and Emission
+        #region State and Emission
 
-		private enum State
-		{
-			Playing,
-			Paused,
-			Stopping,
-			Stopped
-		}
+        private enum State
+        {
+            Playing,
+            Paused,
+            Stopping,
+            Stopped
+        }
 
-		private enum EmissionAction
-		{
-			EnableEmission,
-			DisableEmission,
-			Play,
-			Stop
-		}
+        private enum EmissionAction
+        {
+            EnableEmission,
+            DisableEmission,
+            Play,
+            Stop
+        }
 
-		private struct StateEvent
-		{
-			public State state;
-			public float time;
+        private struct StateEvent
+        {
+            public State state;
+            public float time;
 
-			public StateEvent(State state, float time)
-			{
-				this.state = state;
-				this.time = time;
-			}
-		}
-
-		private struct EmissionEvent
-		{
-			public EmissionAction action;
-			public float time;
-
-			public EmissionEvent(EmissionAction action, float time)
-			{
-				this.action = action;
-				this.time = time;
-			}
-		}
-
-		private float stateEventsTime
-		{
-			get { return timeline.time; }
-		}
-
-		private float emissionEventsTime
-		{
-			get { return absoluteSimulationTime; }
-		}
-
-		private void RegisterState(State state)
-		{
-			stateEvents.Add(new StateEvent(state, stateEventsTime));
-		}
-
-		private void RegisterEmission(EmissionAction action)
-		{
-			emissionEvents.Add(new EmissionEvent(action, emissionEventsTime));
-		}
-
-		public RewindableParticleSystemTimeline(Timeline timeline, ParticleSystem component) : base(timeline, component)
-		{
-			emissionEvents = new List<EmissionEvent>();
-			stateEvents = new List<StateEvent>();
-		}
-
-		private List<StateEvent> stateEvents;
-		private State stateOnStart;
-
-		private List<EmissionEvent> emissionEvents;
-		private bool enableEmissionOnStart;
-
-		private State _state;
-
-		private State state
-		{
-			get { return _state; }
-			set
-			{
-				if (!AssertForwardProperty("state", Severity.Error)) return;
-
-				if (_state != value)
-				{
-					RegisterState(value);
-					_state = value;
-				}
-			}
-		}
-
-		private bool _enableEmission;
-
-		public bool enableEmission
-		{
-			get { return _enableEmission; }
-			set
-			{
-				if (!AssertForwardProperty("enableEmission", Severity.Warn)) return;
-
-				if (_enableEmission && !value)
-				{
-					RegisterEmission(EmissionAction.DisableEmission);
-				}
-				else if (!_enableEmission && value)
-				{
-					RegisterEmission(EmissionAction.EnableEmission);
-				}
-
-				_enableEmission = value;
-			}
-		}
-
-		#endregion
-
-		#region Timeline
-
-		public override void CopyProperties(ParticleSystem source)
-		{
-			playbackSpeed = source.main.simulationSpeed;
-
-			stateOnStart = state = source.main.playOnAwake ? State.Playing : State.Stopped;
-
-			enableEmissionOnStart = _enableEmission = source.emission.enabled;
-
-			time = 0;
-
-			if (source.useAutoRandomSeed)
+            public StateEvent(State state, float time)
             {
-				if (source.isPlaying)
-				{
-					source.Pause(true);
-				}
+                this.state = state;
+                this.time = time;
+            }
+        }
 
-				source.useAutoRandomSeed = false;
-				source.randomSeed = (uint)Random.Range(1, int.MaxValue);
-			}
-		}
+        private struct EmissionEvent
+        {
+            public EmissionAction action;
+            public float time;
 
-		public override void Update()
-		{
-			if (timeline.timeScale < 0)
-			{
-				// Determine state by consuming state events
+            public EmissionEvent(EmissionAction action, float time)
+            {
+                this.action = action;
+                this.time = time;
+            }
+        }
 
-				if (stateEvents.Count > 0)
-				{
-					StateEvent lastStateEvent = stateEvents[stateEvents.Count - 1];
+        private float stateEventsTime
+        {
+            get { return timeline.time; }
+        }
 
-					if (stateEventsTime <= lastStateEvent.time)
-					{
-						stateEvents.Remove(lastStateEvent);
+        private float emissionEventsTime
+        {
+            get { return absoluteSimulationTime; }
+        }
 
-						if (stateEvents.Count > 0)
-						{
-							_state = stateEvents[stateEvents.Count - 1].state;
-						}
-						else
-						{
-							_state = stateOnStart;
-						}
-					}
-				}
+        private void RegisterState(State state)
+        {
+            stateEvents.Add(new StateEvent(state, stateEventsTime));
+        }
 
-				// Consume emission events
+        private void RegisterEmission(EmissionAction action)
+        {
+            emissionEvents.Add(new EmissionEvent(action, emissionEventsTime));
+        }
 
-				for (int i = emissionEvents.Count - 1; i >= 0; i--)
-				{
-					if (emissionEvents[i].time > emissionEventsTime)
-					{
-						emissionEvents.RemoveAt(i);
-					}
-				}
-			}
+        public RewindableParticleSystemTimeline(Timeline timeline, ParticleSystem component) : base(timeline, component)
+        {
+            emissionEvents = new List<EmissionEvent>();
+            stateEvents = new List<StateEvent>();
+        }
 
-			// Known issue: low time scales / speed will cause stutter
-			// Reported here: http://fogbugz.unity3d.com/default.asp?694191_dso514lin4rf5vbg
-			
-			component.Simulate(0, true, true);
+        private List<StateEvent> stateEvents;
+        private State stateOnStart;
 
-			if (loopedSimulationTime > 0)
-			{
-				var emission = component.emission;
+        private List<EmissionEvent> emissionEvents;
+        private bool enableEmissionOnStart;
 
-				emission.enabled = enableEmissionOnStart;
+        private State _state;
 
-				float chunkStartTime = 0;
+        private State state
+        {
+            get { return _state; }
+            set
+            {
+                if (!AssertForwardProperty("state", Severity.Error)) return;
 
-				for (int i = 0; i < emissionEvents.Count; i++)
-				{
-					EmissionEvent current = emissionEvents[i];
+                if (_state != value)
+                {
+                    RegisterState(value);
+                    _state = value;
+                }
+            }
+        }
 
-					component.Simulate(current.time - chunkStartTime, true, false);
+        private bool _enableEmission;
 
-					emission.enabled = current.action == EmissionAction.Play || current.action == EmissionAction.EnableEmission;
+        public bool enableEmission
+        {
+            get { return _enableEmission; }
+            set
+            {
+                if (!AssertForwardProperty("enableEmission", Severity.Warn)) return;
 
-					chunkStartTime = current.time;
-				}
+                if (_enableEmission && !value)
+                {
+                    RegisterEmission(EmissionAction.DisableEmission);
+                }
+                else if (!_enableEmission && value)
+                {
+                    RegisterEmission(EmissionAction.EnableEmission);
+                }
 
-				component.Simulate(loopedSimulationTime - chunkStartTime, true, false);
+                _enableEmission = value;
+            }
+        }
 
-				if (state == State.Stopping && component.particleCount == 0 && timeline.timeScale > 0)
-				{
-					state = State.Stopped;
-				}
-			}
+        #endregion
 
-			if (state == State.Playing || state == State.Stopping)
-			{
-				absoluteSimulationTime += timeline.deltaTime * playbackSpeed;
+        #region Timeline
 
-				if (state == State.Playing && !component.main.loop && absoluteSimulationTime >= component.main.duration)
-				{
-					// A bit hacky to stop it here, as the real system just goes on playing,
-					// just without emitting, but it shouldn't cause any problem. Unfortunately,
-					// there is no check on Unity's side to see if it entered that final state.
-					state = State.Stopping;
-				}
+        public override void CopyProperties(ParticleSystem source)
+        {
+            playbackSpeed = source.main.simulationSpeed;
 
-				// Can be performance intensive at high times.
-				// Limit it with a loop-multiple of its time (globally configurable)
+            stateOnStart = state = source.main.playOnAwake ? State.Playing : State.Stopped;
 
-				float maxLoops = Timekeeper.instance.maxParticleLoops;
+            enableEmissionOnStart = _enableEmission = source.emission.enabled;
 
-				if (maxLoops > 0 && state != State.Stopping)
-				{
-					loopedSimulationTime = absoluteSimulationTime % (component.main.duration * maxLoops);
-				}
-				else
-				{
-					loopedSimulationTime = absoluteSimulationTime;
-				}
-			}
-		}
+            time = 0;
 
-		#endregion
+            if (source.useAutoRandomSeed)
+            {
+                if (source.isPlaying)
+                {
+                    source.Pause(true);
+                }
 
-		#region Methods
+                source.useAutoRandomSeed = false;
+                source.randomSeed = (uint)Random.Range(1, int.MaxValue);
+            }
+        }
 
-		public void Play(bool withChildren = true)
-		{
-			if (!AssertForwardMethod("Play", Severity.Warn)) return;
+        public override void Update()
+        {
+            if (timeline.timeScale < 0)
+            {
+                // Determine state by consuming state events
 
-			if (state != State.Paused)
-			{
-				RegisterEmission(EmissionAction.Play);
-				relativeStartTime = loopedSimulationTime;
-			}
+                if (stateEvents.Count > 0)
+                {
+                    StateEvent lastStateEvent = stateEvents[stateEvents.Count - 1];
 
-			state = State.Playing;
+                    if (stateEventsTime <= lastStateEvent.time)
+                    {
+                        stateEvents.Remove(lastStateEvent);
 
-			if (withChildren)
-			{
-				ExecuteOnChildren(ps => ps.Play(false), ps => ps.Play(false));
-			}
-		}
+                        if (stateEvents.Count > 0)
+                        {
+                            _state = stateEvents[stateEvents.Count - 1].state;
+                        }
+                        else
+                        {
+                            _state = stateOnStart;
+                        }
+                    }
+                }
 
-		public void Pause(bool withChildren = true)
-		{
-			if (!AssertForwardMethod("Pause", Severity.Warn)) return;
+                // Consume emission events
 
-			state = State.Paused;
+                for (int i = emissionEvents.Count - 1; i >= 0; i--)
+                {
+                    if (emissionEvents[i].time > emissionEventsTime)
+                    {
+                        emissionEvents.RemoveAt(i);
+                    }
+                }
+            }
 
-			if (withChildren)
-			{
-				ExecuteOnChildren(ps => ps.Pause(false), ps => ps.Pause(false));
-			}
-		}
+            // Known issue: low time scales / speed will cause stutter
+            // Reported here: http://fogbugz.unity3d.com/default.asp?694191_dso514lin4rf5vbg
 
-		public void Stop(bool withChildren = true)
-		{
-			if (!AssertForwardMethod("Stop", Severity.Warn)) return;
+            component.Simulate(0, true, true);
 
-			state = State.Stopping;
+            if (loopedSimulationTime > 0)
+            {
+                var emission = component.emission;
 
-			RegisterEmission(EmissionAction.Stop);
+                emission.enabled = enableEmissionOnStart;
 
-			if (withChildren)
-			{
-				ExecuteOnChildren(ps => ps.Stop(false), ps => ps.Stop(false));
-			}
-		}
+                float chunkStartTime = 0;
 
-		public bool IsAlive(bool withChildren = true)
-		{
-			if (state == State.Stopped)
-			{
-				return false;
-			}
+                for (int i = 0; i < emissionEvents.Count; i++)
+                {
+                    EmissionEvent current = emissionEvents[i];
 
-			if (withChildren)
-			{
-				return CheckOnChildren(ps => ps.IsAlive(false), ps => ps.IsAlive(false));
-			}
+                    component.Simulate(current.time - chunkStartTime, true, false);
 
-			return true;
-		}
+                    emission.enabled = current.action == EmissionAction.Play || current.action == EmissionAction.EnableEmission;
 
-		#endregion
+                    chunkStartTime = current.time;
+                }
 
-		#region Hierarchy
+                component.Simulate(loopedSimulationTime - chunkStartTime, true, false);
 
-		private delegate void ChildNativeAction(ParticleSystem target);
+                if (state == State.Stopping && component.particleCount == 0 && timeline.timeScale > 0)
+                {
+                    state = State.Stopped;
+                }
+            }
 
-		private delegate void ChildChronosAction(IParticleSystemTimeline target);
+            if (state == State.Playing || state == State.Stopping)
+            {
+                absoluteSimulationTime += timeline.deltaTime * playbackSpeed;
 
-		private delegate bool ChildNativeCheck(ParticleSystem target);
+                if (state == State.Playing && !component.main.loop && absoluteSimulationTime >= component.main.duration)
+                {
+                    // A bit hacky to stop it here, as the real system just goes on playing,
+                    // just without emitting, but it shouldn't cause any problem. Unfortunately,
+                    // there is no check on Unity's side to see if it entered that final state.
+                    state = State.Stopping;
+                }
 
-		private delegate bool ChildChronosCheck(IParticleSystemTimeline target);
+                // Can be performance intensive at high times.
+                // Limit it with a loop-multiple of its time (globally configurable)
 
-		private void ExecuteOnChildren(ChildNativeAction native, ChildChronosAction chronos)
-		{
-			foreach (ParticleSystem childParticleSystem in timeline.GetComponentsInChildren<ParticleSystem>())
-			{
-				if (childParticleSystem == component)
-				{
-					continue;
-				}
+                float maxLoops = Timekeeper.instance.maxParticleLoops;
 
-				Timeline childTimeline = childParticleSystem.GetComponent<Timeline>();
+                if (maxLoops > 0 && state != State.Stopping)
+                {
+                    loopedSimulationTime = absoluteSimulationTime % (component.main.duration * maxLoops);
+                }
+                else
+                {
+                    loopedSimulationTime = absoluteSimulationTime;
+                }
+            }
+        }
 
-				if (childTimeline != null)
-				{
-					chronos(childTimeline.particleSystem);
-				}
-				else
-				{
-					native(childParticleSystem);
-				}
-			}
-		}
+        #endregion
 
-		private bool CheckOnChildren(ChildNativeCheck native, ChildChronosCheck chronos)
-		{
-			foreach (ParticleSystem childParticleSystem in timeline.GetComponentsInChildren<ParticleSystem>())
-			{
-				if (childParticleSystem == component)
-				{
-					continue;
-				}
+        #region Methods
 
-				Timeline childTimeline = childParticleSystem.GetComponent<Timeline>();
+        public void Play(bool withChildren = true)
+        {
+            if (!AssertForwardMethod("Play", Severity.Warn)) return;
 
-				if (childTimeline != null)
-				{
-					if (!chronos(childTimeline.particleSystem))
-					{
-						return false;
-					}
-				}
-				else
-				{
-					if (!native(childParticleSystem))
-					{
-						return false;
-					}
-				}
-			}
+            if (state != State.Paused)
+            {
+                RegisterEmission(EmissionAction.Play);
+                relativeStartTime = loopedSimulationTime;
+            }
 
-			return true;
-		}
+            state = State.Playing;
 
-		#endregion
+            if (withChildren)
+            {
+                ExecuteOnChildren(ps => ps.Play(false), ps => ps.Play(false));
+            }
+        }
 
-		#region Utility
+        public void Pause(bool withChildren = true)
+        {
+            if (!AssertForwardMethod("Pause", Severity.Warn)) return;
 
-		private bool AssertForwardMethod(string method, Severity severity)
-		{
-			if (timeline.timeScale <= 0)
-			{
-				if (severity == Severity.Error)
-				{
-					throw new ChronosException("Cannot call " + method + " on the particle system while time is paused or rewinding.");
-				}
-				else if (severity == Severity.Warn)
-				{
-					Debug.LogWarning("Trying to call " + method +
-									 " on the particle system while time is paused or rewinding, ignoring.");
-				}
-			}
+            state = State.Paused;
 
-			return timeline.timeScale > 0;
-		}
+            if (withChildren)
+            {
+                ExecuteOnChildren(ps => ps.Pause(false), ps => ps.Pause(false));
+            }
+        }
 
-		private bool AssertForwardProperty(string property, Severity severity)
-		{
-			if (timeline.timeScale <= 0)
-			{
-				if (severity == Severity.Error)
-				{
-					throw new ChronosException("Cannot set " + property + " on the particle system while time is paused or rewinding.");
-				}
-				else if (severity == Severity.Warn)
-				{
-					Debug.LogWarning("Trying to set " + property +
-									 " on the particle system while time is paused or rewinding, ignoring.");
-				}
-			}
+        public void Stop(bool withChildren = true)
+        {
+            if (!AssertForwardMethod("Stop", Severity.Warn)) return;
 
-			return timeline.timeScale > 0;
-		}
+            state = State.Stopping;
 
-		#endregion
-	}
+            RegisterEmission(EmissionAction.Stop);
+
+            if (withChildren)
+            {
+                ExecuteOnChildren(ps => ps.Stop(false), ps => ps.Stop(false));
+            }
+        }
+
+        public bool IsAlive(bool withChildren = true)
+        {
+            if (state == State.Stopped)
+            {
+                return false;
+            }
+
+            if (withChildren)
+            {
+                return CheckOnChildren(ps => ps.IsAlive(false), ps => ps.IsAlive(false));
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Hierarchy
+
+        private delegate void ChildNativeAction(ParticleSystem target);
+
+        private delegate void ChildChronosAction(IParticleSystemTimeline target);
+
+        private delegate bool ChildNativeCheck(ParticleSystem target);
+
+        private delegate bool ChildChronosCheck(IParticleSystemTimeline target);
+
+        private void ExecuteOnChildren(ChildNativeAction native, ChildChronosAction chronos)
+        {
+            foreach (ParticleSystem childParticleSystem in timeline.GetComponentsInChildren<ParticleSystem>())
+            {
+                if (childParticleSystem == component)
+                {
+                    continue;
+                }
+
+                Timeline childTimeline = childParticleSystem.GetComponent<Timeline>();
+
+                if (childTimeline != null)
+                {
+                    chronos(childTimeline.particleSystem);
+                }
+                else
+                {
+                    native(childParticleSystem);
+                }
+            }
+        }
+
+        private bool CheckOnChildren(ChildNativeCheck native, ChildChronosCheck chronos)
+        {
+            foreach (ParticleSystem childParticleSystem in timeline.GetComponentsInChildren<ParticleSystem>())
+            {
+                if (childParticleSystem == component)
+                {
+                    continue;
+                }
+
+                Timeline childTimeline = childParticleSystem.GetComponent<Timeline>();
+
+                if (childTimeline != null)
+                {
+                    if (!chronos(childTimeline.particleSystem))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!native(childParticleSystem))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Utility
+
+        private bool AssertForwardMethod(string method, Severity severity)
+        {
+            if (timeline.timeScale <= 0)
+            {
+                if (severity == Severity.Error)
+                {
+                    throw new ChronosException("Cannot call " + method + " on the particle system while time is paused or rewinding.");
+                }
+                else if (severity == Severity.Warn)
+                {
+                    Debug.LogWarning("Trying to call " + method +
+                                     " on the particle system while time is paused or rewinding, ignoring.");
+                }
+            }
+
+            return timeline.timeScale > 0;
+        }
+
+        private bool AssertForwardProperty(string property, Severity severity)
+        {
+            if (timeline.timeScale <= 0)
+            {
+                if (severity == Severity.Error)
+                {
+                    throw new ChronosException("Cannot set " + property + " on the particle system while time is paused or rewinding.");
+                }
+                else if (severity == Severity.Warn)
+                {
+                    Debug.LogWarning("Trying to set " + property +
+                                     " on the particle system while time is paused or rewinding, ignoring.");
+                }
+            }
+
+            return timeline.timeScale > 0;
+        }
+
+        #endregion
+    }
 }

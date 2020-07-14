@@ -14,6 +14,7 @@ public class PlayerMovement : BaseBehaviour
     [SerializeField] float WalkSpeed = 5.0f;
     [SerializeField] float SprintSpeed = 10.0f;
     [SerializeField] float ClimbSpeed = 2.0f;
+    [SerializeField] float WallRunSpeed = 10.0f;
 
     public bool IsSprinting { get; set; }
 
@@ -127,6 +128,13 @@ public class PlayerMovement : BaseBehaviour
     {
         GetComponent<Timeline>().rigidbody.useGravity = false;
         Direction *= ClimbSpeed * Time.deltaTime;
+        rb.MovePosition(rb.position + Direction);
+    }
+
+    public void WallRun(Vector3 Direction)
+    {
+        GetComponent<Timeline>().rigidbody.useGravity = false;
+        Direction *= WallRunSpeed * Time.deltaTime;
         rb.MovePosition(rb.position + Direction);
     }
 

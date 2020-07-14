@@ -5,259 +5,259 @@ using UnityEngine;
 
 namespace Chronos
 {
-	public interface IRecorder
-	{
-		void Reset();
-		int EstimateMemoryUsage();
-	}
+    public interface IRecorder
+    {
+        void Reset();
+        int EstimateMemoryUsage();
+    }
 
-	public abstract class RecorderTimeline<TComponent, TSnapshot> : ComponentTimeline<TComponent>, IRecorder where TComponent : Component
-	{
-		public RecorderTimeline(Timeline timeline, TComponent component) : base(timeline, component)
-		{
-			snapshots = new List<TSnapshot>();
-			times = new List<float>();
-		}
+    public abstract class RecorderTimeline<TComponent, TSnapshot> : ComponentTimeline<TComponent>, IRecorder where TComponent : Component
+    {
+        public RecorderTimeline(Timeline timeline, TComponent component) : base(timeline, component)
+        {
+            snapshots = new List<TSnapshot>();
+            times = new List<float>();
+        }
 
-		public override void OnStartOrReEnable()
-		{
-			Reset();
-		}
+        public override void OnStartOrReEnable()
+        {
+            Reset();
+        }
 
-		public override void Update()
-		{
-			float timeScale = timeline.timeScale;
+        public override void Update()
+        {
+            float timeScale = timeline.timeScale;
 
-			if (lastTimeScale >= 0 && timeScale < 0) // Started rewind
-			{
-				laterSnapshot = CopySnapshot();
-				laterTime = timeline.time;
-				interpolatedSnapshot = laterSnapshot;
-				canRewind = TryFindEarlierSnapshot(false);
-			}
+            if (lastTimeScale >= 0 && timeScale < 0) // Started rewind
+            {
+                laterSnapshot = CopySnapshot();
+                laterTime = timeline.time;
+                interpolatedSnapshot = laterSnapshot;
+                canRewind = TryFindEarlierSnapshot(false);
+            }
 
-			if (timeScale > 0)
-			{
-				Progress();
-			}
-			else if (timeScale < 0)
-			{
-				Rewind();
-			}
+            if (timeScale > 0)
+            {
+                Progress();
+            }
+            else if (timeScale < 0)
+            {
+                Rewind();
+            }
 
-			lastTimeScale = timeScale;
-		}
+            lastTimeScale = timeScale;
+        }
 
-		#region Fields
+        #region Fields
 
-		protected List<TSnapshot> snapshots;
-		protected List<float> times;
-		protected int capacity;
-		protected float recordingTimer;
-		protected float lastTimeScale = 1;
-		protected bool canRewind;
-		protected TSnapshot laterSnapshot;
-		protected float laterTime;
-		protected TSnapshot earlierSnapshot;
-		protected float earlierTime;
-		protected TSnapshot interpolatedSnapshot;
+        protected List<TSnapshot> snapshots;
+        protected List<float> times;
+        protected int capacity;
+        protected float recordingTimer;
+        protected float lastTimeScale = 1;
+        protected bool canRewind;
+        protected TSnapshot laterSnapshot;
+        protected float laterTime;
+        protected TSnapshot earlierSnapshot;
+        protected float earlierTime;
+        protected TSnapshot interpolatedSnapshot;
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// Indicates whether the recorder has exhausted its rewind capacity. 
-		/// </summary>
-		public bool exhaustedRewind
-		{
-			get { return !canRewind; }
-		}
+        /// <summary>
+        /// Indicates whether the recorder has exhausted its rewind capacity. 
+        /// </summary>
+        public bool exhaustedRewind
+        {
+            get { return !canRewind; }
+        }
 
-		/// <summary>
-		/// Returns the available rewind duration in seconds. 
-		/// </summary>
-		public float availableRewindDuration
-		{
-			get
-			{
-				if (exhaustedRewind || times.Count == 0)
-				{
-					return 0;
-				}
+        /// <summary>
+        /// Returns the available rewind duration in seconds. 
+        /// </summary>
+        public float availableRewindDuration
+        {
+            get
+            {
+                if (exhaustedRewind || times.Count == 0)
+                {
+                    return 0;
+                }
 
-				return Mathf.Max(0, timeline.time - times[0]);
-			}
-		}
-		
-		#endregion
+                return Mathf.Max(0, timeline.time - times[0]);
+            }
+        }
 
-		#region Flow
+        #endregion
 
-		protected void Progress()
-		{
-			if (recordingTimer >= timeline.recordingInterval)
-			{
-				Record();
+        #region Flow
 
-				recordingTimer = 0;
-			}
+        protected void Progress()
+        {
+            if (recordingTimer >= timeline.recordingInterval)
+            {
+                Record();
 
-			recordingTimer += timeline.deltaTime;
-		}
+                recordingTimer = 0;
+            }
 
-		/// <summary>
-		/// Forces the recprder to record a snapshot at the current frame.
-		/// </summary>
-		public void Record()
-		{
-			if (!timeline.rewindable)
-			{
-				return;
-			}
+            recordingTimer += timeline.deltaTime;
+        }
 
-			if (snapshots.Count == capacity)
-			{
-				snapshots.RemoveAt(0);
-				times.RemoveAt(0);
-			}
+        /// <summary>
+        /// Forces the recprder to record a snapshot at the current frame.
+        /// </summary>
+        public void Record()
+        {
+            if (!timeline.rewindable)
+            {
+                return;
+            }
 
-			snapshots.Add(CopySnapshot());
-			times.Add(timeline.time);
+            if (snapshots.Count == capacity)
+            {
+                snapshots.RemoveAt(0);
+                times.RemoveAt(0);
+            }
 
-			canRewind = true;
-		}
+            snapshots.Add(CopySnapshot());
+            times.Add(timeline.time);
 
-		protected void Rewind()
-		{
-			if (canRewind)
-			{
-				if (timeline.time <= earlierTime)
-				{
-					canRewind = TryFindEarlierSnapshot(true);
+            canRewind = true;
+        }
 
-					if (!canRewind)
-					{
-						// Make sure the last snapshot is perfectly in place
-						interpolatedSnapshot = earlierSnapshot;
-						ApplySnapshot(interpolatedSnapshot);
+        protected void Rewind()
+        {
+            if (canRewind)
+            {
+                if (timeline.time <= earlierTime)
+                {
+                    canRewind = TryFindEarlierSnapshot(true);
 
-						timeline.SendMessage("OnExhaustRewind", SendMessageOptions.DontRequireReceiver);
+                    if (!canRewind)
+                    {
+                        // Make sure the last snapshot is perfectly in place
+                        interpolatedSnapshot = earlierSnapshot;
+                        ApplySnapshot(interpolatedSnapshot);
 
-						return;
-					}
-				}
+                        timeline.SendMessage("OnExhaustRewind", SendMessageOptions.DontRequireReceiver);
 
-				float t = (laterTime - timeline.time) / (laterTime - earlierTime);
+                        return;
+                    }
+                }
 
-				interpolatedSnapshot = LerpSnapshots(laterSnapshot, earlierSnapshot, t);
+                float t = (laterTime - timeline.time) / (laterTime - earlierTime);
 
-				ApplySnapshot(interpolatedSnapshot);
-			}
-		}
+                interpolatedSnapshot = LerpSnapshots(laterSnapshot, earlierSnapshot, t);
 
-		protected void OnExhaustRewind()
-		{
-			if (Timekeeper.instance.debug)
-			{
-				Debug.LogWarning("Reached rewind limit.");
-			}
-		}
+                ApplySnapshot(interpolatedSnapshot);
+            }
+        }
 
-		#endregion
+        protected void OnExhaustRewind()
+        {
+            if (Timekeeper.instance.debug)
+            {
+                Debug.LogWarning("Reached rewind limit.");
+            }
+        }
 
-		#region Snapshots
+        #endregion
 
-		protected abstract TSnapshot LerpSnapshots(TSnapshot from, TSnapshot to, float t);
+        #region Snapshots
 
-		protected abstract TSnapshot CopySnapshot();
+        protected abstract TSnapshot LerpSnapshots(TSnapshot from, TSnapshot to, float t);
 
-		protected abstract void ApplySnapshot(TSnapshot snapshot);
+        protected abstract TSnapshot CopySnapshot();
 
-		protected bool TryFindEarlierSnapshot(bool pop)
-		{
-			if (pop)
-			{
-				if (snapshots.Count < 1)
-				{
-					return false;
-				}
+        protected abstract void ApplySnapshot(TSnapshot snapshot);
 
-				laterSnapshot = snapshots[snapshots.Count - 1];
-				laterTime = times[times.Count - 1];
+        protected bool TryFindEarlierSnapshot(bool pop)
+        {
+            if (pop)
+            {
+                if (snapshots.Count < 1)
+                {
+                    return false;
+                }
 
-				snapshots.RemoveAt(snapshots.Count - 1);
-				times.RemoveAt(times.Count - 1);
-			}
+                laterSnapshot = snapshots[snapshots.Count - 1];
+                laterTime = times[times.Count - 1];
 
-			if (snapshots.Count < 1)
-			{
-				return false;
-			}
+                snapshots.RemoveAt(snapshots.Count - 1);
+                times.RemoveAt(times.Count - 1);
+            }
 
-			earlierSnapshot = snapshots[snapshots.Count - 1];
-			earlierTime = times[times.Count - 1];
+            if (snapshots.Count < 1)
+            {
+                return false;
+            }
 
-			return true;
-		}
+            earlierSnapshot = snapshots[snapshots.Count - 1];
+            earlierTime = times[times.Count - 1];
 
-		/// <summary>
-		/// Resets the snapshots. 
-		/// </summary>
-		public override void Reset()
-		{
-			lastTimeScale = 1;
+            return true;
+        }
 
-			if (timeline.recordingDuration < timeline.recordingInterval)
-			{
-				throw new ChronosException("The recording duration must be longer than or equal to interval.");
-			}
+        /// <summary>
+        /// Resets the snapshots. 
+        /// </summary>
+        public override void Reset()
+        {
+            lastTimeScale = 1;
 
-			if (timeline.recordingInterval <= 0)
-			{
-				throw new ChronosException("The recording interval must be positive.");
-			}
-			
-			snapshots.Clear();
-			times.Clear();
+            if (timeline.recordingDuration < timeline.recordingInterval)
+            {
+                throw new ChronosException("The recording duration must be longer than or equal to interval.");
+            }
 
-			capacity = Mathf.CeilToInt(timeline.recordingDuration / timeline.recordingInterval);
-			snapshots.Capacity = capacity;
-			times.Capacity = capacity;
-			recordingTimer = 0;
+            if (timeline.recordingInterval <= 0)
+            {
+                throw new ChronosException("The recording interval must be positive.");
+            }
 
-			Record();
-		}
+            snapshots.Clear();
+            times.Clear();
 
-		/// <summary>
-		/// Modifies all snapshots via the specified modifier delegate.
-		/// </summary>
-		public virtual void ModifySnapshots(SnapshotModifier modifier)
-		{
-			for (int i = 0; i < snapshots.Count; i++)
-			{
-				snapshots[i] = modifier(snapshots[i], times[i]);
-			}
-		}
+            capacity = Mathf.CeilToInt(timeline.recordingDuration / timeline.recordingInterval);
+            snapshots.Capacity = capacity;
+            times.Capacity = capacity;
+            recordingTimer = 0;
 
-		public delegate TSnapshot SnapshotModifier(TSnapshot snapshot, float time);
+            Record();
+        }
 
-		#endregion
+        /// <summary>
+        /// Modifies all snapshots via the specified modifier delegate.
+        /// </summary>
+        public virtual void ModifySnapshots(SnapshotModifier modifier)
+        {
+            for (int i = 0; i < snapshots.Count; i++)
+            {
+                snapshots[i] = modifier(snapshots[i], times[i]);
+            }
+        }
 
-		internal static int EstimateMemoryUsage(float duration, float interval)
-		{
-			int structSize = Marshal.SizeOf(typeof(TSnapshot));
-			int structAmount = Mathf.CeilToInt(duration / interval);
-			int pointerAmount = 1;
-			while (pointerAmount < structAmount) pointerAmount *= 2;
-			int pointerSize = IntPtr.Size;
+        public delegate TSnapshot SnapshotModifier(TSnapshot snapshot, float time);
 
-			return (structSize * structAmount) + (pointerSize * pointerAmount);
-		}
+        #endregion
 
-		public int EstimateMemoryUsage()
-		{
-			return EstimateMemoryUsage(timeline.recordingDuration, timeline.recordingInterval);
-		}
-	}
+        internal static int EstimateMemoryUsage(float duration, float interval)
+        {
+            int structSize = Marshal.SizeOf(typeof(TSnapshot));
+            int structAmount = Mathf.CeilToInt(duration / interval);
+            int pointerAmount = 1;
+            while (pointerAmount < structAmount) pointerAmount *= 2;
+            int pointerSize = IntPtr.Size;
+
+            return (structSize * structAmount) + (pointerSize * pointerAmount);
+        }
+
+        public int EstimateMemoryUsage()
+        {
+            return EstimateMemoryUsage(timeline.recordingDuration, timeline.recordingInterval);
+        }
+    }
 }
