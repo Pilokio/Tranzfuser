@@ -2029,7 +2029,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 1.5
+  m_Speed: 4.5
   m_Acceleration: 20
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -2147,7 +2147,7 @@ MonoBehaviour:
   Aggresiveness: 1
   Determination: 1
   Awareness: 1
-  Swiftness: 1
+  Swiftness: 3
   SuccessChance: 1
   AlertStatus: 0
   VisionConeAngle: 45
