@@ -45,14 +45,12 @@ public class Ladder : MonoBehaviour
     {
         if (PlayerOccupied)
         {
-
             if (CustomInputManager.GetAxisRaw("LeftStickHorizontal") < CustomInputManager.GetAxisNeutralPosition("LeftStickHorizontal"))
             {
                 player.GetComponent<PlayerController>().SetIsClimbing(false);
                 IsOccupied = false;
                 PlayerOccupied = false;
             }
-
 
             //If the player is close to the bottom of the ladder and still moving down
             if (Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") < CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
@@ -73,7 +71,6 @@ public class Ladder : MonoBehaviour
                                                                    //Stop climbing and resume normal movement
                 player.GetComponent<PlayerController>().SetIsClimbing(false);
             }
-
         }
     }
 
