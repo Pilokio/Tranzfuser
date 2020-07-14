@@ -6,6 +6,7 @@ public class PlayerMovement : BaseBehaviour
 
     // Movement
     public float XRotation { get; set; }
+    public float YRotation { get; set; }
     [Header("LookAt Parameters")]
     [SerializeField] float LookSensitivityKeyboardAndMouse = 100.0f;
     [SerializeField] float LookSensitivityController = 150.0f;
@@ -34,11 +35,13 @@ public class PlayerMovement : BaseBehaviour
 
 
     // Other
+    private Camera MainCamera;
     private Rigidbody rb;
 
     // Start is called before the first frame update
     void Start()
     {
+        MainCamera = Camera.main;
         rb = GetComponent<Rigidbody>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -67,7 +70,23 @@ public class PlayerMovement : BaseBehaviour
 
         if (Move.magnitude > 0.1f)
             rb.MovePosition(new Vector3(rb.position.x + Move.x, rb.position.y, rb.position.z + Move.z));
+    }
 
+
+    public void MoveOnWall(float forwardPush)
+    {
+       if(forwardPush <= 0.25f)
+        {
+            Debug.Log("Not moving fast enough");
+            return;
+        }
+
+        Vector3 Move = new Vector3(0.0f, 0.0f, forwardPush);
+        Move *= SprintSpeed * Time.fixedDeltaTime;
+        
+
+        if (Move.magnitude > 0.1f)
+            rb.MovePosition(new Vector3(rb.position.x + Move.x, rb.position.y, rb.position.z + Move.z));
     }
 
     public void Jump()
@@ -118,10 +137,45 @@ public class PlayerMovement : BaseBehaviour
         XRotation = Mathf.Clamp(XRotation, -90, 90);
 
         //Update the camera's x rotation
-        Camera.main.transform.localRotation = Quaternion.Euler(XRotation, Camera.main.transform.localRotation.eulerAngles.y, Camera.main.transform.localRotation.eulerAngles.z);
+        MainCamera.transform.localRotation = Quaternion.Euler(XRotation, MainCamera.transform.localRotation.eulerAngles.y, MainCamera.transform.localRotation.eulerAngles.z);
 
         //Rotate the entire player container transform around the y-axis based on the look direction
         transform.Rotate(transform.up * LookDirection.x);
+    }
+
+    public void LookOnWall(Vector2 LookDirection)
+    {
+        float LookSensitivity = 0.0f;
+        LookSensitivity = LookSensitivityController;
+
+        if (CustomInputManager.ControllersConnected == false)
+            LookSensitivity = LookSensitivityKeyboardAndMouse;
+
+        if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
+            LookDirection.x = 0.0f;
+
+        if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
+            LookDirection.y = 0.0f;
+
+
+        LookDirection *= LookSensitivity * Time.deltaTime;
+
+        //Update the x rotation of the camera based on the new Look Direction
+        XRotation -= LookDirection.y;
+
+        //Clamp to prevent full 360 rotation around the x-axis
+        XRotation = Mathf.Clamp(XRotation, -90, 90);
+
+
+        //Update the x rotation of the camera based on the new Look Direction
+        YRotation += LookDirection.x;
+
+        //Clamp to prevent full 360 rotation around the x-axis
+        //YRotation = Mathf.Clamp(YRotation, -90, 90);
+
+
+        //Update the camera's x rotation
+        MainCamera.transform.localRotation = Quaternion.Euler(XRotation, YRotation, MainCamera.transform.localRotation.eulerAngles.z);
     }
 
     public void ClimbLadder(Vector3 Direction)

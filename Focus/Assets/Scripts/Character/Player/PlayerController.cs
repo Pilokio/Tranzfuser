@@ -126,14 +126,9 @@ public class PlayerController : MonoBehaviour
                 HandleInput();
                 HandleLook();
                 HandleHookshotStart();
-
-                MyWallRunning.WallChecker();
-                MyWallRunning.RestoreCamera();
                 break;
 
             case State.HookshotThrown:
-                MyWallRunning.WallRunCameraRestore();
-
                 HandleHookshotThrow();
                 HandleLook();
                 HandleInput();
@@ -153,7 +148,7 @@ public class PlayerController : MonoBehaviour
         Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
 
         //Core Player movement
-        if (!IsClimbing)
+        if (!IsClimbing && !IsWallRunning)
         {
             // Apply momentum
             MyMovement.Move(characterVelocityMomentum);
@@ -171,7 +166,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        else
+        
+
+        if(IsClimbing)
         {
             //GetComponent<Rigidbody>().useGravity = false;
             MyMovement.Move(new Vector2(MoveDirection.x, 0));
@@ -180,8 +177,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
-            Debug.Log("You are wall running.");
-            //MyMovement.WallRun(new Vector3(0, 0, MoveDirection.x));
+            MyMovement.MoveOnWall(MoveDirection.y);
         }
     }
 
@@ -248,7 +244,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
-        if (CustomInputManager.GetButtonDown("ActionButton1"))
+        if (CustomInputManager.GetButtonDown("ActionButton1") && !IsWallRunning)
         {
             MyMovement.Jump();
         }
@@ -275,17 +271,12 @@ public class PlayerController : MonoBehaviour
 
     public void HandleLook()
     {
-        if (!IsClimbing)
+        if (!IsClimbing && !IsWallRunning)
             MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else
+        else if(IsClimbing)
             MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
-
-        if (!IsWallRunning)
-        
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), 0.0f));
-        
+        else if(IsWallRunning)
+            MyMovement.LookOnWall(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));   
     }
 
     void UpdateUI()
