@@ -108,7 +108,15 @@ public class EnemyController : BaseBehaviour
     Collider BodyCollider;
     Collider DetectionSphere;
 
-   
+    //How long will the enemy stay in cover for
+    [SerializeField] float CoverTime = 5.0f;
+    public float CoverSearchRadius = 50.0f;
+    public LayerMask CoverMask;
+    public float MinCoverThreshold = 10.0f;
+
+    //How long will the enemy stay in combat for
+    [SerializeField] float AttackTime = 5.0f;
+    private float DecisionTimer = 0.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -256,87 +264,148 @@ public class EnemyController : BaseBehaviour
       
     }
 
+    public Text StateDebug;
 
-    void DecisionMaking()
+    AlertState MakeEvaluation()
     {
-        if (IsHitCounter > 2 || TargetSighted)
+        int combatVotes = 0;
+        int takeCoverVotes = 0;
+
+        //Calculate the percentages for the HP of the enemy and target, as well as the distance of the target
+        //relative to the max attack range of the current weapon
+        float enemyHP = ((float)EnemyStats.Health / (float)EnemyStats.MaxHealth);
+        float targetHP = (float)Target.GetComponent<CharacterStats>().Health / (float)Target.GetComponent<CharacterStats>().MaxHealth;
+        float distancePercentage0to1 = Vector3.Distance(transform.position, Target.position) / AttackRange;
+
+        //Convert the floating point percentages to ints and set between 0 and 100 for easier calculations
+        int enemyPercentHP = (int)(enemyHP * 100);
+        int targetPercentHP = (int)(targetHP * 100);
+        int distancePercentage = (int)(distancePercentage0to1 * 100);
+
+        //If the current health % falls below threshold
+        //One vote for take cover
+        if (enemyPercentHP < SelfPreservationThreshold)
+        {
+            Debug.Log("I am too weak");
+            takeCoverVotes++;
+        }
+        else
+        {
+            Debug.Log("I am strong enough");
+            combatVotes++;
+        }
+
+        //If the enemy health % is greater than the target health %
+        //One vote for combat otherwise one vote to take cover
+        //This allows the enemy to prioritise their action based on the HP difference between themself and the target
+        //if the enemy is winning, they may be more aggressive, while if the target is winning they may be more defensive
+        if (enemyPercentHP > targetPercentHP)
+        {
+            Debug.Log("I am stronger than the target");
+            combatVotes++;
+        }
+        else
+        {
+            Debug.Log("The target is stronger than me");
+            takeCoverVotes++;
+        }
+
+        //If the player HP% is less than the damage of a single shot from the current weapon
+        //One vote for combat to finish them off
+        //No need for an else here as it would present unrealistic behaviour to take cover is you cant one shot the target
+        //Instead this acts to tip the scales in favour of combat if the target is weak
+        if (targetPercentHP <= MyWeaponController.GetCurrentlyEquippedWeapon().WeaponDamage)
+        {
+            Debug.Log("I can one-shot the target");
+            combatVotes++;
+        }
+
+        //if the target is within the proximity threshold, one vote for taking cover
+        //this threshold is determined by the bravery and aggressiveness stat
+        //otherwise one vote for combat
+        if (distancePercentage < ProximityThreshold)
+        {
+            Debug.Log("The target is too close");
+            takeCoverVotes++;
+        }
+        else
+        {
+            combatVotes++;
+        }
+
+        if (TargetSighted)
+        {
+            Debug.Log("I can see the target");
+            combatVotes++;
+        }
+        else
+        {
+            Debug.Log("I cannot see the target");
+            takeCoverVotes++;
+        }
+
+
+        if (combatVotes > takeCoverVotes)
+            return AlertState.Hostile;
+        else if (takeCoverVotes > combatVotes)
+            return AlertState.TakingCover;
+        else
+            return (AlertState)(int)Random.Range((float)AlertState.TakingCover, (float)AlertState.Hostile);
+    }
+
+    void DecisionMaking(AlertState Evaluation)
+    {
+        int combatVotes = 0;
+        int coverVotes = 0;
+
+        if (Evaluation == AlertState.TakingCover)
+        {
+            coverVotes++;
+        }
+        else if (Evaluation == AlertState.Hostile)
+        {
+            combatVotes++;
+        }
+
+
+        //This unbalances the votes and handles tie breakers
+        //It reduces the liklihood of the enemy repeating behaviours multiple times in a row
+        if (AlertStatus == AlertState.TakingCover)
+        {
+            combatVotes++;
+        }
+        else if (AlertStatus == AlertState.Hostile)
+        {
+            coverVotes++;
+        }
+
+        if(IsHitCounter >= 2)
         {
             IsHitCounter = 0;
-            //decide between take cover and combat
-
-            int combatVotes = 0;
-            int takeCoverVotes = 0;
-
-            float temp = ((float)EnemyStats.Health / (float)EnemyStats.MaxHealth);
-
-            //If the current health % falls below threshold
-            //One vote for take cover
-            if ((int)(temp * 100) < SelfPreservationThreshold)
-            {
-                Debug.Log("Low on health");
-                takeCoverVotes++;
-            }
-            else
-            {
-                Debug.Log("Plenty of health");
-                combatVotes++;
-            }
-
-            float temp2 = Vector3.Distance(transform.position, Target.position) / AttackRange;
-            int DistPercentage = (int)(temp2 * 100);
-
-
-            if (DistPercentage < ProximityThreshold)
-            {
-                Debug.Log("Player too close");
-                takeCoverVotes++;
-            }
-            else
-            {
-                Debug.Log("Player not close enough");
-                combatVotes++;
-            }
-
-            Debug.Log("TCV: " + takeCoverVotes + ", CBV: " + combatVotes);
-
-            if (combatVotes > takeCoverVotes)
-            {
-                if (AlertStatus != AlertState.Hostile)
-                {
-                    AlertStatus = AlertState.Hostile;
-                }
-            }
-            else if (takeCoverVotes > combatVotes)
-            {
-                if (AlertStatus != AlertState.TakingCover)
-                {
-                    TakeCover();
-                    AlertStatus = AlertState.TakingCover;
-                }
-            }
-            else
-            {
-                Debug.Log("50/50");
-                float rand = Random.Range(0, 100);
-                if (rand < 50)
-                {
-                    if (AlertStatus != AlertState.TakingCover)
-                    {
-                        TakeCover();
-                        AlertStatus = AlertState.TakingCover;
-                    }
-                }
-                else
-                {
-                    if (AlertStatus != AlertState.Hostile)
-                    {
-                        AlertStatus = AlertState.Hostile;
-                    }
-                }
-
-            }
+            coverVotes++;
         }
+        else
+        {
+            combatVotes++;
+        }
+
+
+        if(combatVotes > coverVotes)
+        {
+            DecisionTimer = AttackTime;
+            AlertStatus = AlertState.Hostile;
+        }
+        else
+        {
+            DecisionTimer = CoverTime;
+            TakeCover();
+            AlertStatus = AlertState.TakingCover;
+        }
+
+        StateDebug.text = combatVotes.ToString() + " : " + coverVotes.ToString() + " = " +  AlertStatus.ToString();
+
     }
+
 
     private void Update()
     {
@@ -345,22 +414,19 @@ public class EnemyController : BaseBehaviour
 
         //Determine if the enemy has a LOS to the player
         TargetSighted = DetectPlayer();
-        DecisionMaking();
-     
-
 
         //While taking cover or in combat if the target cannot be seen decrement timer
         //if the timer reaches zero then return to idle state as the hostile has been lost
         //if LOS is regained or never lost, reset timer
-        if(AlertStatus == AlertState.Hostile || AlertStatus == AlertState.TakingCover)
+        /*
+        if (AlertStatus == AlertState.Hostile || AlertStatus == AlertState.TakingCover)
         {
             if (!TargetSighted)
             {
                 LineOfSightTimer -= Time.deltaTime;
-
-
                 if (LineOfSightTimer <= 0.0f)
                 {
+                    IsHitCounter = 0;
                     AlertStatus = AlertState.Idle;
                 }
             }
@@ -369,27 +435,36 @@ public class EnemyController : BaseBehaviour
                 LineOfSightTimer = TimeToLose;
             }
         }
+        */
+       AlertState eval = MakeEvaluation();
+
+        if(eval != AlertStatus || DecisionTimer <= 0.0f)
+        {
+            DecisionMaking(eval);
+        }
 
 
         //Control this enemy based on the current alert status
         switch (AlertStatus)
         {
             case AlertState.Idle:
+                if (IsHitCounter > 2 || TargetSighted)
+                {
+                    IsHitCounter = 0;
+                    AlertStatus = AlertState.Hostile;
+                }
                 Patrol();
                 break;
             case AlertState.Hostile:
                 Combat();
+
+                DecisionTimer -= Time.deltaTime;
                 break;
             case AlertState.TakingCover:
                 if (Agent.remainingDistance < Agent.stoppingDistance)
                 {
-                    CoverTime -= Time.deltaTime;
-
-                    if (CoverTime <= 0.0f)
-                    {
-                        CoverTime = MaxCoverTime;
-                        AlertStatus = AlertState.Hostile;
-                    }
+                    DecisionTimer -= Time.deltaTime;
+                
                 }
 
                 //wait in cover for x seconds or until circumstances change
@@ -399,11 +474,7 @@ public class EnemyController : BaseBehaviour
         }
     }
 
-    private float CoverTime = 5.0f;
-    public float MaxCoverTime = 5.0f;
-    public float CoverSearchRadius = 50.0f;
-    public LayerMask CoverMask;
-    public float MinCoverThreshold = 10.0f;
+  
     Vector3 FindCover()
     {
         //Find all the possible cover points scattered around the level in the assigned radius
