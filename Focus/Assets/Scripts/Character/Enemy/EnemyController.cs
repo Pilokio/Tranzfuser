@@ -359,7 +359,6 @@ public class EnemyController : BaseBehaviour
 
         if(DecisionTimer <= 0.0f)
         {
-            Debug.Log("Making decision");
             DecisionMaking();
         }
 
@@ -393,6 +392,14 @@ public class EnemyController : BaseBehaviour
                 if (Agent.remainingDistance < Agent.stoppingDistance)
                 {
                     DecisionTimer -= Time.deltaTime;
+
+
+                    if(!IsCurrentCoverValid())
+                    {
+                        Debug.Log("This cover is compromised");
+                        TakeCover();
+                    }
+
 
                     //If being hit when in cover, set the timer to 0 to make a new decision
                     if(IsHitCounter > 0)
@@ -441,6 +448,7 @@ public class EnemyController : BaseBehaviour
                         //then it is 'good enough' and will be used
                         if (CurrentDistance <= MinCoverThreshold)
                         {
+                            CurrentCover = CoverPoints[TargetIndex].gameObject;
                             return Cover.CoverPosition.position;
                         }
                     }
@@ -456,16 +464,19 @@ public class EnemyController : BaseBehaviour
             //then return the current transform position
             //This will be checked before assigning a new destination as we dont want the enemy to deviate from its existing
             //orders if there is no suitable cover 
+            CurrentCover = null;
             return transform.position;
         }
         else
         {
             //If all cover points were looked at and the most suitable one is not below the minimum threshold
             //Use the best one that could be found
+            CurrentCover = CoverPoints[TargetIndex].gameObject;
             return CoverPoints[TargetIndex].gameObject.GetComponent<CoverData>().CoverPosition.position;
         }
     }
 
+    private GameObject CurrentCover;
     /// <summary>
     /// This function handles the patrol behaviours of the enemy
     /// </summary>
@@ -494,7 +505,27 @@ public class EnemyController : BaseBehaviour
     }
 
    
+    bool IsCurrentCoverValid()
+    {
+        if (CurrentCover == null)
+            return false;
 
+
+        //Determine suitability of cover based on player current position
+        //ie is the player in front of the cover position (will the piece of cover actually provide protection)
+        Vector3 heading = Target.position - CurrentCover.GetComponent<CoverData>().CoverPosition.position;
+        float dot = Vector3.Dot(heading, CurrentCover.GetComponent<CoverData>().CoverPosition.forward);
+
+        //If the dot product is greater than zero, then the player is roughly in front of the cover
+        if (dot > 0)
+        {
+            return true;
+        }
+
+
+
+            return false;
+    }
 
     /// <summary>
     /// This function handles the combat behaviours of the enemy
