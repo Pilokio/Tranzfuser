@@ -414,12 +414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad43942bd7f81b64db0baaa51fbe0369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upForce: 0
-  sideForce: 0
-  MinWallRunDistance: 3
   wallJumpForce: 27
-  IsOccupied: 0
-  isOnWall: 0
 --- !u!1 &2686211373547741493
 GameObject:
   m_ObjectHideFlags: 0
@@ -5290,7 +5285,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 7479
+    m_Bits: 15671
   m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
