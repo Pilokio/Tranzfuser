@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
 
         if (Param)
         {
+            GetComponent<Timeline>().rigidbody.velocity = new Vector3(0,0,0);
             GetComponent<Timeline>().rigidbody.useGravity = false;
         }
         else
@@ -177,6 +178,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
+
             MyMovement.MoveOnWall(MoveDirection.y);
         }
     }
