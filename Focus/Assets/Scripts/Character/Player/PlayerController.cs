@@ -178,8 +178,12 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
-
+            MyWallRunning.TiltCamera();
             MyMovement.MoveOnWall(MoveDirection.y);
+        }
+        else
+        {
+            MyWallRunning.RestoreCamera();
         }
     }
 

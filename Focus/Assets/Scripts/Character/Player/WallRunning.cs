@@ -16,7 +16,8 @@ public class WallRunning : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _PlayerController = GetComponent<PlayerController>();
     }
-   
+
+    bool Restored = false;
     // This is used for when the player fires a hook while wall running
     public void RestoreCamera()
     {
@@ -33,17 +34,19 @@ public class WallRunning : MonoBehaviour
         //}
         Debug.Log("Restoring camera");
 
-        if(MainCamera.transform.localEulerAngles.y != 0)
+        if(MainCamera.transform.localEulerAngles.y != 0 && !Restored)
         {
-            Debug.Log("normalising camera");
+            Debug.Log("normalising camera");          
+            transform.rotation = Quaternion.Euler(transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, transform.localEulerAngles.z);
+
             MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
-            //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, transform.localEulerAngles.z);
-            //MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
+            Restored = true;
         }
     }
 
     public void TiltCamera()
     {
+        Restored = false;
         //if(JumpOffDirection.x > 0)
         //{
         //    Debug.Log("Wall to left"); 
