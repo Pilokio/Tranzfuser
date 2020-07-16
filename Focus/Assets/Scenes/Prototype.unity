@@ -7117,7 +7117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1799948295}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.1, y: 24.83, z: 34.07}
+  m_LocalPosition: {x: 2.87, y: 24.83, z: 34.07}
   m_LocalScale: {x: 0.3, y: 17, z: 63}
   m_Children: []
   m_Father: {fileID: 1676606845}
@@ -8579,11 +8579,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlayerContainer
-      objectReference: {fileID: 0}
-    - target: {fileID: 2783557252329496228, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 15671
       objectReference: {fileID: 0}
     - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}

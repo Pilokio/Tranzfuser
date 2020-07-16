@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
 
         if (Param)
         {
+            GetComponent<Timeline>().rigidbody.velocity = new Vector3(0,0,0);
             GetComponent<Timeline>().rigidbody.useGravity = false;
         }
         else
@@ -87,9 +88,9 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        playerCamera = Camera.main;
+        playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
         cameraFov = playerCamera.GetComponent<CameraFov>();
-        speedLinesParticleSystem = playerCamera.transform.Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
+        speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
         speedLinesParticleSystem.Stop();
         state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
@@ -177,13 +178,8 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
-            Debug.Log("Wall running");
-            MyWallRunning.TiltCamera();
+
             MyMovement.MoveOnWall(MoveDirection.y);
-        }
-        else
-        {
-            MyWallRunning.RestoreCamera();
         }
     }
 
