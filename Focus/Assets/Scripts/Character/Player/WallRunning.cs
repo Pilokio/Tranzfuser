@@ -20,22 +20,51 @@ public class WallRunning : MonoBehaviour
     // This is used for when the player fires a hook while wall running
     public void RestoreCamera()
     {
-        if (MainCamera.transform.localEulerAngles.z != 0.0f)
-        {
-            float angle = Mathf.LerpAngle(MainCamera.transform.localEulerAngles.z, 0.0f, Time.deltaTime * 5);
-            MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, angle);
+        //if (MainCamera.transform.localEulerAngles.z != 0.0f)
+        //{
+        //    float angle = Mathf.LerpAngle(MainCamera.transform.localEulerAngles.z, 0.0f, Time.deltaTime * 5);
+        //    MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, angle);
 
-            //Snap back to zero when the rotation is "close enough"
-            if (MainCamera.transform.localEulerAngles.z > -0.5f && MainCamera.transform.localEulerAngles.z < 0.5f)
-            {
-                MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, 0.0f);
-            }
-        }
+        //    //Snap back to zero when the rotation is "close enough"
+        //    if (MainCamera.transform.localEulerAngles.z > -0.5f && MainCamera.transform.localEulerAngles.z < 0.5f)
+        //    {
+        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, 0.0f);
+        //    }
+        //}
+        Debug.Log("Restoring camera");
 
-        if(MainCamera.transform.localEulerAngles.y != transform.localEulerAngles.y)
+        if(MainCamera.transform.localEulerAngles.y != 0)
         {
-            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, transform.localEulerAngles.z);
+            Debug.Log("normalising camera");
+            MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
+            //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, transform.localEulerAngles.z);
+            //MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
         }
+    }
+
+    public void TiltCamera()
+    {
+        //if(JumpOffDirection.x > 0)
+        //{
+        //    Debug.Log("Wall to left"); 
+        //    if (MainCamera.transform.localEulerAngles.z != -45)
+        //    {
+        //        float angle = Mathf.LerpAngle(MainCamera.transform.localEulerAngles.z, -45.0f, Time.deltaTime * 5);
+        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, angle);
+        //    }
+        //}
+
+
+        //if(JumpOffDirection.x < 0)
+        //{
+        //    Debug.Log("Wall to right");
+        //    if (MainCamera.transform.localEulerAngles.z != 45)
+        //    {
+        //        float angle = Mathf.LerpAngle(MainCamera.transform.localEulerAngles.z, 45.0f, Time.deltaTime * 5);
+        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, MainCamera.transform.localEulerAngles.y, angle);
+        //    }
+        //}
+        Debug.Log("Tilting camera");
     }
 
     Vector3 JumpOffDirection = new Vector3();
@@ -46,6 +75,8 @@ public class WallRunning : MonoBehaviour
         {
             JumpOffDirection = collision.contacts[0].normal;
             GetComponent<PlayerController>().SetIsWallRunning(true);
+
+            //transform.rotation = collision.gameObject.transform.rotation;
         }
     }
     private void OnCollisionExit(Collision collision)
