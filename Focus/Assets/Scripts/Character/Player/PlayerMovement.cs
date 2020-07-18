@@ -81,7 +81,7 @@ public class PlayerMovement : BaseBehaviour
             return;
         }
 
-        Vector3 Move = new Vector3(0.0f, 0.0f, forwardPush);
+        Vector3 Move = transform.forward * forwardPush;// new Vector3(0.0f, 0.0f, forwardPush);
         Move *= SprintSpeed * Time.fixedDeltaTime;
         
 
