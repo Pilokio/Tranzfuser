@@ -74,15 +74,11 @@ public class PlayerController : MonoBehaviour
     public void SetIsWallRunning(bool Param)
     {
         IsWallRunning = Param;
+        GetComponent<Timeline>().rigidbody.useGravity = !Param;
 
         if (Param)
         {
             GetComponent<Timeline>().rigidbody.velocity = new Vector3(0,0,0);
-            GetComponent<Timeline>().rigidbody.useGravity = false;
-        }
-        else
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = true;
         }
     }
 
@@ -178,12 +174,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
-            MyWallRunning.TiltCamera();
             MyMovement.MoveOnWall(MoveDirection.y);
-        }
-        else
-        {
-            MyWallRunning.RestoreCamera();
         }
     }
 

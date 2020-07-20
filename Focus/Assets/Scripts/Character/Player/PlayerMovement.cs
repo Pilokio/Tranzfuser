@@ -72,16 +72,21 @@ public class PlayerMovement : BaseBehaviour
             rb.MovePosition(new Vector3(rb.position.x + Move.x, rb.position.y, rb.position.z + Move.z));
     }
 
+    public Vector3 ForwardOnWall = new Vector3();
 
     public void MoveOnWall(float forwardPush)
     {
        if(forwardPush <= 0.25f)
         {
             Debug.Log("Not moving fast enough");
+            
+
+            //Uncomment this to make player drop from wall when not moving
+            //GetComponent<PlayerController>().SetIsWallRunning(false);
             return;
         }
 
-        Vector3 Move = transform.forward * forwardPush;// new Vector3(0.0f, 0.0f, forwardPush);
+        Vector3 Move = transform.forward * forwardPush;
         Move *= SprintSpeed * Time.fixedDeltaTime;
         
 
