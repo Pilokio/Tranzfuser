@@ -15,3 +15,10 @@ Slide 2 - Time Control
 Time control is the biggest feature of our game. Slow motion can capture exhilirating events like dodging bullets and manouvering around enemies 
 will be exiting and a breath of fresh air for players, especially mixed with parkour.
 
+We beleive this is innovative because it brings a new twist to a modern classic.
+
+Games on the market such as Mirrors edge and Titanfall are both very popular, mainly 
+due to the parkour mechanics mixed with gun play. With CyberFocus, we hope players find 
+the controls familiar from playing games like these.
+
+
