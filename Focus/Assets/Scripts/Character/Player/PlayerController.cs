@@ -60,15 +60,7 @@ public class PlayerController : MonoBehaviour
     public void SetIsClimbing(bool Param)
     {
         IsClimbing = Param;
-
-        if (Param)
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = false;
-        }
-        else
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = true;
-        }
+        GetComponent<Timeline>().rigidbody.useGravity = !Param;
     }
 
     public void SetIsWallRunning(bool Param)
@@ -174,6 +166,12 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
+            if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
+            {
+                Debug.Log("Skipping to end of turn");
+                MyWallRunning.IsTurning = false;
+            }
+
             MyMovement.MoveOnWall(MoveDirection.y);
         }
     }
@@ -230,15 +228,7 @@ public class PlayerController : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////
 
-        // Crouch using X
-        if (ControllerSupport.ActionButton5.GetCustomButtonDown())
-        {
-            // MyMovement.StartCrouch();
-        }
-        else if (ControllerSupport.ActionButton5.GetCustomButtonUp())
-        {
-            // MyMovement.StopCrouch();
-        }
+  
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
         if (CustomInputManager.GetButtonDown("ActionButton1") && !IsWallRunning)
@@ -380,4 +370,14 @@ public class PlayerController : MonoBehaviour
     ///
     // End of hook mechanic
     ///
+
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Bullet"))
+        {
+            Debug.Log("Player says Ow!");
+            MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
+        }
+    }
 }
