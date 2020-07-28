@@ -22,7 +22,4 @@ MonoBehaviour:
   WeaponFireRate: 0.75
   WeaponAmmoType: 3
   WeaponMagCapacity: 2
-  WeaponAmmoLoaded: 0
-  SpawnAmmo: 0
-  AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
-    type: 3}
+  WeaponAmmoLoaded: 2

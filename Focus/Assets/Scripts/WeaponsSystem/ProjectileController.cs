@@ -1,50 +1,80 @@
-﻿using Chronos;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ProjectileController : MonoBehaviour
 {
-    [SerializeField] bool DebugMode = false;
-    public float DamageAmount { get; set;}
-    Vector3 StartingPosition = new Vector3();
-    float DistanceTravelled = 0;   
-    float MaxTravelDistance = 100;
+    //The direction the projectile will travel
+    public Vector3 Direction { get; set; }
+    //The amount of force being applied to the projectile
+    public Vector3 Force { get; set; }
 
+    private Rigidbody rb;
+
+    public float Lifespan = 5.0f;
+    private float Timer;
+    public float DamageAmount = 0.0f;
+    public bool BelongsToPlayer = false;
     // Start is called before the first frame update
     void Awake()
     {
-            GetComponent<TrailRenderer>().enabled = DebugMode;
-
-            StartingPosition = transform.position;
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = true;
+        Timer = Lifespan;
     }
 
-    public void Fire(Vector3 Direction, float Force, float MaxRange)
+    /// <summary>
+    /// This function simply propels the projectile in the assigned direction using its assigned force value
+    /// </summary>
+    public void Fire()
     {
-        MaxTravelDistance = MaxRange;
-        GetComponent<Timeline>().rigidbody.AddForce(Direction * Force * Time.deltaTime);
+        rb.AddForce(new Vector3(Direction.x * Force.x, Direction.y * Force.y, Direction.z * Force.z) * Time.deltaTime);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(DebugMode)
-            Debug.Log("I have hit something. Destroying self.");
-        
-        Destroy(this.gameObject);
-    }
+        //TODO
+        //Check the tag of the object it collides with and respond accordingly before destroying itself
+        //ie Enemy would be ragdolled, surfaces would have an impact decal spawned, etc.
 
+        if (!BelongsToPlayer)
+        {
+            if (collision.gameObject.tag == "Player" && collision.gameObject.GetComponent<CharacterStats>() != null)
+            {
+                Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
+
+                collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+            }
+            else
+            {
+                // Debug.Log("I hit " + collision.gameObject.name);
+            }
+        }
+
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Debug.Log("I hit " + collision.gameObject.name);
+
+            if (collision.gameObject.GetComponent<CharacterStats>() != null)
+            {
+                Debug.Log(collision.gameObject.name + " took " + DamageAmount.ToString() + " damage.");
+                collision.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+                collision.gameObject.GetComponent<EnemyStats>().TakeDamage((int)DamageAmount);
+            }
+
+            Destroy(this.gameObject);
+        }
+
+
+    }
 
     private void Update()
     {
-        DistanceTravelled = Vector3.Distance(StartingPosition, transform.position);
+        Timer -= Time.deltaTime;
 
-        if (DistanceTravelled >= MaxTravelDistance)
+        if (Timer <= 0.0f)
         {
-            if (DebugMode)
-                Debug.Log("Reached Max Range on weapon and hit nothing. Destroying self.");
-           
+            //Debug.Log("I hit nothing");
             Destroy(this.gameObject);
-            GetComponent<Timeline>().rigidbody.velocity = Vector3.zero;
         }
     }
 }

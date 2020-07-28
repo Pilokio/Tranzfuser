@@ -4,8 +4,6 @@
 public class Weapon : ScriptableObject
 {
     public enum WeaponType { Pistol, SMG, Rifle, Shotgun, Launcher };
-    public enum AmmoSpawn { Always, SlowMoOnly, Never};
-
 
     [Header("Weapon Data")]
     public string WeaponName;
@@ -21,9 +19,6 @@ public class Weapon : ScriptableObject
     public AmmunitionType.AmmoType WeaponAmmoType;
     public int WeaponMagCapacity;
     public int WeaponAmmoLoaded;
-    public AmmoSpawn SpawnAmmo;
-    public GameObject AmmoObject;
-    public float BulletForce = 1000.0f;
 }
 
 [System.Serializable]

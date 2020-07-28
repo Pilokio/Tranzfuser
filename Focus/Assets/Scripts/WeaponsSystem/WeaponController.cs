@@ -29,7 +29,6 @@ public class WeaponController : MonoBehaviour
     RaycastHit hit;
 
    
-   
     //Timer variables to determine if weapon can be fired again
     private float FireDelay = 0;
     private float FireTimer = 0;
@@ -140,59 +139,44 @@ public class WeaponController : MonoBehaviour
             //If there is still ammo in the magazine and a suitable weapon is equipped
             if (WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded > 0)
             {
-                //Spawn a physical bullet object (as per the current weapon) if any of the following conditions are met
-                //1. The weapon's ammo spawn is set to always
-                //2. The weapon's ammo spawn is set to slow motion only AND slow motion is currently active
-                //Else fire weapon via raycast
-                if ((WeaponsList[CurrentWeaponIndex].SpawnAmmo == Weapon.AmmoSpawn.Always) || (WeaponsList[CurrentWeaponIndex].SpawnAmmo == Weapon.AmmoSpawn.SlowMoOnly && PlayerManager.Instance.Player.transform.GetComponent<TimeControl>().IsSlowMo))
+                Ray ray = new Ray(Origin, Direction);
+                
+                if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                 {
-                    SpawnBullet();
-                }
-                else
-                {
-
-
-                    Ray ray = new Ray(Origin, Direction);
-
-                    if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
+                    if (hit.transform.CompareTag("Enemy") && !transform.CompareTag("Enemy"))
                     {
-                        if (hit.transform.CompareTag("Enemy") && !transform.CompareTag("Enemy"))
-                        {
-                            hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
-                        }
+                        hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                    }
 
-                        if (hit.transform.CompareTag("Player") && !transform.CompareTag("Player"))
-                        {
-                            hit.transform.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
-                        }
+                    if(hit.transform.CompareTag("Player") && !transform.CompareTag("Player"))
+                    {
+                        hit.transform.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                    }
 
 
-                        if (WeaponsList[CurrentWeaponIndex].Type == Weapon.WeaponType.Launcher)
+                    if (WeaponsList[CurrentWeaponIndex].Type == Weapon.WeaponType.Launcher)
+                    {
+                        Vector3 hitLocation = hit.point;
+                        Collider[] cols = Physics.OverlapSphere(hitLocation, 10.0f);
+                        foreach (Collider c in cols)
                         {
-                            Vector3 hitLocation = hit.point;
-                            Collider[] cols = Physics.OverlapSphere(hitLocation, 10.0f);
-                            foreach (Collider c in cols)
+                            if(c.gameObject.GetComponent<CharacterStats>())
                             {
-                                if (c.gameObject.GetComponent<CharacterStats>())
-                                {
-                                    c.gameObject.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
-                                }
+                                c.gameObject.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                            }
 
-                                if (c.gameObject.GetComponent<Rigidbody>())
-                                {
-                                    c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(WeaponsList[CurrentWeaponIndex].ImpactForce, hitLocation, 10.0f);
-                                }
+                            if (c.gameObject.GetComponent<Rigidbody>())
+                            {
+                                c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(WeaponsList[CurrentWeaponIndex].ImpactForce, hitLocation, 10.0f);
                             }
                         }
-                        else if (hit.rigidbody != null)
-                        {
-                            hit.rigidbody.AddForce(-hit.normal * WeaponsList[CurrentWeaponIndex].ImpactForce);
-                        }
-
+                    }
+                    else if (hit.rigidbody != null)
+                    {
+                        hit.rigidbody.AddForce(-hit.normal * WeaponsList[CurrentWeaponIndex].ImpactForce);
                     }
 
                 }
-                
                 //Decrement the ammo count
                 WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded--;
             }
@@ -205,14 +189,6 @@ public class WeaponController : MonoBehaviour
         }
 
     }
-
-    private void SpawnBullet()
-    {
-        GameObject bulletTemp = Instantiate(WeaponsList[CurrentWeaponIndex].AmmoObject, CurrentGun.transform.GetChild(0).transform.position + CurrentGun.transform.GetChild(0).transform.forward, CurrentGun.transform.GetChild(0).transform.rotation);
-        bulletTemp.GetComponent<ProjectileController>().DamageAmount = WeaponsList[CurrentWeaponIndex].WeaponDamage;
-        bulletTemp.GetComponent<ProjectileController>().Fire(CurrentGun.transform.GetChild(0).transform.forward, WeaponsList[CurrentWeaponIndex].BulletForce, WeaponsList[CurrentWeaponIndex].WeaponRange);
-    }
-
 
     /// <summary>
     /// This function reloads the weapon if there is enough spare ammo for it
