@@ -643,6 +643,7 @@ public class EnemyController : BaseBehaviour
         if(DetectionSphere.bounds.IntersectRay(ray))
         {
             IsHitCounter++;
+
             AlertStatus = AlertState.Hostile;
         }
 
@@ -658,6 +659,36 @@ public class EnemyController : BaseBehaviour
             AlertStatus = AlertState.Hostile;
             GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
             return;
+        }
+    }
+
+    public void IsHitWithBullet(Collider bullet, int damageAmount)
+    {
+        if (DetectionSphere.bounds.Intersects(bullet.bounds))
+        {
+            IsHitCounter++;
+            AlertStatus = AlertState.Hostile;
+        }
+
+        if (HeadCollider.bounds.Intersects(bullet.bounds))
+        {
+            AlertStatus = AlertState.Hostile;
+            GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * HeadshotDamagePercentage));
+            return;
+        }
+
+        if (BodyCollider.bounds.Intersects(bullet.bounds))
+        {
+            AlertStatus = AlertState.Hostile;
+            GetComponent<CharacterStats>().TakeDamage((int)(damageAmount * BodyShotDamagePercentage));
+            return;
+        }
+    }
+    public void OnCollisionEnter(Collision collision)
+    {
+        if(collision.transform.CompareTag("Bullet"))
+        {
+            IsHitWithBullet(collision.gameObject.GetComponent<Collider>(), (int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }
     }
 

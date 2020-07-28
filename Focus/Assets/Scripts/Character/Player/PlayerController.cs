@@ -174,6 +174,12 @@ public class PlayerController : MonoBehaviour
 
         if (IsWallRunning)
         {
+            if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
+            {
+                Debug.Log("Skipping to end of turn");
+                MyWallRunning.IsTurning = false;
+            }
+
             MyMovement.MoveOnWall(MoveDirection.y);
         }
     }
@@ -230,15 +236,7 @@ public class PlayerController : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////
 
-        // Crouch using X
-        if (ControllerSupport.ActionButton5.GetCustomButtonDown())
-        {
-            // MyMovement.StartCrouch();
-        }
-        else if (ControllerSupport.ActionButton5.GetCustomButtonUp())
-        {
-            // MyMovement.StopCrouch();
-        }
+  
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
         if (CustomInputManager.GetButtonDown("ActionButton1") && !IsWallRunning)
