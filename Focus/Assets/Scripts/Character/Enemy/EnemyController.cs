@@ -267,85 +267,88 @@ public class EnemyController : BaseBehaviour
     public Text StateDebug;
 
 
-    void DecisionMaking()
-    {
-        int combatVotes = 0;
-        int coverVotes = 0;
+    //void DecisionMaking()
+    //{
+    //    int combatVotes = 0;
+    //    int coverVotes = 0;
 
-        //Calculate the percentages for the HP of the enemy and target, as well as the distance of the target
-        //relative to the max attack range of the current weapon
-        float enemyHP = ((float)EnemyStats.Health / (float)EnemyStats.MaxHealth);
-        float targetHP = (float)Target.GetComponent<CharacterStats>().Health / (float)Target.GetComponent<CharacterStats>().MaxHealth;
+    //    //Calculate the percentages for the HP of the enemy and target, as well as the distance of the target
+    //    //relative to the max attack range of the current weapon
+    //    float enemyHP = ((float)EnemyStats.Health / (float)EnemyStats.MaxHealth);
+    //    float targetHP = (float)Target.GetComponent<CharacterStats>().Health / (float)Target.GetComponent<CharacterStats>().MaxHealth;
 
-        //Convert the floating point percentages to ints and set between 0 and 100 for easier calculations
-        int enemyPercentHP = (int)(enemyHP * 100);
-        int targetPercentHP = (int)(targetHP * 100);
+    //    //Convert the floating point percentages to ints and set between 0 and 100 for easier calculations
+    //    int enemyPercentHP = (int)(enemyHP * 100);
+    //    int targetPercentHP = (int)(targetHP * 100);
 
-        //If the current health % falls below threshold
-        //One vote for take cover
-        if (enemyPercentHP < SelfPreservationThreshold)
-        {
-            coverVotes++;
-        }
-        else
-        {
-            combatVotes++;
-        }
+    //    //If the current health % falls below threshold
+    //    //One vote for take cover
+    //    if (enemyPercentHP < SelfPreservationThreshold)
+    //    {
+    //        coverVotes++;
+    //    }
+    //    else
+    //    {
+    //        combatVotes++;
+    //    }
 
-        //If the enemy health % is greater than the target health %
-        //One vote for combat otherwise one vote to take cover
-        //This allows the enemy to prioritise their action based on the HP difference between themself and the target
-        //if the enemy is winning, they may be more aggressive, while if the target is winning they may be more defensive
-        if (enemyPercentHP >= targetPercentHP)
-        {
-            combatVotes++;
-        }
-        else
-        {
-           coverVotes++;
-        }
+    //    //If the enemy health % is greater than the target health %
+    //    //One vote for combat otherwise one vote to take cover
+    //    //This allows the enemy to prioritise their action based on the HP difference between themself and the target
+    //    //if the enemy is winning, they may be more aggressive, while if the target is winning they may be more defensive
+    //    if (enemyPercentHP >= targetPercentHP)
+    //    {
+    //        combatVotes++;
+    //    }
+    //    else
+    //    {
+    //       coverVotes++;
+    //    }
 
-        //If the player HP% is less than the damage of a single shot from the current weapon
-        //One vote for combat to finish them off
-        //No need for an else here as it would present unrealistic behaviour to take cover is you cant one shot the target
-        //Instead this acts to tip the scales in favour of combat if the target is weak
-        if (targetPercentHP <= MyWeaponController.GetCurrentlyEquippedWeapon().WeaponDamage)
-        {
-            combatVotes++;
-        }
+    //    //If the player HP% is less than the damage of a single shot from the current weapon
+    //    //One vote for combat to finish them off
+    //    //No need for an else here as it would present unrealistic behaviour to take cover is you cant one shot the target
+    //    //Instead this acts to tip the scales in favour of combat if the target is weak
+    //    if (targetPercentHP <= MyWeaponController.GetCurrentlyEquippedWeapon().WeaponDamage)
+    //    {
+    //        combatVotes++;
+    //    }
 
 
-        //This unbalances the votes and handles tie breakers
-        //It reduces the liklihood of the enemy repeating behaviours multiple times in a row
-        if (AlertStatus == AlertState.TakingCover)
-        {
-            combatVotes++;
-        }
-        else if (AlertStatus == AlertState.Hostile)
-        {
-            coverVotes++;
-        }
+    //    //This unbalances the votes and handles tie breakers
+    //    //It reduces the liklihood of the enemy repeating behaviours multiple times in a row
+    //    if (AlertStatus == AlertState.TakingCover)
+    //    {
+    //        combatVotes++;
+    //    }
+    //    else if (AlertStatus == AlertState.Hostile)
+    //    {
+    //        coverVotes++;
+    //    }
 
-        if(combatVotes > coverVotes)
-        {
-            DecisionTimer = AttackTime;
-            AlertStatus = AlertState.Hostile;
-        }
-        else if(coverVotes > combatVotes)
-        {
-            DecisionTimer = CoverTime;
-            TakeCover();
-            AlertStatus = AlertState.TakingCover;
-        }
-        else
-        {
-            Debug.Log("50-50");
-        }
+    //    if(combatVotes > coverVotes)
+    //    {
+    //        DecisionTimer = AttackTime;
+    //        AlertStatus = AlertState.Hostile;
+    //    }
+    //    else if(coverVotes > combatVotes)
+    //    {
+    //        DecisionTimer = CoverTime;
+    //        TakeCover();
+    //       // AlertStatus = AlertState.TakingCover;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("50-50");
+    //    }
 
-        StateDebug.text = combatVotes.ToString() + " : " + coverVotes.ToString() + " = " +  AlertStatus.ToString();
+    //    StateDebug.text = combatVotes.ToString() + " : " + coverVotes.ToString() + " = " +  AlertStatus.ToString();
 
-    }
+    //}
 
+
+
+    AttackType CurrentAttackType = 0;
 
     private void Update()
     {
@@ -354,13 +357,6 @@ public class EnemyController : BaseBehaviour
 
         //Determine if the enemy has a LOS to the player
         TargetSighted = DetectPlayer();
-
-     
-
-        if(DecisionTimer <= 0.0f)
-        {
-            DecisionMaking();
-        }
 
 
         //Control this enemy based on the current alert status
@@ -374,39 +370,80 @@ public class EnemyController : BaseBehaviour
                 }
                 Patrol();
                 break;
-            case AlertState.Hostile:
-                Combat();
+            case AlertState.Suspicious:
 
-                DecisionTimer -= Time.deltaTime;
+                //Increase angle and depth of cone of vision as the enemy is on high alert (x2 to both?)
 
-                //If being hit when in combat, set the timer to 0 to make a new decision
-                if (IsHitCounter > 5)
-                {
-                    IsHitCounter = 0;
-                    DecisionTimer = 0;
-                }
+                //Using the source of the suspicion (location of dead enemy, approx location of nearest gunfire, etc.)
+                //Define a search radius around that point
+
+                //Begin by moving to the source if not already close to it
+                //Assuming enemy is still in this state
+
+                //Repeat for a defined number of times (persistence rating? determination?)
+                //Pick a random point within the search radius and move to it
+                //This provides an opportunity for this enemy to find the player by looking around the area to move into the hostile state
+
+
+                //Meanwhile a serach timer will decrement and when it reaches 0 this enemy will return to the idle state
+
 
                 break;
-            case AlertState.TakingCover:
-                //Upon arriving at the cover, begin the timer
-                if (Agent.remainingDistance < Agent.stoppingDistance)
+            case AlertState.Hostile:
+
+                //if this enemy is a tank or a berserker
+                //choose between attack and move towards player
+                //or do both at same time? set destination then attack while moving?
+                //When moving towards player, a relatively small max distance will be observed to ensure they are always close to the player when not actively moving
+
+                //If the enemy is a sniper or soldier/grunt
+                //choose between move towards player, take cover and attack
+                //this decision will be made based on the stats and environmental factors
+                //when moving towards player a reasonably large min distance will be observed to ensure they dont get too close 
+
+                //If LOS is broken, a timer will decrement and when it reaches 0, this enemy will search for the player by moving to the suspicious state
+
+                switch (CurrentAttackType)
                 {
-                    DecisionTimer -= Time.deltaTime;
+                    case AttackType.Charge:
+                        break;
+                    case AttackType.Attack:
+
+                        Combat();
+
+                        DecisionTimer -= Time.deltaTime;
+
+                        //If being hit when in combat, set the timer to 0 to make a new decision
+                        if (IsHitCounter > 5)
+                        {
+                            IsHitCounter = 0;
+                            DecisionTimer = 0;
+                        }
+
+                        break;
+                    case AttackType.TakeCover:
+
+                        //Upon arriving at the cover, begin the timer
+                        if (Agent.remainingDistance < Agent.stoppingDistance)
+                        {
+                            DecisionTimer -= Time.deltaTime;
 
 
-                    if(!IsCurrentCoverValid())
-                    {
-                        Debug.Log("This cover is compromised");
-                        TakeCover();
-                    }
+                            if (!IsCurrentCoverValid())
+                            {
+                                Debug.Log("This cover is compromised");
+                                TakeCover();
+                            }
 
 
-                    //If being hit when in cover, set the timer to 0 to make a new decision
-                    if(IsHitCounter > 0)
-                    {
-                        IsHitCounter = 0;
-                        DecisionTimer = 0;
-                    }
+                            //If being hit when in cover, set the timer to 0 to make a new decision
+                            if (IsHitCounter > 0)
+                            {
+                                IsHitCounter = 0;
+                                DecisionTimer = 0;
+                            }
+                        }
+                        break;
                 }
                 break;
         }
@@ -781,8 +818,14 @@ public class EnemyController : BaseBehaviour
     {
         Idle = 0,
         Suspicious = 1,
-        Hostile = 2,
-        TakingCover = 3
+        Hostile = 2
+    }
+
+    enum AttackType
+    {
+        Charge = 0,
+        Attack = 1,
+        TakeCover = 2
     }
 
     /// <summary>
