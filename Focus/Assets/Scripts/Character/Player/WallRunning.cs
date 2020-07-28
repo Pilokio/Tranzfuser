@@ -27,6 +27,7 @@ public class WallRunning : MonoBehaviour
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
+            IsJumping = false;
 
             //Use the wall normal to determine the jump off direction
             //This will not change regardless of move direction
@@ -107,8 +108,14 @@ public class WallRunning : MonoBehaviour
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
-            StartCoroutine(WallRunCleanup());
-            GetComponent<PlayerController>().SetIsWallRunning(false);
+            WallRunCleanup();
+
+            if (IsJumping)
+                StartCoroutine(StopWallRun(0.25f));
+            else
+                StartCoroutine(StopWallRun(0.0f));
+
+
         }
     }
     private void Update()
@@ -116,15 +123,25 @@ public class WallRunning : MonoBehaviour
         if (GetComponent<PlayerController>().IsWallRunning && CustomInputManager.GetButtonDown("ActionButton1"))
         {
             rb.velocity += wallJumpForce * JumpOffDirection;
+            IsJumping = true;
         }
     }
+    public bool IsTurning = false;
+    bool IsJumping = false;
 
+    IEnumerator StopWallRun(float time)
+    {
+        yield return new WaitForSeconds(time);
+        GetComponent<PlayerController>().SetIsWallRunning(false);
+    }
 
     IEnumerator TurnPlayer(float TargetAngle)
     {
+        IsTurning = true;
+
         while (transform.localEulerAngles.y != TargetAngle)
         {
-            if (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, TargetAngle)) <= MinAngle)
+            if (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, TargetAngle)) <= MinAngle)// || !IsTurning)
             {
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, TargetAngle, transform.rotation.eulerAngles.z);
             }
@@ -135,7 +152,11 @@ public class WallRunning : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+
+        IsTurning = false;
     }
+
+   
 
     IEnumerator TiltCamera(float TargetAngle)
     {
@@ -154,12 +175,12 @@ public class WallRunning : MonoBehaviour
         }
     }
 
-    IEnumerator WallRunCleanup()
+
+
+    void WallRunCleanup()
     {
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, MainCamera.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
         StartCoroutine(TiltCamera(0.0f));
-        yield return new WaitForSeconds(0);
     }
-
 }
