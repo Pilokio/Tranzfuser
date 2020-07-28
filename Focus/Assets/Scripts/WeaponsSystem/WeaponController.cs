@@ -6,6 +6,7 @@ using UnityEngine;
 /// This component is used to determine the weapons that can be used by the character it is placed on
 /// as well as the usage of them
 /// </summary>
+/// 
 public class WeaponController : MonoBehaviour
 {
     [Header("Weapon Details")]

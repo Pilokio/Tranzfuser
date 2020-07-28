@@ -24,6 +24,7 @@ public class Weapon : ScriptableObject
     public AmmoSpawn SpawnAmmo;
     public GameObject AmmoObject;
     public float BulletForce = 1000.0f;
+    //Test
 }
 
 [System.Serializable]
