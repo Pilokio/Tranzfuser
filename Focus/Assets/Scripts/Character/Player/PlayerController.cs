@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(WeaponController))]
 [RequireComponent(typeof(CharacterStats))]
+
 public class PlayerController : MonoBehaviour
 {
     PlayerMovement MyMovement;

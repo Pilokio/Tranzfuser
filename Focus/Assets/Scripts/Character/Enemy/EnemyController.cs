@@ -267,7 +267,6 @@ public class EnemyController : BaseBehaviour
     public Text StateDebug;
 
 
-
     //void DecisionMaking()
     //{
     //    int combatVotes = 0;
