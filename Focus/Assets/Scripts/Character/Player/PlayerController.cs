@@ -60,15 +60,7 @@ public class PlayerController : MonoBehaviour
     public void SetIsClimbing(bool Param)
     {
         IsClimbing = Param;
-
-        if (Param)
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = false;
-        }
-        else
-        {
-            GetComponent<Timeline>().rigidbody.useGravity = true;
-        }
+        GetComponent<Timeline>().rigidbody.useGravity = !Param;
     }
 
     public void SetIsWallRunning(bool Param)
@@ -378,4 +370,14 @@ public class PlayerController : MonoBehaviour
     ///
     // End of hook mechanic
     ///
+
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Bullet"))
+        {
+            Debug.Log("Player says Ow!");
+            MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
+        }
+    }
 }
