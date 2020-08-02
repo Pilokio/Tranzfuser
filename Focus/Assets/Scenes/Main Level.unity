@@ -638,7 +638,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -9638,7 +9638,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -17618,7 +17618,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -17876,7 +17876,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -18668,7 +18668,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -18852,7 +18852,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17296
+  m_Name: pb_Mesh15164
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -19807,7 +19807,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 10
+  m_Intensity: 1
   m_Range: 59.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
