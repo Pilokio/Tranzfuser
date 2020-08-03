@@ -77,7 +77,7 @@ public class EnemyProfile : ScriptableObject
     [Range(1, 3)]
     [SerializeField] public int Bravery = 1; //Determines how close the enemy can be before retreating
     [Range(1, 3)]
-    [SerializeField] public int Aggresiveness = 1; //Determines whether the enemy will prioritise attacking over self preservation
+    [SerializeField] public int Aggressiveness = 1; //Determines whether the enemy will prioritise attacking over self preservation
     [Range(1, 3)]
     [SerializeField] public int Determination = 1; //Determines how long the enemy will search for before giving up
     [Range(1, 3)]

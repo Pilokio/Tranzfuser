@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Soldier
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProfile
   Bravery: 2
-  Aggresiveness: 3
+  Aggressiveness: 1
   Determination: 1
   Awareness: 2
   Swiftness: 3
   SuccessChance: 2
   BaseMaxHealth: 100
-  HasTankBehaviour: 0
+  HasTankBehaviour: 1
   PassiveOption: 0
-  AggressiveOption: 0
+  AggressiveOption: 3
   DefaultDetectionAngle: 45
   DefaultDetectionRange: 35
   DecisionTime: 3

@@ -1,0 +1,29 @@
+To create a new weapon, add one in the assets folder via Right-click > Create > Weapon.
+
+Click on the new Weapon Asset that has just been created, to assign the weapon's values in the inspector.
+
+The values are as follows:
+-	Weapon Name: used to visually display the currently equipped weapon in the UI.
+-	Type: the current weapon type (e.g. pistol, launcher, etc.).
+-	Weapon Object: the weapon prefab (the game object used to visually represent this weapon).
+-	Weapon Damage: The base level of damage that this weapon will inflict.
+-	Weapon Range: how far the raycast will reach/how far the physical bullet will travel before being destroyed. 
+-	Impact Force: The force applied to physics objects being shot by this weapon. Launchers use this value as the explosion force.
+-	Weapon Fire Rate: fire rate of the weapon between 0 and 1.
+	o	1 is ideal for large intervals between shots such as snipers.
+	o	0.1 is for fully automatic weapons as the interval between shots is near instant.(0 would not be recommended).
+	o	0.5 is ideal for semi-automatic weapons as it provides a medium sized interval between shots.
+-	Weapon Ammo Type: the type of ammo that will be consumed when firing the weapon.
+-	Weapon Mag Capacity: the number of shots that can be fired before a reload is needed.
+-	Weapon Ammo Loaded: the amount of ammunition currently loaded into the gun.
+-	Spawn Ammo: This determines if and when a physical projectile should be spawned when the weapon is fired
+	o	Always results in the projectile being spawned in whenever the weapon is fired.
+	o	Slow Mo Only results in a projectile being spawned only when slow motion is active.
+	o	Never means that a projectile will never be spawned when the weapon is fired.
+-	Ammo Object: the bullet prefab for this weapon that will be spawned in.
+-	Bullet Force: the amount of force that the bullet will be fired with.
+
+Add the weapon asset you have just created to the desired character's weapon controller component.
+
+Assuming the character is setup to use the weapon controller properly, it should be good to go.
+

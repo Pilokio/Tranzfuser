@@ -677,7 +677,7 @@ public class EnemyController : BaseBehaviour
         //After which, a randomly generated number will be used to determine the action to be taken, based on which side of the 
         //boundary it falls on.
         //By default the bravery and aggressiveness stat is used where a very brave and aggressive enemy will prioritise the aggressuve option
-        int SplitPoint = 100 - ((MyProfile.Aggresiveness + MyProfile.Bravery) * 10);
+        int SplitPoint = 100 - ((MyProfile.Aggressiveness + MyProfile.Bravery) * 10);
 
         if (MyProfile.HasTankBehaviour)
         {
@@ -722,7 +722,7 @@ public class EnemyController : BaseBehaviour
 
                 //Using the aggressiveness rating, this will increase the chances of an aggressive action
                 //being taken proportional to the stat
-                SplitPoint -= (MyProfile.Aggresiveness) * 10;
+                SplitPoint -= (MyProfile.Aggressiveness) * 10;
 
                 //Using the bravery rating, the chances of cowardice being prioritised will
                 //be increased proportionally to the stat
