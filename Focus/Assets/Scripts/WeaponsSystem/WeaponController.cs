@@ -6,6 +6,7 @@ using UnityEngine;
 /// This component is used to determine the weapons that can be used by the character it is placed on
 /// as well as the usage of them
 /// </summary>
+[DisallowMultipleComponent]
 public class WeaponController : MonoBehaviour
 {
     [Header("Weapon Details")]
@@ -158,7 +159,7 @@ public class WeaponController : MonoBehaviour
                     {
                         if (hit.transform.CompareTag("Enemy") && !transform.CompareTag("Enemy"))
                         {
-                            hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                           hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                         }
 
                         if (hit.transform.CompareTag("Player") && !transform.CompareTag("Player"))

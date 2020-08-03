@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[DisallowMultipleComponent]
 public class Ladder : MonoBehaviour
 {
     public bool IsOccupied = false;
