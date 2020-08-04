@@ -313,23 +313,24 @@ public class PlayerController : MonoBehaviour
     }
 
     private void HandleHookshotMovement()
-    {
+    {   
+        float hookshotSpeedMin = 0.1f;
+        float hookshotSpeedMax = 0.7f;
+        float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
 
         hookshotTransform.LookAt(hookshotPosition);
 
-        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 1f);
+        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, hookshotSpeed);
 
         //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
 
         //// FIXEME Not working - probably the cause of the weird movement
-        //float hookshotSpeedMin = 10f;
-        //float hookshotSpeedMax = 40f;
-        //float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
+        
         //float hookshotSpeedMultiplier = 2f;
 
         //MyMovement.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
 
-        float reachedHookshotPositionDistance = 1f;
+        float reachedHookshotPositionDistance = 2.5f;
         if (Vector3.Distance(transform.position, hookshotPosition) < reachedHookshotPositionDistance)
         {
             StopHookshot();
