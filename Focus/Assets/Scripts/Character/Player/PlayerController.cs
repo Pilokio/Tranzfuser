@@ -317,7 +317,7 @@ public class PlayerController : MonoBehaviour
 
         hookshotTransform.LookAt(hookshotPosition);
 
-        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 0.5f);
+        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, 1f);
 
         //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
 
