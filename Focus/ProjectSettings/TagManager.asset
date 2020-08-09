@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - CameraHolder
   - HookPoint
+  - Platform
   layers:
   - Default
   - TransparentFX
