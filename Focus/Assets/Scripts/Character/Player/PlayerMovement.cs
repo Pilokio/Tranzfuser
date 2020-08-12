@@ -79,6 +79,7 @@ public class PlayerMovement : BaseBehaviour
        if(forwardPush <= 0.25f)
         {
             Debug.Log("Not moving fast enough");
+            
 
             //Uncomment this to make player drop from wall when not moving
             //GetComponent<PlayerController>().SetIsWallRunning(false);
