@@ -158,5 +158,8 @@ class EnemyData
     public bool IsHostile;
 
     private EnemyStats Stats;
-    public EnemyData(GameObject gameObject, EnemyStats stats,)
+    public EnemyData(GameObject gameObject, EnemyStats stats)
+    {
+
+    }
 }
