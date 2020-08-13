@@ -541,7 +541,6 @@ public class EnemyController2 : BaseBehaviour
         }
     }
 
-
     bool IsCurrentCoverValid()
     {
         if (CurrentCover == null)
