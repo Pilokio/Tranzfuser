@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class EnemyManager : MonoBehaviour
         TotalEnemyCount = enemyList.Length;
         Player = PlayerManager.Instance.Player;
         PlayerStats = Player.GetComponent<CharacterStats>();
+  
+        
+        InitEnemyList();
     }
 
     #endregion
@@ -81,6 +85,23 @@ public class EnemyManager : MonoBehaviour
         //Debug Only
         //GetAllHostileEnemyPositions();
         //GetAllDeadEnemyPositions();
+
+        for (int i = 0; i < EnemyList.Count; i++)
+        {
+            if (EnemyList[i].Enemy.transform.GetComponent<EnemyStats>().IsDead)
+            {
+                EnemyList[i].IsDead = true;
+            }
+
+            if (EnemyList[i].Enemy.transform.GetComponent<EnemyController>().AlertStatus == EnemyUtility.AlertState.Hostile)
+            {
+                EnemyList[i].IsHostile = true;
+            }
+            else
+            {
+                EnemyList[i].IsHostile = false;
+            }
+        }
     }
 
     public List<Vector3> GetAllHostileEnemyPositions()
@@ -97,5 +118,48 @@ public class EnemyManager : MonoBehaviour
         }
 
         return HostileEnemies;
+    }
+
+
+    public void InitEnemyList()
+    {
+        //Get a list of all the enemies in the current level
+        GameObject[] enemyList = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach(GameObject g in enemyList)
+        {
+            
+        }
+    }
+
+
+
+    List<EnemyData> EnemyList = new List<EnemyData>();
+
+    public List<GameObject> GetDeadEnemies()
+    {
+        List<GameObject> enemies = new List<GameObject>();
+        EnemyData[] data = EnemyList.Where(x => x.IsDead == true).ToArray();
+
+        foreach(EnemyData d in data)
+        {
+            enemies.Add(d.Enemy);
+        }
+       
+        return enemies;
+    }
+}
+
+class EnemyData
+{
+    public GameObject Enemy;
+    public bool IsDead;
+    public bool IsFound;
+    public bool IsHostile;
+
+    private EnemyStats Stats;
+    public EnemyData(GameObject gameObject, EnemyStats stats)
+    {
+
     }
 }

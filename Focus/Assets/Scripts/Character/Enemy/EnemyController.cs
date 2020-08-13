@@ -242,6 +242,8 @@ public class EnemyController : BaseBehaviour
                     { 
                         //Move to suspicious mode and heighten detection cone
                         ChangeDetectionMode(true);
+                        SearchTimer = TimeForSearch;
+                        
                         AlertStatus = EnemyUtility.AlertState.Suspicious;
                         break;
                     }
@@ -261,7 +263,12 @@ public class EnemyController : BaseBehaviour
                         AlertStatus = EnemyUtility.AlertState.Idle;
                         break;
                     }
-                    
+
+
+                    if(MyNavMeshAgent.remainingDistance < 5.0f)
+                    {
+                        StartCoroutine(FindSearchPoint());
+                    }
                     
                     //Increase angle and depth of cone of vision as the enemy is on high alert (x2 to both?)
 
@@ -544,6 +551,7 @@ public class EnemyController : BaseBehaviour
                 {
                     if (DetectTarget(enemy.transform, false))
                     {
+                        SearchOrigin = enemy.transform.position;
                         return true;
                     }
                 }
@@ -554,6 +562,18 @@ public class EnemyController : BaseBehaviour
     }
 
     #endregion
+
+
+
+    Vector3 SearchOrigin = new Vector3();
+    float SearchRadius = 10.0f;
+    float WaitTime = 2.0f;
+    IEnumerator FindSearchPoint()
+    {
+        yield return new WaitForSeconds(WaitTime);
+        MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), Random.Range(SearchOrigin.y - SearchRadius, SearchOrigin.y + SearchRadius), Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
+    }
+
 
     #region CombatMethods
 
