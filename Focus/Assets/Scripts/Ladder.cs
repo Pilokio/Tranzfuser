@@ -8,6 +8,7 @@ public class Ladder : MonoBehaviour
 {
     public bool IsOccupied = false;
     bool PlayerOccupied = false;
+    public bool InvertMountedRotation = false;
 
     //The player gameobject
     private GameObject player;
@@ -27,11 +28,11 @@ public class Ladder : MonoBehaviour
         {
             PlayerOccupied = true;
             IsOccupied = true;
-            //Make the player turn to face the ladder
             Vector3 target = transform.rotation.eulerAngles;
             target.x = 0;
             target.z = 0;
-            target.y += 180;
+            if (InvertMountedRotation)
+                target.y += 180;
             player.transform.rotation = Quaternion.Euler(target);
 
             //Set the x and z position of the player to match the ladder climbing positions
@@ -54,7 +55,7 @@ public class Ladder : MonoBehaviour
             }
 
             //If the player is close to the bottom of the ladder and still moving down
-            if (Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f && CustomInputManager.GetAxisRaw("LeftStickVertical") < CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
+            if ((Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f || player.transform.position.y <= LadderPath[2].position.y) && CustomInputManager.GetAxisRaw("LeftStickVertical") < CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
             {
                 IsOccupied = false;
                 PlayerOccupied = false;

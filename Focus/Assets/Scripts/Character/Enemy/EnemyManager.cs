@@ -121,6 +121,7 @@ public class EnemyManager : MonoBehaviour
     }
 
 
+
     public void InitEnemyList()
     {
         //Get a list of all the enemies in the current level

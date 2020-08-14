@@ -350,8 +350,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622a7c8958e9c1943b9c947995923700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Top: {fileID: 7947351606915375624}
-  Bottom: {fileID: 7947351606482027013}
+  IsOccupied: 0
+  InvertMountedRotation: 1
   LadderPath:
   - {fileID: 5645745616347075976}
   - {fileID: 5645745617182243047}
