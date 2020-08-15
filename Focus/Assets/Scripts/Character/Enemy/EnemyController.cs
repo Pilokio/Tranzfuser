@@ -167,6 +167,7 @@ public class EnemyController : BaseBehaviour
 
 
         //Initialise the timers and counters
+        TimeForSearch *= MyProfile.Determination;
         SearchTimer = TimeForSearch;
         DecisionTimer = 0.0f; //Set to 0 so we can immediately make a decision
 
@@ -225,6 +226,10 @@ public class EnemyController : BaseBehaviour
                 LOS_Timer = TimeForLOS;
                 AlertStatus = EnemyUtility.AlertState.Hostile;
             }
+
+         
+           
+           
             #endregion
 
 
@@ -245,9 +250,28 @@ public class EnemyController : BaseBehaviour
                         SearchTimer = TimeForSearch;
                         
                         AlertStatus = EnemyUtility.AlertState.Suspicious;
+                        StartCoroutine(FindSearchPoint());
+
                         break;
                     }
-                        
+
+                    List<GameObject> HostileEnemies = MyManager.GetHostileEnemies();
+
+                    if (HostileEnemies.Count > 0)
+                    {
+                        foreach (GameObject item in HostileEnemies)
+                        {
+                            if (Vector3.Distance(item.transform.position, transform.position) < 30.0f)
+                            {
+                                ChangeDetectionMode(true);
+                                SearchOrigin = item.transform.position;
+                                StartCoroutine(FindSearchPoint());
+                                AlertStatus = EnemyUtility.AlertState.Suspicious;
+                                break;
+                            }
+                        }
+                    }
+
                     //Patrol through the patrol points
                     Patrol();
                     #endregion
@@ -260,13 +284,15 @@ public class EnemyController : BaseBehaviour
                     if(SearchTimer <= 0.0f)
                     {
                         SearchTimer = TimeForSearch;
+                        ChangeDetectionMode(false);
                         AlertStatus = EnemyUtility.AlertState.Idle;
                         break;
                     }
 
 
-                    if(MyNavMeshAgent.remainingDistance < 5.0f)
+                    if(MyNavMeshAgent.remainingDistance < 5.0f && !FindingSP)
                     {
+                        StopAllCoroutines();
                         StartCoroutine(FindSearchPoint());
                     }
                     
@@ -541,7 +567,7 @@ public class EnemyController : BaseBehaviour
     //And detects if this enemy has a LOS to any of them. If they do, then return true, otherwise return false
     private bool DetectDeadEnemies()
     {
-        List<GameObject> deadEnemies = MyManager.GetAllDeadEnemyGameObjects();
+        List<GameObject> deadEnemies = MyManager.GetDeadEnemies();
 
         if (deadEnemies != null)
         {
@@ -552,6 +578,7 @@ public class EnemyController : BaseBehaviour
                     if (DetectTarget(enemy.transform, false))
                     {
                         SearchOrigin = enemy.transform.position;
+                        MyManager.SetDeadEnemyAsDiscovered(enemy);
                         return true;
                     }
                 }
@@ -568,10 +595,24 @@ public class EnemyController : BaseBehaviour
     Vector3 SearchOrigin = new Vector3();
     float SearchRadius = 10.0f;
     float WaitTime = 2.0f;
+    bool FindingSP = false;
+
+
+
     IEnumerator FindSearchPoint()
     {
+        FindingSP = true;
         yield return new WaitForSeconds(WaitTime);
-        MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), Random.Range(SearchOrigin.y - SearchRadius, SearchOrigin.y + SearchRadius), Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
+        MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), SearchOrigin.y, Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
+       
+        while(MyNavMeshAgent.path.status == NavMeshPathStatus.PathInvalid)
+        {
+            Debug.Log("Finding valid path");
+            MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), SearchOrigin.y, Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
+        }
+
+
+        FindingSP = false;
     }
 
 
@@ -719,7 +760,7 @@ public class EnemyController : BaseBehaviour
 
 
             //The enemy's bravery stat is used to determine the percentage of dead enemies in the level where cowardice will be prioritised
-            if (MyManager.GetAllDeadEnemyPositions().Count/MyManager.TotalEnemyCount > ((MyProfile.Bravery) * 25) / MyManager.TotalEnemyCount)
+            if (MyManager.GetDeadEnemies().Count/MyManager.TotalEnemyCount > ((MyProfile.Bravery) * 25) / MyManager.TotalEnemyCount)
             {
                 //Passive
                 SplitPoint += 10;
@@ -883,5 +924,9 @@ public class EnemyController : BaseBehaviour
 
         Gizmos.color = Color.white;
         Gizmos.DrawWireMesh(EnemyUtility.CreateViewCone(DetectionAngle, DetectionRange, 8), 0, transform.position + EyePosition);
+
+        Gizmos.color = Color.blue;
+        if(MyNavMeshAgent != null)
+            Gizmos.DrawSphere(MyNavMeshAgent.destination, 1.0f);
     }
 }

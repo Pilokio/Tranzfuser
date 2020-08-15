@@ -102,7 +102,7 @@ public class EnemyProfile : ScriptableObject
     [SerializeField] public float DefaultDetectionAngle = 35.0f; //The range at which hostiles can be seen (Multiplied by Awareness stat ?)
     [Range(20, 60)]
     [SerializeField] public float DefaultDetectionRange = 20.0f;
-
+   
     //The amount of time before a new decision will be made
     //If equal to 0, new decisions will be made purely based on changes in circumstance
     [SerializeField] public float DecisionTime = 2.0f; 
