@@ -9597,7 +9597,7 @@ PrefabInstance:
     - target: {fileID: 6870599191380658245, guid: 2f1fbd9241882f24288909a12ea8d388,
         type: 3}
       propertyPath: IsPaused
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6870599191380658246, guid: 2f1fbd9241882f24288909a12ea8d388,
         type: 3}
