@@ -1,4 +1,5 @@
 ﻿using Chronos;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour
     private State state;
     private Vector3 hookshotPosition;
     private float hookshotSize;
-    public float pushbackForce = 100000.0f;
+    public float pushbackForce = 10.0f;
 
     private enum State
     {
@@ -118,19 +119,24 @@ public class PlayerController : MonoBehaviour
                 // Check for all player input
                 HandleInput();
                 HandleLook();
-                HandleHookshotStart();
-                break;
+            //    HandleHookshotStart();
+            //    break;
 
-            case State.HookshotThrown:
-                HandleHookshotThrow();
-                HandleLook();
-                HandleInput();
-                break;
+            //case State.HookshotThrown:
+            //    HandleHookshotThrow();
+            //    HandleLook();
+            //    HandleInput();
+            //    break;
 
-            case State.HookShotFlyingPlayer:
-                HandleLook();
-                HandleHookshotMovement();
+            //case State.HookShotFlyingPlayer:
+            //    HandleLook();
+            //    HandleHookshotMovement();
                 break;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+           TestGrapple();
         }
 
         UpdateUI();
@@ -300,6 +306,37 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void TestGrapple()
+    {
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
+        {
+            StartCoroutine(MoveGrapple(raycastHit.point));
+        }
+    }
+    float reachedHookshotPositionDistance = 2.5f;
+
+    float GrappleSpeed = 1.0f;
+    IEnumerator MoveGrapple(Vector3 destination)
+    {
+        GetComponent<LineRenderer>().enabled = true;
+        speedLinesParticleSystem.Play();
+        cameraFov.SetCameraFov(HOOKSHOT_FOV);
+
+        GetComponent<LineRenderer>().SetPositions(new Vector3[] { MyWeaponController.CurrentGun.transform.GetChild(0).transform.position, destination });
+
+        yield return null;
+        while (Vector3.Distance(transform.position, destination) > reachedHookshotPositionDistance)
+        {
+            yield return new WaitForEndOfFrame();
+            transform.position = Vector3.MoveTowards(transform.position, destination, GrappleSpeed);
+            GetComponent<LineRenderer>().SetPosition(0, MyWeaponController.CurrentGun.transform.GetChild(0).transform.position);
+        }
+
+        GetComponent<LineRenderer>().enabled = false;
+        cameraFov.SetCameraFov(NORMAL_FOV);
+        speedLinesParticleSystem.Stop();
+    }
+
     private void HandleHookshotThrow()
     {
         hookshotTransform.LookAt(hookshotPosition);
@@ -318,13 +355,13 @@ public class PlayerController : MonoBehaviour
 
     private void HandleHookshotMovement()
     {   
-        float hookshotSpeedMin = 0.1f;
-        float hookshotSpeedMax = 0.7f;
-        float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
+        //float hookshotSpeedMin = 0.1f;
+        //float hookshotSpeedMax = 0.7f;
+        //float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
 
         hookshotTransform.LookAt(hookshotPosition);
 
-        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, hookshotSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, GrappleSpeed);
 
         //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
 
@@ -385,16 +422,21 @@ public class PlayerController : MonoBehaviour
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        //Check to see if the tag on the collider is equal to Enemy
-        if (other.tag == "Fan")
-        {
-            Debug.Log("Triggered by Fan");
-            MyStats.TakeDamage(5);
-            //Vector3 pushbackDir = other.transform.position;
-            //pushbackDir.y = transform.position.y;
-            //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    //Check to see if the tag on the collider is equal to Enemy
+    //    if (other.tag == "Fan")
+    //    {
+    //        Debug.Log("Triggered by Fan");
+    //        MyStats.TakeDamage(5);
+
+    //        Vector3 DirectionOfTarget = ((transform.position + (Vector3.up * 2.0f)) - (other.transform.position)).normalized;
+
+    //        MyRigidbody.AddForce(transform.forward * -DirectionOfTarget.z * pushbackForce);
+
+    //        //Vector3 pushbackDir = other.transform.position;
+    //        //pushbackDir.y = transform.position.y;
+    //        //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
+    //    }
+    //}
 }
