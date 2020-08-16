@@ -38,11 +38,14 @@ public class PlayerController : MonoBehaviour
 
     private Camera playerCamera;
 
+    public Rigidbody MyRigidbody;
+
     private float smoothFactor = 10.0f;
 
     private State state;
     private Vector3 hookshotPosition;
     private float hookshotSize;
+    public float pushbackForce = 100000.0f;
 
     private enum State
     {
@@ -101,6 +104,7 @@ public class PlayerController : MonoBehaviour
         MyWeaponController = GetComponent<WeaponController>();
         MyStats = GetComponent<CharacterStats>();
         MyTimeController = GetComponent<TimeControl>();
+        MyRigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -388,6 +392,9 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Triggered by Fan");
             MyStats.TakeDamage(5);
+            //Vector3 pushbackDir = other.transform.position;
+            //pushbackDir.y = transform.position.y;
+            //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
         }
     }
 }
