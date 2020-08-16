@@ -421,7 +421,7 @@ public class EnemyController : BaseBehaviour
                             Retreat();
                         }
 
-                       if(IsInCover && Vector3.Distance(transform.position, CurrentCover.GetComponent<CoverData>().CoverPosition.position) <= 5.0f)
+                       if(IsInCover && (CurrentCover != null && Vector3.Distance(transform.position, CurrentCover.GetComponent<CoverData>().CoverPosition.position) <= 5.0f))
                         {
                             IsHoldingPosition = true;
                         }

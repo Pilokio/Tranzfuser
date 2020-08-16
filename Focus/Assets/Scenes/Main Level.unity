@@ -11158,6 +11158,11 @@ PrefabInstance:
       propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 394830901}
+    - target: {fileID: 5281236830341715102, guid: 54d4f2d3e269607459564a3687dbdfec,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54d4f2d3e269607459564a3687dbdfec, type: 3}
 --- !u!1 &328600586
@@ -22524,6 +22529,11 @@ PrefabInstance:
       propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 394830901}
+    - target: {fileID: 5281236830341715102, guid: 54d4f2d3e269607459564a3687dbdfec,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54d4f2d3e269607459564a3687dbdfec, type: 3}
 --- !u!43 &677178411
@@ -23966,7 +23976,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752973059}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
@@ -24391,6 +24401,11 @@ PrefabInstance:
       propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 394830901}
+    - target: {fileID: 5281236830341715102, guid: 54d4f2d3e269607459564a3687dbdfec,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54d4f2d3e269607459564a3687dbdfec, type: 3}
 --- !u!1 &833916301
@@ -25407,7 +25422,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 880300190}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
@@ -29139,7 +29154,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046697782}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
@@ -30310,7 +30325,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1126136163}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
@@ -45035,6 +45050,11 @@ PrefabInstance:
       propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 394830901}
+    - target: {fileID: 5281236830341715102, guid: 54d4f2d3e269607459564a3687dbdfec,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54d4f2d3e269607459564a3687dbdfec, type: 3}
 --- !u!1 &1784809785
@@ -47840,6 +47860,11 @@ PrefabInstance:
       propertyPath: PatrolPoints.Array.data[1]
       value: 
       objectReference: {fileID: 394830901}
+    - target: {fileID: 5281236830341715102, guid: 54d4f2d3e269607459564a3687dbdfec,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54d4f2d3e269607459564a3687dbdfec, type: 3}
 --- !u!1 &1997167138 stripped
@@ -49294,7 +49319,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3748184384166961133}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
