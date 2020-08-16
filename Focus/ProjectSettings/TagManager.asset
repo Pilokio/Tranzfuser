@@ -11,6 +11,7 @@ TagManager:
   - CameraHolder
   - HookPoint
   - Platform
+  - Fan
   layers:
   - Default
   - TransparentFX
@@ -26,7 +27,7 @@ TagManager:
   - Player
   - Ladder
   - Cover
-  - 
+  - MovingPlatform
   - 
   - 
   - 

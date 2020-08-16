@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProfile
   Bravery: 2
   Aggressiveness: 1
-  Determination: 1
+  Determination: 3
   Awareness: 2
   Swiftness: 3
   SuccessChance: 2
