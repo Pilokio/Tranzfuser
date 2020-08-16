@@ -11,37 +11,37 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: aiStandardSurface7
-    second: {fileID: 2100000, guid: fbe9c34b3b7b07f42a362d46d59a9d41, type: 2}
+    second: {fileID: 2100000, guid: cd995cea49ef87b4dafc00179af413f3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: boot
-    second: {fileID: 2100000, guid: 73d153b286721c14b9a7e7ba5960579b, type: 2}
+    second: {fileID: 2100000, guid: 0ff0899204f7a6f4e8fad26f6105d990, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: face_2
-    second: {fileID: 2100000, guid: 157b561bc10d00a4197f81f2e0a65230, type: 2}
+    second: {fileID: 2100000, guid: a92bd9300e601b947bf592bf1c1034ce, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: face_mask
-    second: {fileID: 2100000, guid: b994c579f1ea8474d85725704a8c7b49, type: 2}
+    second: {fileID: 2100000, guid: ae2b62c0f49693443b040b96871a5a48, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: pad
-    second: {fileID: 2100000, guid: cd0eadb5664db734eb5e42f6263b179e, type: 2}
+    second: {fileID: 2100000, guid: f008c217a9eb4a34fa738b1dd5fc2893, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: skin
-    second: {fileID: 2100000, guid: 6e40a7b94a9109a4892d0642d59d1896, type: 2}
+    second: {fileID: 2100000, guid: 193051c945b225c4c8a340b9f7b8b449, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: sweater
-    second: {fileID: 2100000, guid: e2670a3d04cf0e545935d7c889fc33b0, type: 2}
+    second: {fileID: 2100000, guid: 2bb73f5e698330f4dba36d236527b04a, type: 2}
   materials:
     materialImportMode: 1
     materialName: 3
