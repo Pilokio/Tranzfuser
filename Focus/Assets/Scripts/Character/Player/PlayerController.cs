@@ -381,4 +381,13 @@ public class PlayerController : MonoBehaviour
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        //Check to see if the tag on the collider is equal to Enemy
+        if (other.tag == "Fan")
+        {
+            Debug.Log("Triggered by Fan");
+            MyStats.TakeDamage(5);
+        }
+    }
 }

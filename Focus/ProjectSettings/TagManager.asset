@@ -11,6 +11,7 @@ TagManager:
   - CameraHolder
   - HookPoint
   - Platform
+  - Fan
   layers:
   - Default
   - TransparentFX
