@@ -20,7 +20,7 @@ MonoBehaviour:
   SuccessChance: 2
   BaseMaxHealth: 100
   HasTankBehaviour: 0
-  PassiveOption: 0
+  PassiveOption: 1
   AggressiveOption: 3
   DefaultDetectionAngle: 45
   DefaultDetectionRange: 35

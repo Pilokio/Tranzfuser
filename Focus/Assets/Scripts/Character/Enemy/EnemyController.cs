@@ -14,6 +14,8 @@ using Chronos;
 public class EnemyController : BaseBehaviour
 {
     #region AssignableInEditor
+    [SerializeField] Animator MyAnimator;
+
     [Header("Enemy Base Settings")]
     [SerializeField] private EnemyProfile MyProfile;
     [Range(1, 5)]
@@ -124,6 +126,8 @@ public class EnemyController : BaseBehaviour
     private int HitThreshold = 2;
     #endregion
 
+    private bool IsAnimated = false;
+
     private void Start()
     {
         MyManager = EnemyManager.Instance;
@@ -133,7 +137,9 @@ public class EnemyController : BaseBehaviour
 
         MyHealthBar = GetComponent<HealthBar>();
 
-    
+
+        if (MyAnimator != null)
+            IsAnimated = true;
 
 
         //Store the hitboxes attached to this enemy
@@ -404,6 +410,7 @@ public class EnemyController : BaseBehaviour
 
                         if (IsMovingIn)
                         {
+                            
                             if (Vector3.Distance(transform.position, PlayerManager.Instance.Player.transform.position) <= 5.0f)
                             {
                                 IsHoldingPosition = true;
@@ -421,12 +428,12 @@ public class EnemyController : BaseBehaviour
                             Retreat();
                         }
 
-                       if(IsInCover && (CurrentCover != null && Vector3.Distance(transform.position, CurrentCover.GetComponent<CoverData>().CoverPosition.position) <= 5.0f))
+                        if (IsInCover && (CurrentCover != null && Vector3.Distance(transform.position, CurrentCover.GetComponent<CoverData>().CoverPosition.position) <= 5.0f))
                         {
                             IsHoldingPosition = true;
                         }
 
-                       if(IsHoldingPosition)
+                        if (IsHoldingPosition)
                         {
                             FaceTarget(PlayerManager.Instance.Player.transform.position);
                         }
@@ -519,6 +526,11 @@ public class EnemyController : BaseBehaviour
     {
         if (PatrolPoints.Count > 1)
         {
+            MyAnimator.SetBool("IsWalk", true);
+            MyAnimator.SetBool("IsRun", false);
+            MyAnimator.SetBool("IsIdle", false);
+            MyAnimator.SetBool("IsSearch", false);
+
             //Move to the current target patrol point
             if (!IsPaused)
                 MyNavMeshAgent.SetDestination(PatrolPoints[TargetPatrolPoint].position);
@@ -602,10 +614,18 @@ public class EnemyController : BaseBehaviour
     IEnumerator FindSearchPoint()
     {
         FindingSP = true;
+        MyAnimator.SetBool("IsRun", false);
+        MyAnimator.SetBool("IsIdle", false);
+        MyAnimator.SetBool("IsWalk", false);
+        MyAnimator.SetBool("IsSearch", true);
         yield return new WaitForSeconds(WaitTime);
+
         MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), SearchOrigin.y, Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
-       
-        while(MyNavMeshAgent.path.status == NavMeshPathStatus.PathInvalid)
+        
+        MyAnimator.SetBool("IsSearch", false);
+        MyAnimator.SetBool("IsWalk", true);
+
+        while (MyNavMeshAgent.path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("Finding valid path");
             MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), SearchOrigin.y, Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
@@ -712,12 +732,22 @@ public class EnemyController : BaseBehaviour
     //This function will tell the enemy to stop moving
     private void HoldPosition()
     {
+        MyAnimator.SetBool("IsRun", false);
+        MyAnimator.SetBool("IsIdle", true);
+        MyAnimator.SetBool("IsWalk", false);
+        MyAnimator.SetBool("IsSearch", false);
+
         MyNavMeshAgent.SetDestination(transform.position);
     }
     
     //This function will make the enemy flee from the player
     private void Retreat()
     {
+        MyAnimator.SetBool("IsRun", true);
+        MyAnimator.SetBool("IsIdle", false);
+        MyAnimator.SetBool("IsWalk", false); 
+        MyAnimator.SetBool("IsSearch", false);
+
         //TODO
         //Change this to instead look for a random position away from the player?
         MyNavMeshAgent.SetDestination(transform.position - (DirectionOfPlayer * 5.0f));
@@ -726,6 +756,11 @@ public class EnemyController : BaseBehaviour
     //This function will tell the enemy to move towards the player's position
     private void MoveIn()
     {
+        MyAnimator.SetBool("IsRun", true);
+        MyAnimator.SetBool("IsIdle", false);
+        MyAnimator.SetBool("IsWalk", false);
+        MyAnimator.SetBool("IsSearch", false);
+
         MyNavMeshAgent.SetDestination(PlayerManager.Instance.Player.transform.position);
     }
 
