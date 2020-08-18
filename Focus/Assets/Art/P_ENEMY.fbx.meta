@@ -3,7 +3,42 @@ guid: af8f6d4c6ec76b742b73c6431d3dc4b1
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface7
+    second: {fileID: 2100000, guid: f2199f2399bc83d48adee23e8d29e2a2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: boot
+    second: {fileID: 2100000, guid: e7423a4c7c8e326408dce434c4dcbbb4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: face_2
+    second: {fileID: 2100000, guid: 55838205f9bb70247884339df7419657, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: face_mask
+    second: {fileID: 2100000, guid: fb7f95af61713f8439890ba04e6b6112, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pad
+    second: {fileID: 2100000, guid: 73d66ced6c72b1c4d8a08f4b6e4f8fa3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: skin
+    second: {fileID: 2100000, guid: 812a3c6ae5547524f87e148af4b857bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sweater
+    second: {fileID: 2100000, guid: da92c00a1ec05ca4e864290fac64e82a, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
