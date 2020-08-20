@@ -10,19 +10,22 @@ public class EnemyManager : MonoBehaviour
 
     public static EnemyManager Instance;
 
-    private void Start()
+    private void Awake()
     {
         Instance = this;
 
-        Player = PlayerManager.Instance.Player;
-        PlayerStats = Player.GetComponent<CharacterStats>();
+        
         InitEnemyList();
         TotalEnemyCount = EnemyList.Count();
     }
 
     #endregion
 
-
+    private void Start()
+    {
+        Player = PlayerManager.Instance.Player;
+        PlayerStats = Player.GetComponent<CharacterStats>();
+    }
     public GameObject Player { get; set; }
     public CharacterStats PlayerStats { get; set; }
 
