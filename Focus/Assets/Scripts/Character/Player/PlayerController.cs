@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     public Vector3 characterVelocityMomentum;
 
     public float wallRunSpeed = 8;
+    private float minRange = 100f;
+
+    public Animator animator;
 
 
     private Camera playerCamera;
@@ -82,6 +85,7 @@ public class PlayerController : MonoBehaviour
     {
         playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
         cameraFov = playerCamera.GetComponent<CameraFov>();
+
         speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
         speedLinesParticleSystem.Stop();
         state = State.Normal;
@@ -217,7 +221,17 @@ public class PlayerController : MonoBehaviour
         //Using either the R key, Square, or X-button depending on input device
         if (CustomInputManager.GetButtonDown("ActionButton4"))
         {
-            MyWeaponController.ReloadWeapon();
+            if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
+            {
+                animator.SetBool("isReloading", true);
+                MyWeaponController.ReloadWeapon();
+            }
+            // Reload anim
+            // else, set bool to false
+        }
+        else
+        {
+            animator.SetBool("isReloading", false);
         }
 
         //Swap the currently equipped weapon
@@ -308,7 +322,7 @@ public class PlayerController : MonoBehaviour
 
     void TestGrapple()
     {
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.CompareTag("HookPoint"))
         {
             StartCoroutine(MoveGrapple(raycastHit.point));
         }
