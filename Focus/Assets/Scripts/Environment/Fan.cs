@@ -7,12 +7,7 @@ public class Fan : BaseBehaviour
 { 
     [SerializeField] float speed = 500.0f;
     [SerializeField] int DamageAmount = 25;
-    [SerializeField] float KnockbackForce = 10.0f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+    [SerializeField] float KnockbackForce = 50.0f;
 
     // Update is called once per frame
     void Update()
@@ -20,28 +15,22 @@ public class Fan : BaseBehaviour
         transform.Rotate(transform.right * speed * time.deltaTime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        //Check to see if the tag on the collider is equal to Enemy
-        if (other.tag == "Player")
+        if (collision.transform.CompareTag("Player"))
         {
-            other.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
+            collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
+
+            Vector3 FanPos = transform.position;
+            FanPos.y = collision.transform.position.y;
+
+            Vector3 Direction = FanPos - collision.transform.position;
+            Direction.Normalize();
+            Direction.z = 0;
+            Direction *= -1;
+
+            collision.transform.position += Direction * KnockbackForce;
+            //collision.transform.GetComponent<Rigidbody>().AddForce(Direction * KnockbackForce, ForceMode.Impulse);
         }
     }
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    if(collision.transform.CompareTag("Player"))
-    //    {
-    //        collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
-    //        Vector3 FanPos = transform.position;
-    //        FanPos.y = collision.transform.position.y;
-
-    //        Vector3 Direction = FanPos - collision.transform.position;
-    //        Direction.Normalize();
-    //        Direction.z = 0;
-
-    //        collision.transform.GetComponent<Rigidbody>().AddForce(Direction * KnockbackForce,ForceMode.Impulse);
-    //    }
-    //}
 }
