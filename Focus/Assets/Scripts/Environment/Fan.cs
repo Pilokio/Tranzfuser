@@ -20,19 +20,28 @@ public class Fan : BaseBehaviour
         transform.Rotate(transform.right * speed * time.deltaTime);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if(collision.transform.CompareTag("Player"))
+        //Check to see if the tag on the collider is equal to Enemy
+        if (other.tag == "Player")
         {
-            collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
-            Vector3 FanPos = transform.position;
-            FanPos.y = collision.transform.position.y;
-
-            Vector3 Direction = FanPos - collision.transform.position;
-            Direction.Normalize();
-            Direction.z = 0;
-
-            collision.transform.GetComponent<Rigidbody>().AddForce(Direction * KnockbackForce,ForceMode.Impulse);
+            other.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
         }
     }
+
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if(collision.transform.CompareTag("Player"))
+    //    {
+    //        collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
+    //        Vector3 FanPos = transform.position;
+    //        FanPos.y = collision.transform.position.y;
+
+    //        Vector3 Direction = FanPos - collision.transform.position;
+    //        Direction.Normalize();
+    //        Direction.z = 0;
+
+    //        collision.transform.GetComponent<Rigidbody>().AddForce(Direction * KnockbackForce,ForceMode.Impulse);
+    //    }
+    //}
 }
