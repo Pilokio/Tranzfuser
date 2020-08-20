@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 
     public static EnemyManager Instance;
 
-    private void Awake()
+    private void Start()
     {
         Instance = this;
 
