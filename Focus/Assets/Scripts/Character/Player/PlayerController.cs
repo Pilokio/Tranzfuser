@@ -422,21 +422,22 @@ public class PlayerController : MonoBehaviour
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }
     }
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    //Check to see if the tag on the collider is equal to Enemy
-    //    if (other.tag == "Fan")
-    //    {
-    //        Debug.Log("Triggered by Fan");
-    //        MyStats.TakeDamage(5);
 
-    //        Vector3 DirectionOfTarget = ((transform.position + (Vector3.up * 2.0f)) - (other.transform.position)).normalized;
+    private void OnTriggerEnter(Collider other)
+    {
+        //Check to see if the tag on the collider is equal to Enemy
+        if (other.tag == "Fan")
+        {
+            Debug.Log("Triggered by Fan");
+            MyStats.TakeDamage(10);
 
-    //        MyRigidbody.AddForce(transform.forward * -DirectionOfTarget.z * pushbackForce);
+            //Vector3 DirectionOfTarget = ((transform.position + (Vector3.back * 2.0f)) - (other.transform.position)).normalized;
 
-    //        //Vector3 pushbackDir = other.transform.position;
-    //        //pushbackDir.y = transform.position.y;
-    //        //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
-    //    }
-    //}
+            //MyRigidbody.AddForce(transform.forward * -DirectionOfTarget.z * pushbackForce);
+
+            //Vector3 pushbackDir = other.transform.position;
+            //pushbackDir.y = transform.position.y;
+            //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
+        }
+    }
 }
