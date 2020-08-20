@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!95 &193428570508119109
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8182723128092571154}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: da528be1bf38d2d47a85bc77f7b70c46, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5468929778968296849
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,7 +281,7 @@ GameObject:
   - component: {fileID: 5468929779672105492}
   - component: {fileID: 5468929779672105493}
   m_Layer: 10
-  m_Name: AnimatedEnemy1Prototype
+  m_Name: Enemy2
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -376,11 +357,7 @@ MonoBehaviour:
   MyAnimator: {fileID: 193428570508119109}
   MyProfile: {fileID: 11400000, guid: 034793d19f038324689b7e5d88b2f5de, type: 2}
   Difficulty: 1
-  PatrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  PatrolPoints: []
   TargetPatrolPoint: 0
   EyePosition: {x: 0, y: 4, z: 0.31}
   HeadshotInstantKill: 0
@@ -979,6 +956,25 @@ RectTransform:
   m_AnchoredPosition: {x: -5.002087, y: 0}
   m_SizeDelta: {x: 9.995827, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!95 &193428570508119109
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8182723128092571154}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: da528be1bf38d2d47a85bc77f7b70c46, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &193428570991488795
 PrefabInstance:
   m_ObjectHideFlags: 0
