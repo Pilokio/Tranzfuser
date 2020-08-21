@@ -5,10 +5,13 @@ using UnityEngine.AI;
 [DisallowMultipleComponent]
 public class EnemyStats : CharacterStats
 {
+    [SerializeField] Animator MyAnimator;
     private void Start()
     {
         SetRigidbodyState(true);
-        SetColliderState(false);
+        SetColliderState(true);
+        MyAnimator.enabled = true;
+
     }
 
     private void Update()
@@ -33,11 +36,12 @@ public class EnemyStats : CharacterStats
     public override void Die()
     {
         base.Die();
-
-        GetComponent<Animator>().enabled = false;
+        GetComponent<NavMeshAgent>().SetDestination(transform.position);
+        MyAnimator.StopPlayback();
+        MyAnimator.enabled = false;
         SetRigidbodyState(false);
         SetColliderState(true);
-        Destroy(gameObject, 3f);
+        //Destroy(gameObject, 3f);
 
 
 
