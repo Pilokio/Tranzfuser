@@ -12,6 +12,9 @@ public class EnemyStats : CharacterStats
         SetColliderState(true);
         MyAnimator.enabled = true;
 
+        if (MyAnimator == null)
+            Debug.LogError("MyAnimator has not been assigned.", this);
+
     }
 
     private void Update()
@@ -36,12 +39,13 @@ public class EnemyStats : CharacterStats
     public override void Die()
     {
         base.Die();
+
         GetComponent<NavMeshAgent>().SetDestination(transform.position);
         MyAnimator.StopPlayback();
         MyAnimator.enabled = false;
         SetRigidbodyState(false);
         SetColliderState(true);
-        //Destroy(gameObject, 3f);
+        Destroy(gameObject, 7f);
 
 
 

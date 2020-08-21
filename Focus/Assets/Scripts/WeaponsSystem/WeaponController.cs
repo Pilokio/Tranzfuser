@@ -36,6 +36,8 @@ public class WeaponController : MonoBehaviour
     private float FireTimer = 0;
     public  bool CanFire { get; private set; }
 
+    private ParticleSystem muzzleFlash;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,6 +78,7 @@ public class WeaponController : MonoBehaviour
         MyStats = GetComponent<CharacterStats>();
         // Init the currently equipped weapon
         ChangeWeapon(0);
+        muzzleFlash = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<ParticleSystem>();
     }
 
     /// <summary>
@@ -151,9 +154,9 @@ public class WeaponController : MonoBehaviour
                 }
                 else
                 {
-
-
                     Ray ray = new Ray(Origin, Direction);
+
+                    muzzleFlash.Play();
 
                     if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                     {
