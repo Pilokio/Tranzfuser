@@ -5,6 +5,12 @@ using UnityEngine.AI;
 [DisallowMultipleComponent]
 public class EnemyStats : CharacterStats
 {
+    private void Start()
+    {
+        SetRigidbodyState(true);
+        SetColliderState(false);
+    }
+
     private void Update()
     {
         if (IsDead == true)
@@ -28,6 +34,13 @@ public class EnemyStats : CharacterStats
     {
         base.Die();
 
+        GetComponent<Animator>().enabled = false;
+        SetRigidbodyState(false);
+        SetColliderState(true);
+        Destroy(gameObject, 3f);
+
+
+
         //Debug.Log("I am dead");
         //Ragdoll goes here
         //GetComponent<EnemyController>().enabled = false;
@@ -39,5 +52,29 @@ public class EnemyStats : CharacterStats
         //transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
         //Destroy object
         // Destroy(gameObject);
+    }
+
+    void SetRigidbodyState(bool state)
+    {
+        Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+
+        foreach (Rigidbody rigidbody in rigidbodies)
+        {
+            rigidbody.isKinematic = state;
+        }
+
+        GetComponent<Rigidbody>().isKinematic = !state;
+    }
+
+    void SetColliderState(bool state)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = state;
+        }
+
+        GetComponent<Collider>().enabled = !state;
     }
 }
