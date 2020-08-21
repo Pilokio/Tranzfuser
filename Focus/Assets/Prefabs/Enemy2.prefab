@@ -357,7 +357,9 @@ MonoBehaviour:
   MyAnimator: {fileID: 193428570508119109}
   MyProfile: {fileID: 11400000, guid: 034793d19f038324689b7e5d88b2f5de, type: 2}
   Difficulty: 1
-  PatrolPoints: []
+  PatrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
   TargetPatrolPoint: 0
   EyePosition: {x: 0, y: 4, z: 0.31}
   HeadshotInstantKill: 0
@@ -995,7 +997,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 22d24def84825744da8d702593766cf0,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.797
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 22d24def84825744da8d702593766cf0,
         type: 3}

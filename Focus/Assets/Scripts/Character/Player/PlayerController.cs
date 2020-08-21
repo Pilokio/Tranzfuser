@@ -86,6 +86,8 @@ public class PlayerController : MonoBehaviour
         playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
         cameraFov = playerCamera.GetComponent<CameraFov>();
 
+        animator = transform.Find("Main Camera").Find("HandPos").GetComponent<Animator>();
+
         speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
         speedLinesParticleSystem.Stop();
         state = State.Normal;
@@ -226,8 +228,6 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isReloading", true);
                 MyWeaponController.ReloadWeapon();
             }
-            // Reload anim
-            // else, set bool to false
         }
         else
         {
