@@ -21,8 +21,8 @@ MonoBehaviour:
   ImpactForce: 500
   WeaponFireRate: 0.5
   WeaponAmmoType: 0
-  WeaponMagCapacity: 10
-  WeaponAmmoLoaded: 7
+  WeaponMagCapacity: 50
+  WeaponAmmoLoaded: 12
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}

@@ -156,6 +156,7 @@ public class WeaponController : MonoBehaviour
                 {
                     Ray ray = new Ray(Origin, Direction);
 
+
                     muzzleFlash.Play();
 
                     if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))

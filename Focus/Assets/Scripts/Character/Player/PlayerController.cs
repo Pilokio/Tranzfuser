@@ -201,8 +201,13 @@ public class PlayerController : MonoBehaviour
         //Using either LMB, R2, or RT depending on input device
         if (CustomInputManager.GetAxis("RightTrigger") != CustomInputManager.GetAxisNeutralPosition("RightTrigger"))
         {
+            animator.SetBool("isFiring", true);
             //Use the equipped weapon
             MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward);
+        }
+        else
+        {
+            animator.SetBool("isFiring", false);
         }
 
 
@@ -210,12 +215,14 @@ public class PlayerController : MonoBehaviour
         //using either RMB, L2, or LT depending on input device
         if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
+            animator.enabled = false;
             GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
 
             //MyTimeManager.DoSlowmotion();
         }
         else
         {
+            animator.enabled = true;
             GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * smoothFactor);
         }
 
