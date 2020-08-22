@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     private float minRange = 100f;
 
     public Animator animator;
+    public AudioSource pistolShot;
 
 
     private Camera playerCamera;
@@ -112,6 +113,8 @@ public class PlayerController : MonoBehaviour
         MyStats = GetComponent<CharacterStats>();
         MyTimeController = GetComponent<TimeControl>();
         MyRigidbody = GetComponent<Rigidbody>();
+
+        pistolShot = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
@@ -201,6 +204,7 @@ public class PlayerController : MonoBehaviour
         //Using either LMB, R2, or RT depending on input device
         if (CustomInputManager.GetAxis("RightTrigger") != CustomInputManager.GetAxisNeutralPosition("RightTrigger"))
         {
+            if (!pistolShot.isPlaying) pistolShot.Play();
             animator.SetBool("isFiring", true);
             //Use the equipped weapon
             MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward);
