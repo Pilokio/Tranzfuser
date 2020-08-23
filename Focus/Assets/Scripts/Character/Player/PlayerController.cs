@@ -138,7 +138,7 @@ public class PlayerController : MonoBehaviour
             //    break;
 
             //case State.HookShotFlyingPlayer:
-            //    HandleLook();
+            //    HandleLook(); 
             //    HandleHookshotMovement();
                 break;
         }
@@ -147,6 +147,27 @@ public class PlayerController : MonoBehaviour
         {
            TestGrapple();
         }
+
+
+        /// Trying to get raycast to constantly draw from player in order
+        /// to play particle system on hook points
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.tag == "HookPoint")
+        {
+            Debug.Log("HOOK POINT");
+
+            raycastHit.transform.GetComponent<ParticleSystem>().Play();
+
+            // Play particle system
+            // Play UI element that displays "Hook" with hook image?
+        }
+        else
+        {
+            // Not working as intedned
+            //raycastHit.transform.GetComponent<ParticleSystem>().Stop();
+        }
+        ///
+        ///
+
 
         UpdateUI();
     }
