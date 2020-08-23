@@ -236,14 +236,16 @@ public class PlayerController : MonoBehaviour
         //using either RMB, L2, or LT depending on input device
         if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
         {
-            animator.enabled = false;
+            GetComponentInChildren<WeaponSway>().enabled = false;
+            animator.SetBool("isAiming", true);
             GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
 
             //MyTimeManager.DoSlowmotion();
         }
         else
         {
-            animator.enabled = true;
+            GetComponentInChildren<WeaponSway>().enabled = true;
+            animator.SetBool("isAiming", false);
             GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * smoothFactor);
         }
 
