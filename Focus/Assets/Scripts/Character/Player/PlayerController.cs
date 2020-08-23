@@ -155,16 +155,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("HOOK POINT");
 
-            raycastHit.transform.GetComponent<ParticleSystem>().Play();
+            //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
             // Play particle system
             // Play UI element that displays "Hook" with hook image?
         }
-        else
-        {
-            // Not working as intedned
-            //raycastHit.transform.GetComponent<ParticleSystem>().Stop();
-        }
+  
         ///
         ///
 
