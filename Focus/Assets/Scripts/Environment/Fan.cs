@@ -21,15 +21,15 @@ public class Fan : BaseBehaviour
         {
             collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
 
-            Vector3 FanPos = transform.position;
-            FanPos.y = collision.transform.position.y;
+            //Vector3 FanPos = transform.position;
+            //FanPos.y = collision.transform.position.y;
 
-            Vector3 Direction = FanPos - collision.transform.position;
-            Direction.Normalize();
-            Direction.z = 0;
-            Direction *= -1;
+            //Vector3 Direction = FanPos - collision.transform.position;
+            //Direction.Normalize();
+            //Direction.z = 0;
+            //Direction *= -1;
 
-            collision.transform.position += Direction * KnockbackForce;
+            //collision.transform.position += Direction * KnockbackForce;
             //collision.transform.GetComponent<Rigidbody>().AddForce(Direction * KnockbackForce, ForceMode.Impulse);
         }
     }

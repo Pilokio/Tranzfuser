@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!95 &4622117245587171743
+--- !u!95 &761786207
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c57f3746b0e88641a09c1b65a904efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MyAnimator: {fileID: 0}
+  MyAnimator: {fileID: 761786207}
   MyProfile: {fileID: 11400000, guid: 034793d19f038324689b7e5d88b2f5de, type: 2}
   Difficulty: 1
   PatrolPoints:
@@ -152,7 +152,7 @@ MonoBehaviour:
   RifleAmmo: 10000
   LauncherAmmo: 10000
   GrenadeCount: 10000
-  MyAnimator: {fileID: 4622117245587171743}
+  MyAnimator: {fileID: 0}
 --- !u!114 &6870599191380658247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   _recordingInterval: 0.5
   _mode: 1
   _globalClockKey: Enemies
-  _rewindable: 1
+  _rewindable: 0
   _recordingDuration: 30
 --- !u!136 &6870599191380658241
 CapsuleCollider:

@@ -1,0 +1,226 @@
+fileFormatVersion: 2
+guid: 22d24def84825744da8d702593766cf0
+ModelImporter:
+  serializedVersion: 19300
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Beast
+    second: {fileID: 2100000, guid: 15a92885e5c9bd042be0c0a638f1098b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aiStandardSurface7
+    second: {fileID: 2100000, guid: 837b5b8e93e94d84bb13a3c38a27eb2f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: body
+    second: {fileID: 2100000, guid: 27c90e29360b6de4781a8fb9bf42f4ed, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eye
+    second: {fileID: 2100000, guid: f546f8e75562eb94089a222de1a67cca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pad
+    second: {fileID: 2100000, guid: c60aa2aa7fe38eb4dbec1bbf9c146ead, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: plastic
+    second: {fileID: 2100000, guid: 8678a766f3fb6cd47adc849695861976, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: robot_arm_emission
+    second: {fileID: 2100000, guid: 2da1344beb6a4364bbf204c9836a7c0b, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_Beast_BaseColor.1001
+    second: {fileID: 2800000, guid: 0bce84eedaf7717458cc45f53ed1abba, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_Beast_Normal.1001
+    second: {fileID: 2800000, guid: 926b327a4f4a98045a47827823a333c9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_aiStandardSurface7_BaseColor.1001
+    second: {fileID: 2800000, guid: d4fa3b94a4575ec48bcc0abfdf4ad7f2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_aiStandardSurface7_Emissive.1001
+    second: {fileID: 2800000, guid: 9da7364ee14ba8442945561fb52f53dd, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_aiStandardSurface7_Normal.1001
+    second: {fileID: 2800000, guid: e2d2b87bf469b9446b43692e736faad8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_aiStandardSurface7_Roughness.1001
+    second: {fileID: 2800000, guid: 8b08736c44becac4caeb23dacf4a09d3, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_body_BaseColor.1001
+    second: {fileID: 2800000, guid: cff5f92526f0fa74488b5a2bb564aeda, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_body_Normal.1001
+    second: {fileID: 2800000, guid: 3d70a261794fe1f439aee2aada7b39e5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_body_Roughness.1001
+    second: {fileID: 2800000, guid: 0880eba6ffd582443b80b333ac07165c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_eye_BaseColor.1001
+    second: {fileID: 2800000, guid: f616337629e80654584db248279c5f62, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_eye_Emissive.1001
+    second: {fileID: 2800000, guid: cd7a56b39dd888b498a77dbe7a0e26bb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_eye_Normal.1001
+    second: {fileID: 2800000, guid: dd22a98c32bb57346885bc0790a8099c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_pad_BaseColor.1001
+    second: {fileID: 2800000, guid: 1a865f580014a0e4dab4d47fe99f3c3f, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_pad_Normal.1001
+    second: {fileID: 2800000, guid: 57aa00143f78191468821b229c6fe45c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_pad_Roughness.1001
+    second: {fileID: 2800000, guid: 604366719f57b21499b6eb2491bc1e2e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_robot_arm_emission_BaseColor.1001
+    second: {fileID: 2800000, guid: 3b2dd3e35f5fa7b46ac9739b255d7b55, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_robot_arm_emission_Emissive.1001
+    second: {fileID: 2800000, guid: 10679fc6bd1b98b4e92602a1d2bb75d0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_robot_arm_emission_Normal.1001
+    second: {fileID: 2800000, guid: d100bec399f0f8a47b55790e76ea35ff, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: p2_enemyb_robot_arm_emission_Roughness.1001
+    second: {fileID: 2800000, guid: 8cfcbf1161c1b674f8da05b37b5c8096, type: 3}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
