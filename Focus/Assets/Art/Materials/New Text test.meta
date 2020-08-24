@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Focus/Assets/Art/Materials/New Text test.meta
 guid: 3e0ad30f88a613343857f9de5177ac61
+=======
+guid: e5fae87e6d5ad6c4691b064305ff27ce
+>>>>>>> bfa0860be09a86b54a0b38ebb6303f4e1b726b2c:Focus/Assets/Art/shotgun_materialtexture.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
