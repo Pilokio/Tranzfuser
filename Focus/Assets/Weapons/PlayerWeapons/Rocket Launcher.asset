@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponName: Rocket Launcher
   Type: 4
-  WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
+  WeaponObject: {fileID: -927199367670048503, guid: 87318ae3c256e0c49a41edc0be747a96,
     type: 3}
   WeaponDamage: 90
   WeaponRange: 1000

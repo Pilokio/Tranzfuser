@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour
     public Transform OriginalGunPos;
     public Vector3 characterVelocityMomentum;
 
+    public Canvas hookCanvas;
+
     public float wallRunSpeed = 8;
     private float minRange = 100f;
 
@@ -93,6 +95,8 @@ public class PlayerController : MonoBehaviour
         speedLinesParticleSystem.Stop();
         state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
+
+        hookCanvas.enabled = false;
     }
 
     // Start is called before the first frame update
@@ -155,12 +159,21 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("HOOK POINT");
 
+            raycastHit.transform.GetComponent<Renderer>().material.color = Color.red;
+            hookCanvas.enabled = true;
+
             //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
             // Play particle system
             // Play UI element that displays "Hook" with hook image?
         }
-  
+        else
+        {
+            //raycastHit.transform.GetComponent<Renderer>().material.color = Color.green;
+            hookCanvas.enabled = false;
+        }
+
+
         ///
         ///
 
