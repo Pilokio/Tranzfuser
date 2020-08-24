@@ -1,0 +1,19 @@
+To create a new enemy type, create an enemy profile
+Right Click in Assets Folder -> Create -> Enemy Profile.
+
+Click on the newly created Enemy Profile and assign the values in the inspector.
+
+Bravery & Aggressiveness: used to influence combat decisions (i.e. self preservation or attack)
+Determination: used when searching for the player to determine search time & radius.
+Awareness: Not currently being used. May be removed later.
+Swiftness: affects movement speed etc.
+Success Chance: affects how accurate the enemy will be with their weapons.
+
+Base Max Health: the amount of health the enemy will have before being multiplied by their difficulty rating.
+Has Tank Behaviour: if this is selected, the enemy will alternate between moving towards the player, 
+		    and stopping to shoot at them. Otherwise, the normal decision making is carried out.
+Passive Option & Aggressive Option: The two actions that can be chosen during combat by this enemy type. Where passive is the less hostile option.
+
+Default Detection Angle: the cone of vision angle used when in the idle state, increased by 90 when suspicious or hostile.
+Default Detection Range: the length of the cone of vision when in the idle state, doubled when suspicious or hostile.
+Decision Time: the amount of time between combat decisions (advised to keep this a low value). Tanks use this as a basis for alternating their actions.
