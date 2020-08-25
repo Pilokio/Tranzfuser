@@ -394,6 +394,7 @@ MonoBehaviour:
   GunHolder: {fileID: 8112973409767937400}
   OriginalGunPos: {fileID: 1027381455032385936}
   characterVelocityMomentum: {x: 0, y: 0, z: 0}
+  hookCanvas: {fileID: 0}
   wallRunSpeed: 15
   animator: {fileID: 0}
   pistolShot: {fileID: 0}
@@ -5527,7 +5528,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7668961343214878473}
   - component: {fileID: 1809953603}
-  - component: {fileID: 1809953604}
   m_Layer: 9
   m_Name: HandPos
   m_TagString: Untagged
@@ -5570,21 +5570,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1809953604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3893576377253202572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c78e003b1d99fa64282934697c95fa40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amount: 0.02
-  maxAmount: 0.06
-  smoothAmount: 6
 --- !u!1 &4468032535667470885
 GameObject:
   m_ObjectHideFlags: 0
@@ -5669,6 +5654,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8112973409767937400}
   - component: {fileID: 228863912124044411}
+  - component: {fileID: 649243425}
   m_Layer: 9
   m_Name: GunHolder
   m_TagString: GunHolder
@@ -5704,6 +5690,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grappling: {fileID: 0}
+--- !u!114 &649243425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4820551708096703238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c78e003b1d99fa64282934697c95fa40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 0.2
+  maxAmount: 0.06
+  smoothAmount: 6
 --- !u!1 &6020034267789999421
 GameObject:
   m_ObjectHideFlags: 0
