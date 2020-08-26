@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     CharacterStats MyStats;
     TimeControl MyTimeController;
     CameraFov cameraFov;
+    Hook hookPoint;
     private ParticleSystem speedLinesParticleSystem;
 
     private const float NORMAL_FOV = 60f;
@@ -33,8 +34,6 @@ public class PlayerController : MonoBehaviour
     public Transform GunHolder;
     public Transform OriginalGunPos;
     public Vector3 characterVelocityMomentum;
-
-    public Canvas hookCanvas;
 
     public float wallRunSpeed = 8;
     private float minRange = 100f;
@@ -95,8 +94,6 @@ public class PlayerController : MonoBehaviour
         speedLinesParticleSystem.Stop();
         state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
-
-        hookCanvas.enabled = false;
     }
 
     // Start is called before the first frame update
@@ -157,10 +154,14 @@ public class PlayerController : MonoBehaviour
         /// to play particle system on hook points
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.tag == "HookPoint")
         {
-            Debug.Log("HOOK POINT");
 
-            raycastHit.transform.GetComponent<Renderer>().material.color = Color.red;
-            hookCanvas.enabled = true;
+            if (raycastHit.transform.GetComponent<Hook>() != hookPoint && hookPoint != null)
+            {
+                hookPoint.HideCanvas();
+            }
+
+            hookPoint = raycastHit.transform.GetComponent<Hook>();
+            hookPoint.DisplayCanvas();
 
             //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
@@ -169,13 +170,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //raycastHit.transform.GetComponent<Renderer>().material.color = Color.green;
-            hookCanvas.enabled = false;
+            hookPoint.HideCanvas();
         }
-
-
-        ///
-        ///
 
 
         UpdateUI();
