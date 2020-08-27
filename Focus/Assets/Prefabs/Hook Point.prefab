@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1782900524867703576}
   - component: {fileID: 1782900524867703578}
   - component: {fileID: 1782900524867703577}
-  m_Layer: 5
+  m_Layer: 15
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 1782900524880225886}
   - component: {fileID: 1782900524880225880}
   - component: {fileID: 1782900524880225887}
-  m_Layer: 5
+  m_Layer: 15
   m_Name: Store
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 1782900525309141023}
   - component: {fileID: 1782900525309141022}
   - component: {fileID: 1782900525309141017}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Hook Point
   m_TagString: HookPoint
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -277,7 +277,7 @@ GameObject:
   - component: {fileID: 1782900525377680981}
   - component: {fileID: 1782900525377680980}
   - component: {fileID: 1782900525377681003}
-  m_Layer: 5
+  m_Layer: 15
   m_Name: HookCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 1782900525535705575}
   - component: {fileID: 1782900525535705569}
   - component: {fileID: 1782900525535705568}
-  m_Layer: 5
+  m_Layer: 15
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}

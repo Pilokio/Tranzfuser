@@ -47,10 +47,13 @@ public class PlayerController : MonoBehaviour
 
     private float smoothFactor = 10.0f;
 
-    private State state;
-    private Vector3 hookshotPosition;
-    private float hookshotSize;
+
     public float pushbackForce = 10.0f;
+    [SerializeField] LayerMask GrappleMask;
+    Hook TargetedHookPoint;
+    float reachedHookshotPositionDistance = 2.5f;
+
+    float GrappleSpeed = 1.0f;
 
     private enum State
     {
@@ -91,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
         speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
         speedLinesParticleSystem.Stop();
-        state = State.Normal;
         hookshotTransform.gameObject.SetActive(false);
     }
 
@@ -120,51 +122,31 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // When the hook fires, grant the player some access to movement such as looking around, jumping etc
-        switch (state)
-        {
-            default:
-            case State.Normal:
-                // Check for all player input
-                HandleInput();
-                HandleLook();
-            //    HandleHookshotStart();
-            //    break;
-
-            //case State.HookshotThrown:
-            //    HandleHookshotThrow();
-            //    HandleLook();
-            //    HandleInput();
-            //    break;
-
-            //case State.HookShotFlyingPlayer:
-            //    HandleLook(); 
-            //    HandleHookshotMovement();
-                break;
-        }
-
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-           TestGrapple();
-        }
-
-
+        HandleInput();
+        HandleLook();
+          
         /// Trying to get raycast to constantly draw from player in order
         /// to play particle system on hook points
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.tag == "HookPoint")
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange, GrappleMask))
         {
-            Debug.Log("HOOK POINT");
-
+            if(TargetedHookPoint != raycastHit.transform.GetComponent<Hook>() && TargetedHookPoint != null)
+            {
+                TargetedHookPoint.HideCanvas();
+            }
+            
+            TargetedHookPoint = raycastHit.transform.GetComponent<Hook>();
+            TargetedHookPoint.DisplayCanvas();
+           
             //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
             // Play particle system
             // Play UI element that displays "Hook" with hook image?
         }
-  
-        ///
-        ///
-
-
+        else
+        {
+            if(TargetedHookPoint != null)
+                TargetedHookPoint.HideCanvas();
+        }
         UpdateUI();
     }
 
@@ -281,17 +263,16 @@ public class PlayerController : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////
 
-  
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            GrappleToHook();
+        }
 
         // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
         if (CustomInputManager.GetButtonDown("ActionButton1") && !IsWallRunning)
         {
             MyMovement.Jump();
-        }
-
-        if (CustomInputManager.GetButtonDown("Menu"))
-        {
-            MyStats.TakeDamage(25);
         }
 
         if (Input.GetKey(KeyCode.LeftShift))
@@ -329,36 +310,15 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-    /// <summary>
-    /// WIP - Hook mechanic, press Q to fire hook
-    /// </summary>
-    private void HandleHookshotStart()
+   
+    void GrappleToHook()
     {
-        if (TestInputDownHookshot())
+        if (TargetedHookPoint != null)
         {
-            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit) && raycastHit.transform.CompareTag("HookPoint"))
-            {
-                // Hit something
-                debugHitPointTransform.position = raycastHit.point;
-                hookshotPosition = raycastHit.point;
-                hookshotSize = 0f;
-                hookshotTransform.gameObject.SetActive(true);
-                hookshotTransform.localScale = Vector3.zero;
-                state = State.HookshotThrown;
-            }
+            StartCoroutine(MoveGrapple(TargetedHookPoint.transform.position));
         }
     }
 
-    void TestGrapple()
-    {
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.CompareTag("HookPoint"))
-        {
-            StartCoroutine(MoveGrapple(raycastHit.point));
-        }
-    }
-    float reachedHookshotPositionDistance = 2.5f;
-
-    float GrappleSpeed = 1.0f;
     IEnumerator MoveGrapple(Vector3 destination)
     {
         GetComponent<LineRenderer>().enabled = true;
@@ -380,107 +340,11 @@ public class PlayerController : MonoBehaviour
         speedLinesParticleSystem.Stop();
     }
 
-    private void HandleHookshotThrow()
-    {
-        hookshotTransform.LookAt(hookshotPosition);
-
-        float hookshotThrowSpeed = 70f;
-        hookshotSize += hookshotThrowSpeed * Time.deltaTime;
-        hookshotTransform.localScale = new Vector3(1, 1, hookshotSize);
-
-        if (hookshotSize >= Vector3.Distance(transform.position, hookshotPosition))
-        {
-            state = State.HookShotFlyingPlayer;
-            cameraFov.SetCameraFov(HOOKSHOT_FOV);
-            speedLinesParticleSystem.Play();
-        }
-    }
-
-    private void HandleHookshotMovement()
-    {   
-        //float hookshotSpeedMin = 0.1f;
-        //float hookshotSpeedMax = 0.7f;
-        //float hookshotSpeed = Mathf.Clamp(Vector3.Distance(transform.position, hookshotPosition), hookshotSpeedMin, hookshotSpeedMax);
-
-        hookshotTransform.LookAt(hookshotPosition);
-
-        transform.position = Vector3.MoveTowards(transform.position, hookshotPosition, GrappleSpeed);
-
-        //Vector3 hookshotDir = (hookshotPosition - transform.position).normalized;
-
-        //// FIXEME Not working - probably the cause of the weird movement
-        
-        //float hookshotSpeedMultiplier = 2f;
-
-        //MyMovement.Move(hookshotDir * hookshotSpeed * hookshotSpeedMultiplier * Time.deltaTime);
-
-        float reachedHookshotPositionDistance = 2.5f;
-        if (Vector3.Distance(transform.position, hookshotPosition) < reachedHookshotPositionDistance)
-        {
-            StopHookshot();
-        }
-
-        if (TestInputDownHookshot())
-        {
-            StopHookshot();
-        }
-
-        //if (TestInputJump())
-        //{
-        //    float momentumExtraSpeed = 7f;
-        //    characterVelocityMomentum = hookshotDir * hookshotSpeed * momentumExtraSpeed;
-        //    float jumpSpeed = 40f;
-        //    characterVelocityMomentum += Vector3.up * jumpSpeed;
-        //    StopHookshot();
-        //}
-    }
-
-    private void StopHookshot()
-    {
-        state = State.Normal;
-        hookshotTransform.gameObject.SetActive(false);
-        cameraFov.SetCameraFov(NORMAL_FOV);
-        speedLinesParticleSystem.Stop();
-    }
-
-    private bool TestInputDownHookshot()
-    {
-        return Input.GetKeyDown(KeyCode.Q);
-    }
-
-    private bool TestInputJump()
-    {
-        return CustomInputManager.GetButtonDown("ActionButton1");
-    }
-    ///
-    // End of hook mechanic
-    ///
-
-
     public void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.CompareTag("Bullet"))
         {
-            Debug.Log("Player says Ow!");
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }
     }
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    //Check to see if the tag on the collider is equal to Enemy
-    //    if (other.tag == "Fan")
-    //    {
-    //        Debug.Log("Triggered by Fan");
-    //        MyStats.TakeDamage(10);
-
-    //        //Vector3 DirectionOfTarget = ((transform.position + (Vector3.back * 2.0f)) - (other.transform.position)).normalized;
-
-    //        //MyRigidbody.AddForce(transform.forward * -DirectionOfTarget.z * pushbackForce);
-
-    //        //Vector3 pushbackDir = other.transform.position;
-    //        //pushbackDir.y = transform.position.y;
-    //        //MyRigidbody.AddForce((pushbackDir - transform.position).normalized * pushbackForce);
-    //    }
-    //}
 }
