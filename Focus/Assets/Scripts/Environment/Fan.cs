@@ -9,9 +9,16 @@ public class Fan : BaseBehaviour
     [SerializeField] int DamageAmount = 25;
     [SerializeField] float KnockbackForce = 50.0f;
 
+    
+    private void Start()
+    {
+        //store non rote angles and  freeze in update ?
+    }
+
     // Update is called once per frame
     void Update()
     {
+        
         transform.Rotate(transform.right * speed * time.deltaTime);
     }
 

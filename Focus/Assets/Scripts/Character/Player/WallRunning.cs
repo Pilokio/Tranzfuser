@@ -109,11 +109,12 @@ public class WallRunning : MonoBehaviour
         {
             StopAllCoroutines();
             WallRunCleanup();
+            //StartCoroutine(Cleanup());
 
             if (IsJumping)
-                StartCoroutine(StopWallRun(0.25f));
+                Invoke("StopWallRun",0.25f);
             else
-                StartCoroutine(StopWallRun(0.0f));
+                Invoke("StopWallRun", 0.0f);
 
 
         }
@@ -129,9 +130,8 @@ public class WallRunning : MonoBehaviour
     public bool IsTurning = false;
     bool IsJumping = false;
 
-    IEnumerator StopWallRun(float time)
+    void StopWallRun()
     {
-        yield return new WaitForSeconds(time);
         GetComponent<PlayerController>().SetIsWallRunning(false);
     }
 
@@ -176,11 +176,30 @@ public class WallRunning : MonoBehaviour
     }
 
 
-
     void WallRunCleanup()
     {
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, MainCamera.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
-        StartCoroutine(TiltCamera(0.0f));
+        float angle = MainCamera.transform.localEulerAngles.y;
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, angle, transform.rotation.eulerAngles.z);
+        Invoke("FinalCheck", 0.25f);
+    }
+
+    //IEnumerator Cleanup()
+    //{
+    //    float angle = MainCamera.transform.localEulerAngles.y;
+    //    transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, angle, transform.rotation.eulerAngles.z);
+
+    //    yield return new WaitForEndOfFrame();
+    //    FinalCheck();
+    //    //Invoke("FinalCheck", 0.5f);
+    //}
+
+
+    void FinalCheck()
+    {
+        if(MainCamera.transform.localEulerAngles.y != 0.0f)
+        {
+            //Debug.LogWarning("Standard Wall Run Cleanup failed to correct camera rotation. Backup fix in place to prevent movement errors");
+            MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
+        }
     }
 }
