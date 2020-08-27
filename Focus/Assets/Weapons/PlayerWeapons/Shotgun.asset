@@ -14,16 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponName: Shotgun
   Type: 3
-  WeaponObject: {fileID: 4549486197502553273, guid: f332c311b8da1fe46abbde13f6490e9b,
+  WeaponObject: {fileID: 4549486197502553273, guid: cd8827a8c41111d4d8b358ec51c4725d,
     type: 3}
   WeaponDamage: 60
   WeaponRange: 50
   ImpactForce: 1000
   CanAimDownSights: 1
+  ReloadSound: {fileID: 0}
+  FireSound: {fileID: 0}
+  MuzzleFlash: {fileID: 0}
   WeaponFireRate: 0.75
   WeaponAmmoType: 3
   WeaponMagCapacity: 2
-  WeaponAmmoLoaded: 0
+  WeaponAmmoLoaded: 1
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}

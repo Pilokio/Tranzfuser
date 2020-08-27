@@ -14,16 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponName: Rocket Launcher
   Type: 4
-  WeaponObject: {fileID: 856349316141069662, guid: fdcc80f31c04f424b9718d7a8f588aaf,
+  WeaponObject: {fileID: 856349316141069662, guid: 8514ff6988b51ac4fb12bb73cf121aed,
     type: 3}
   WeaponDamage: 90
   WeaponRange: 1000
   ImpactForce: 10000
   CanAimDownSights: 0
+  ReloadSound: {fileID: 0}
+  FireSound: {fileID: 0}
+  MuzzleFlash: {fileID: 0}
   WeaponFireRate: 1
   WeaponAmmoType: 4
   WeaponMagCapacity: 1
-  WeaponAmmoLoaded: 1
+  WeaponAmmoLoaded: 0
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}
