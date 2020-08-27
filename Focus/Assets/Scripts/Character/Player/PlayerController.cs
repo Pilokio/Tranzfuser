@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     CharacterStats MyStats;
     TimeControl MyTimeController;
     CameraFov cameraFov;
-    Hook hookPoint;
     private ParticleSystem speedLinesParticleSystem;
 
     private const float NORMAL_FOV = 60f;
@@ -154,24 +153,16 @@ public class PlayerController : MonoBehaviour
         /// to play particle system on hook points
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange) && raycastHit.transform.tag == "HookPoint")
         {
-
-            if (raycastHit.transform.GetComponent<Hook>() != hookPoint && hookPoint != null)
-            {
-                hookPoint.HideCanvas();
-            }
-
-            hookPoint = raycastHit.transform.GetComponent<Hook>();
-            hookPoint.DisplayCanvas();
+            Debug.Log("HOOK POINT");
 
             //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
             // Play particle system
             // Play UI element that displays "Hook" with hook image?
         }
-        else
-        {
-            hookPoint.HideCanvas();
-        }
+  
+        ///
+        ///
 
 
         UpdateUI();
@@ -213,7 +204,6 @@ public class PlayerController : MonoBehaviour
         {
             if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
             {
-                Debug.Log("Skipping to end of turn");
                 MyWallRunning.IsTurning = false;
             }
 
