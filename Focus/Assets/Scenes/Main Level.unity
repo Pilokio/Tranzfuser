@@ -59582,6 +59582,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 2783557252329496228, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 64823
+      objectReference: {fileID: 0}
     - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: AmmoDisplayText
@@ -59601,6 +59606,11 @@ PrefabInstance:
         type: 3}
       propertyPath: hookCanvas
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
+        type: 3}
+      propertyPath: GrappleMask.m_Bits
+      value: 32768
       objectReference: {fileID: 0}
     - target: {fileID: 3611018250486517414, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
