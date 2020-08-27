@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponName: Shotgun
   Type: 3
-  WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
+  WeaponObject: {fileID: -927199367670048503, guid: 89691a33d687a3e4caf8788c2aeabd92,
     type: 3}
   WeaponDamage: 60
   WeaponRange: 50
