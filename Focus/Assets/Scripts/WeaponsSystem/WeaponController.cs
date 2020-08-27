@@ -78,7 +78,7 @@ public class WeaponController : MonoBehaviour
         MyStats = GetComponent<CharacterStats>();
         // Init the currently equipped weapon
         ChangeWeapon(0);
-        muzzleFlash = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<ParticleSystem>();
+//        muzzleFlash = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<ParticleSystem>();
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public class WeaponController : MonoBehaviour
                     Ray ray = new Ray(Origin, Direction);
 
 
-                    muzzleFlash.Play();
+                    //muzzleFlash.Play();
 
                     if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                     {

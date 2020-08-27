@@ -10,7 +10,9 @@ public class EnemyStats : CharacterStats
     {
         SetRigidbodyState(true);
         SetColliderState(true);
-        MyAnimator.enabled = true;
+        
+        if(MyAnimator)
+            MyAnimator.enabled = true;
 
         if (MyAnimator == null)
             Debug.LogError("MyAnimator has not been assigned.", this);
