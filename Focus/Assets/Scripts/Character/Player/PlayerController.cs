@@ -38,7 +38,6 @@ public class PlayerController : MonoBehaviour
     private float minRange = 100f;
 
     public Animator animator;
-    public AudioSource pistolShot;
 
 
     private Camera playerCamera;
@@ -202,10 +201,11 @@ public class PlayerController : MonoBehaviour
         //Using either LMB, R2, or RT depending on input device
         if (CustomInputManager.GetAxis("RightTrigger") != CustomInputManager.GetAxisNeutralPosition("RightTrigger"))
         {
-            if (!pistolShot.isPlaying) pistolShot.Play();
-            animator.SetBool("isFiring", true);
             //Use the equipped weapon
-            MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward);
+            if (MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward))
+            {
+                animator.SetBool("isFiring", true);
+            }
         }
         else
         {

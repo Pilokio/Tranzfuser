@@ -76,6 +76,7 @@ public class WeaponController : MonoBehaviour
         }
 
         MyStats = GetComponent<CharacterStats>();
+
         // Init the currently equipped weapon
         ChangeWeapon(0);
         //muzzleFlash = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<ParticleSystem>();
@@ -126,13 +127,13 @@ public class WeaponController : MonoBehaviour
     /// <summary>
     /// This function is called to use the currently equipped weapon if possible
     /// </summary>    
-    public void UseWeapon(Vector3 Origin, Vector3 Direction)
+    public bool UseWeapon(Vector3 Origin, Vector3 Direction)
     {
         //Don't attempt to use weapon if invalid
         if (CurrentGun == null || CurrentWeaponIndex == -1)
         {
             Debug.LogError("Error when firing weapon on " + transform.name + " object.");
-            return;
+            return false;
         }
 
         //If the weapon is ready to be fired again
@@ -156,6 +157,14 @@ public class WeaponController : MonoBehaviour
                 {
                     Ray ray = new Ray(Origin, Direction);
 
+                    if (CurrentGun.GetComponent<AudioSource>() && GetCurrentlyEquippedWeapon().FireSound != null)
+                    {
+                        CurrentGun.GetComponent<AudioSource>().clip = GetCurrentlyEquippedWeapon().FireSound;
+                        CurrentGun.GetComponent<AudioSource>().Play();
+                    }
+
+                    if(GetGunTip().transform.childCount > 0)
+                        GetGunTip().transform.GetChild(0).GetComponent<ParticleSystem>().Play();
 
                     //muzzleFlash.Play();
 
@@ -200,24 +209,32 @@ public class WeaponController : MonoBehaviour
                 
                 //Decrement the ammo count
                 WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded--;
+                return true;
             }
             else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
             {
                 //Automatically reload if the player attempts to fire the weapon 
                 //provided they have more ammunition
                 ReloadWeapon();
+                return false;
             }
         }
 
+        return false;
     }
 
     private void SpawnBullet()
     {
-        GameObject bulletTemp = Instantiate(WeaponsList[CurrentWeaponIndex].AmmoObject, CurrentGun.transform.GetChild(0).transform.position + CurrentGun.transform.GetChild(0).transform.forward, CurrentGun.transform.GetChild(0).transform.rotation);
+        GameObject bulletTemp = Instantiate(WeaponsList[CurrentWeaponIndex].AmmoObject, GetGunTip().transform.position + GetGunTip().transform.forward, GetGunTip().transform.rotation);
         bulletTemp.GetComponent<ProjectileController>().DamageAmount = WeaponsList[CurrentWeaponIndex].WeaponDamage;
-        bulletTemp.GetComponent<ProjectileController>().Fire(CurrentGun.transform.GetChild(0).transform.forward, WeaponsList[CurrentWeaponIndex].BulletForce, WeaponsList[CurrentWeaponIndex].WeaponRange);
+        bulletTemp.GetComponent<ProjectileController>().Fire(GetGunTip().transform.forward, WeaponsList[CurrentWeaponIndex].BulletForce, WeaponsList[CurrentWeaponIndex].WeaponRange);
     }
 
+
+    GameObject GetGunTip()
+    {
+        return CurrentGun.transform.GetChild(0).gameObject;
+    }
 
     /// <summary>
     /// This function reloads the weapon if there is enough spare ammo for it
@@ -227,6 +244,12 @@ public class WeaponController : MonoBehaviour
         //Ensure there is spare ammo to load into the weapon
         if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
         {
+            if (CurrentGun.GetComponent<AudioSource>() && GetCurrentlyEquippedWeapon().ReloadSound != null)
+            {
+                CurrentGun.GetComponent<AudioSource>().clip = GetCurrentlyEquippedWeapon().ReloadSound;
+                CurrentGun.GetComponent<AudioSource>().Play();
+            }
+
             //Take the ammo from the clip and add it to the spare ammo counter (prevents the current mag being lost in the reload)
 
             MyStats.AddAmmo(new AmmunitionType(WeaponsList[CurrentWeaponIndex].WeaponAmmoType, WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded));

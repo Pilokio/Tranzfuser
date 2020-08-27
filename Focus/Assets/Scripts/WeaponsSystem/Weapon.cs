@@ -15,6 +15,13 @@ public class Weapon : ScriptableObject
     public int WeaponRange;
     public float ImpactForce = 100.0f;
     public bool CanAimDownSights = true;
+    
+    [Header("Audio Settings")]
+    public AudioClip ReloadSound;
+    public AudioClip FireSound;
+
+    public GameObject MuzzleFlash;
+
 
     [Header("Ammunition Data")]
     [Range(0.1f, 1.0f)]
