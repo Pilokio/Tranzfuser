@@ -260,7 +260,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1782900525309141021}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1132210051c4124e9db71cee4ad57c4, type: 3}
+  m_Script: {fileID: 11500000, guid: ebf1882dac2061343a02bf33d8ffdc86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hookCanvas: {fileID: 1782900524568561508}
