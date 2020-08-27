@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
         MyTimeController = GetComponent<TimeControl>();
         MyRigidbody = GetComponent<Rigidbody>();
 
-        pistolShot = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<AudioSource>();
+       // pistolShot = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
