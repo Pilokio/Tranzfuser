@@ -77,7 +77,7 @@ public class WeaponController : MonoBehaviour
 
         MyStats = GetComponent<CharacterStats>();
         // Init the currently equipped weapon
-        ChangeWeapon(0);
+        ChangeWeapon(2);
         //muzzleFlash = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<ParticleSystem>();
     }
 
