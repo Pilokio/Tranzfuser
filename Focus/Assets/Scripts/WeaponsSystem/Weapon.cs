@@ -14,6 +14,7 @@ public class Weapon : ScriptableObject
     public int WeaponDamage;
     public int WeaponRange;
     public float ImpactForce = 100.0f;
+    public bool CanAimDownSights = true;
 
     [Header("Ammunition Data")]
     [Range(0.1f, 1.0f)]

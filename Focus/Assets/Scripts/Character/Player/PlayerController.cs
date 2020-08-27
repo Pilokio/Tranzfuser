@@ -233,7 +233,7 @@ public class PlayerController : MonoBehaviour
 
         //Slow time for the player
         //using either RMB, L2, or LT depending on input device
-        if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger"))
+        if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger") && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
         {
             GetComponentInChildren<WeaponSway>().enabled = false;
             animator.SetBool("isAiming", true);
