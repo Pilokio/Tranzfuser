@@ -1,0 +1,86 @@
+-------------------------------------
+Overview
+
+The new input system is a unity package that overhauls the old system and allows for multiple keybvindings per "Input Action", including for multiple different devices.
+
+There is now an Input folder in the project.
+Inside this folder are two items. 
+
+The first is the Input System itself, which can be used to open the settings window.
+This is generally not needed as the default values are fine. 
+It would only be if we wanted to only support certain input devices that we would need to affect this page (ie only PS4 and Xbox One).
+However, leaving it as is, means any input device detected by Unity can be used.
+
+The second item is the more important one, and is used to store the control schemes.
+Clicking on this will open the Input Actions window.
+This window has three columns on it: Action Maps, Actions, Properties.
+
+The Action Maps column is used to create entirely new control schemes . 
+For example, there could be an action map for both driving a car and walking on-foot, 
+with different controls for each.
+However, for this project, unless we create an alternate controller layout, it is probably fine the way it is.
+
+The Actions column is where the bindings actually are made. Here, you can create a new Input Action (something the player can do), 
+and assign different bindings to this action, so that the action will register when either button is pressed.
+For example, assigning spacebar to Jump, as well as the X button on a PS4 controller, will allow the player to jump
+using either input device.
+
+The Properties column is where additional detail is added to the Input Action and is split into three sections:
+Binding, Interactions, and Processors.
+
+The Bindings section is basically where it is set to either an "axis" or a "button" in terms of the old system as well as assigning to a specific control scheme.
+The Interactions section is where you can describe how the action must be performed (ie Hold the button down, or Tap it, etc.).
+The Processors section is probably not needed for this project.
+
+------------------------------------
+Example
+
+In the Player Action Map, I have already created a binding for all the functionality currently in-game.
+
+The first Input Action on this list is the Move action. As can be seen in the Properties tab, the Action type 
+is set to value, meaning it is essentially an axis. The control type is set to vector2 meaning that the horizontal
+and vertical axis will be stored in the x and y positions of the vector2.
+
+In the dropdown beneath the Move action, the two bindings can be seen. For any gamepad being used, the left stick will 
+control this action. Clicking on the binding will show that the Gamepad control scheme is checked, and the path is set
+to the left stick of a gamepad.
+Additionally, WASD is also bound to this action however its properties are different as this is 4 keys rather than an axis.
+And the keyboard&mouse control scheme is checked.
+
+This means that when playing the game, the user could trigger the Move action with either the left joystick or WASD.
+
+
+Further down the list of actions is the Fire action. This action type is set to Button rather than value as it is not 
+an axis.
+Additionally, under the interactions section, it has been assigned the Tap interaction, meaning this action will
+only trigger when the button is tapped.
+Under its bindings, both the right trigger on a gamepad and the left mouse button can be used.
+
+
+---------------------------------------
+How To Use 
+
+In order for UI canvases to work a component on the event system must be replaced with "Input System UI Module",
+however if this is not already done, there should be a button on the old component which will replace it for you.
+This has already been done for the main level and main menu scenes.
+
+On the player object, the Player Input component has been added. The first parameter on this is the Actions component, 
+where the PlayerMaster Input Actions asset is placed. Default map is set to Player rather than UI as it is the player Input Map 
+we want to use. The main camera is also assigned here. 
+
+For behavior, it is set to Invoke Unity Events, which allows a function to be called whenever the input action is triggered.
+This allows us to not only determine if the button is pressed in script, but also the values of the axis we created
+for movement etc.
+
+Under the events dropdown, there is another dropdown for each of the action maps. For the player action map, I have
+added a "Callback Context" to each of the input actions, which just calls a function on the PlayerContainer's PlayerController
+component, which takes in the input action's "context" .This function can be seen in the Player Controller script, 
+and you basically just have to copy the exact code and change the contents. The "context" parameter being passed in is just the state 
+of the input, so using context.ReadvalueAsbutton() is just GetButtonDown() for the new system. And context.ReadValue<Vector2> is just
+GetAxis() for the new system, except it automatically returns it as a vector2.
+
+Theres plenty of examples of this in the player controller script.
+
+Brackeys has a video explaining most of this but is pretty outdated as he made the video when this was still a preview 
+package. Most of the theory is the same but some of the changes I have made in code to what he uses are because of 
+changes to the package itself: https://www.youtube.com/watch?v=Pzd8NhcRzVo
