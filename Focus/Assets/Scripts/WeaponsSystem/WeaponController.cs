@@ -38,6 +38,8 @@ public class WeaponController : MonoBehaviour
 
     private ParticleSystem muzzleFlash;
 
+    public GameObject explosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -170,9 +172,10 @@ public class WeaponController : MonoBehaviour
 
                     if (Physics.Raycast(ray, out hit, WeaponsList[CurrentWeaponIndex].WeaponRange))
                     {
+
                         if (hit.transform.CompareTag("Enemy") && !transform.CompareTag("Enemy"))
                         {
-                           hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
+                            hit.transform.GetComponent<EnemyController>().IsHit(ray, WeaponsList[CurrentWeaponIndex].WeaponDamage);
                         }
 
                         if (hit.transform.CompareTag("Player") && !transform.CompareTag("Player"))
