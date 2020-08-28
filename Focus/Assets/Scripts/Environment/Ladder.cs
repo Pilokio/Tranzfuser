@@ -12,12 +12,14 @@ public class Ladder : MonoBehaviour
 
     //The player gameobject
     private GameObject player;
-
+    private PlayerController playerController;
     private void Start()
     {
         //Use the player manager to access the player object from anywhere without editor assign
         //Useful for if the player is to be instantiated into the scene at runtime
         player = PlayerManager.Instance.Player;
+        playerController = player.GetComponent<PlayerController>();
+
     }
 
 
@@ -44,10 +46,11 @@ public class Ladder : MonoBehaviour
     }
 
     private void Update()
-    {
+    {        
         if (PlayerOccupied)
         {
-            if (CustomInputManager.GetAxisRaw("LeftStickHorizontal") < CustomInputManager.GetAxisNeutralPosition("LeftStickHorizontal"))
+            Debug.Log("I am on the ladder");
+            if (Mathf.Abs(playerController.GetMoveDirection().x) >= 0.25f)
             {
                 player.GetComponent<PlayerController>().SetIsClimbing(false);
                 IsOccupied = false;
@@ -55,7 +58,7 @@ public class Ladder : MonoBehaviour
             }
 
             //If the player is close to the bottom of the ladder and still moving down
-            if ((Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f || player.transform.position.y <= LadderPath[2].position.y) && CustomInputManager.GetAxisRaw("LeftStickVertical") < CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
+            if ((Vector3.Distance(player.transform.position, LadderPath[2].position) < 0.5f || player.transform.position.y <= LadderPath[2].position.y) && playerController.GetMoveDirection().y < 0.0f)
             {
                 IsOccupied = false;
                 PlayerOccupied = false;
@@ -64,7 +67,7 @@ public class Ladder : MonoBehaviour
             }
 
             //If the player is near or above the top of the ladder and still moving up
-            if (player.transform.position.y > LadderPath[1].position.y && CustomInputManager.GetAxisRaw("LeftStickVertical") > CustomInputManager.GetAxisNeutralPosition("LeftStickVertical"))
+            if (player.transform.position.y > LadderPath[1].position.y && playerController.GetMoveDirection().y > 0.0f)
             {
                 IsOccupied = false;
                 PlayerOccupied = false;

@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -10,69 +11,250 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    //This disables the warning about uninitialised variables as they are assigned in the editor
+#pragma warning disable 0649
+
+    #region Component Caches
+
+    //Local component caches
     PlayerMovement MyMovement;
     WeaponController MyWeaponController;
     WallRunning MyWallRunning;
     CharacterStats MyStats;
     TimeControl MyTimeController;
-    CameraFov cameraFov;
-    private ParticleSystem speedLinesParticleSystem;
+    CameraFov MyFOVController;
+    WeaponSway MyWeaponSway;
+    LineRenderer MyLineRenderer;
+    //The player animator used for the fire and reload animations
+    //Assigned in editor as animator is not on the parent object
+    [SerializeField] Animator MyAnimator;
+    //Local store of the main camera (ie the one used by the player)
+    private Camera PlayerCamera;
 
-    private const float NORMAL_FOV = 60f;
-    private const float HOOKSHOT_FOV = 100f;
+    #endregion
 
-#pragma warning disable 0649
+    #region UI 
     [Header("User Interface")]
+    //The text UI where the ammo counter will be displayed
     [SerializeField] Text AmmoDisplayText;
+    //The player health bar
     [SerializeField] Slider HealthBar;
-    [SerializeField] private Transform debugHitPointTransform;
-    [SerializeField] private Transform hookshotTransform;
-#pragma warning restore 0649
+    #endregion
 
-    public Transform AimDownSightsPos;
-    public Transform GunHolder;
-    public Transform OriginalGunPos;
+    #region Grapple
+    [Header("Grapple Settings")]
+    //Layermask to ensure the grapple raycast only interacts with suitable hook points
+    [SerializeField] private LayerMask GrappleMask;
+    //The particle system used when grappling
+    [SerializeField] private ParticleSystem GrappleParticleSystem;
+    //This is the range at which the grapple can be fired
+    [SerializeField] private float GrappleRange = 100f;
+    //The distance the player can be to the grapple point before disconnecting (ie close enough)
+    [SerializeField] private float GrappleMinDistance = 2.5f;
+    //Used when moving the player towards the grapple point 
+    //Must be 1.0f 
+    private float GrappleSpeed = 1.0f;
+    //Local store of the targeted hook point 
+    //used to toggle hook canvas without raycast hit
+    Hook TargetedHookPoint;
+    //The ray being used in the grapple raycast
+    Ray GrappleRay;
+    //The hit from the grapple raycast
+    RaycastHit GrappleTarget;
+
+    #endregion
+
+    #region Combat
+    [Header("Weapon Settings")]
+    //This is the position the gun holder will be moved to when aiming down sights
+    [SerializeField] Transform AimDownSightsPos;
+    //This is the default position of the gun holder when not aiming down sights
+    [SerializeField] Transform OriginalGunPos;
+    //The gun holder object is where the currently equipped weapon will be spawned
+    //This is what will be moved to move the gun to the aiming position
+    [SerializeField] Transform GunHolder;
+    //Toggle used in input callback to determine whether the gun holder
+    //should be in the aim down sights position
+    private bool IsAiming = false;
+    //The smoothing factor used when aiming down the sights
+    //Affects the interpolation of the gun holder transform
+    private float AimingSmoothFactor = 10.0f;
+
+    #endregion
+
+    #region Traversal Variables
     public Vector3 characterVelocityMomentum;
 
-    public float wallRunSpeed = 8;
-    private float minRange = 100f;
-
-    public Animator animator;
-
-
-    private Camera playerCamera;
-
-    public Rigidbody MyRigidbody;
-
-    private float smoothFactor = 10.0f;
-
-
-    public float pushbackForce = 10.0f;
-    [SerializeField] LayerMask GrappleMask;
-    Hook TargetedHookPoint;
-    float reachedHookshotPositionDistance = 2.5f;
-
-    float GrappleSpeed = 1.0f;
-
-    private enum State
-    {
-        Normal,
-        HookshotThrown,
-        HookShotFlyingPlayer
-    }
-
-    // Is the player using a ladder?
+    //The direction of movement based on player input
+    private Vector2 MoveDirection = new Vector2();
+    //The look direction based on player input
+    private Vector2 LookDirection = new Vector2();
+    //Is the player using a ladder?
     public bool IsClimbing { get; private set; }
-
-    // Is the player wall running?
+    //Is the player wall running?
     public bool IsWallRunning { get; private set; }
 
+    #endregion
+
+#pragma warning restore 0649
+
+    #region Input Callbacks
+    //The following callback functions are used to update variables/activate functionality
+    //based on user input from a connected input device. NB will work for any input device Unity can recognise.
+
+    public void Move(InputAction.CallbackContext context)
+    {
+        MoveDirection = context.ReadValue<Vector2>();
+    }
+
+    public void Look(InputAction.CallbackContext context)
+    {
+        if(context.control.name == "delta")
+        {
+            MyMovement.SetLookSensitivity(true);
+        }
+        else
+        {
+            MyMovement.SetLookSensitivity(false);
+        }
+
+        LookDirection = context.ReadValue<Vector2>();
+    }
+
+    public void Sprint(InputAction.CallbackContext context)
+    {
+        if(context.ReadValueAsButton())
+        {
+            MyMovement.IsSprinting = true;
+        }
+        else
+        {
+            MyMovement.IsSprinting = false;
+        }
+    }
+
+    public void Aim(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            IsAiming = true;
+        }
+        else
+        {
+            IsAiming = false;
+        }
+    }
+
+    public void Fire(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            //Use the equipped weapon
+            if (MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward))
+            {
+                MyAnimator.SetBool("isFiring", true);
+            }
+        }
+        else
+        {
+            MyAnimator.SetBool("isFiring", false);
+        }
+    }
+
+    public void Focus(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            MyTimeController.ToggleSlowMo(); 
+        }
+    }
+
+    public void Grapple(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            GrappleToHook();
+        }
+    }
+
+    public void WeaponSwap(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            //if the next increment is beyond the bounds of the weapons list, reset to zero
+            if (MyWeaponController.CurrentWeaponIndex + 1 < MyWeaponController.GetWeaponListSize())
+            {
+                MyWeaponController.ChangeWeapon(MyWeaponController.CurrentWeaponIndex + 1);
+            }
+            else
+            {
+                MyWeaponController.ChangeWeapon(0);
+            }
+        }
+    }
+
+    public void Jump(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            if (IsWallRunning)
+            {
+                MyWallRunning.JumpOffWall();
+            }
+            else
+            {
+                MyMovement.Jump();
+            }
+        }
+    }
+    public void Reload(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
+            {
+                MyAnimator.SetBool("isReloading", true);
+                MyWeaponController.ReloadWeapon();
+            }
+        }
+        else
+        {
+            MyAnimator.SetBool("isReloading", false);
+        }
+    }
+
+    public void Pause(InputAction.CallbackContext context)
+    {
+        if (context.ReadValueAsButton())
+        {
+            //Toggle pause menu here
+        }
+    }
+
+    #endregion
+
+    #region Getters & Setters
+
+    //Used by the ladder script to determine the current move input
+    public Vector2 GetMoveDirection()
+    {
+        return MoveDirection;
+    }
+
+    //Used by the weapon sway script to determine the current look input
+    public Vector2 GetLookDirection()
+    {
+        return LookDirection;
+    }
+
+    //Determines whether the player should use climbing controls
     public void SetIsClimbing(bool Param)
     {
         IsClimbing = Param;
         GetComponent<Timeline>().rigidbody.useGravity = !Param;
     }
 
+    //Determines whether the player should use wall running controls
     public void SetIsWallRunning(bool Param)
     {
         IsWallRunning = Param;
@@ -84,75 +266,88 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        playerCamera = transform.Find("Main Camera").GetComponent<Camera>();
-        cameraFov = playerCamera.GetComponent<CameraFov>();
+    #endregion
 
-        animator = transform.Find("Main Camera").Find("HandPos").GetComponent<Animator>();
-
-        speedLinesParticleSystem = transform.Find("Main Camera").Find("SpeedLinesParticleSystem").GetComponent<ParticleSystem>();
-        speedLinesParticleSystem.Stop();
-        hookshotTransform.gameObject.SetActive(false);
-    }
 
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 120;
 
-        //Init the custom input manager and only track controllers connected on start
-        CustomInputManager.InitialiseCustomInputManager();
-        //Add bindings for a single player to the custom input manager
-        CustomInputManager.CreateDefaultSinglePlayerInputManager();
-        //Begin checking for controllers, to determine changes to the tracked controller list
-        StartCoroutine(CustomInputManager.CheckForControllers());
+        //Get and store the main camera, used by the player
+        PlayerCamera = Camera.main;
 
+        //Store local caches of all the relevant components on the player
         MyMovement = GetComponent<PlayerMovement>();
         MyWallRunning = GetComponent<WallRunning>();
         MyWeaponController = GetComponent<WeaponController>();
         MyStats = GetComponent<CharacterStats>();
         MyTimeController = GetComponent<TimeControl>();
-        MyRigidbody = GetComponent<Rigidbody>();
+        MyLineRenderer = GetComponent<LineRenderer>();
+        MyWeaponSway = GetComponentInChildren<WeaponSway>();
+        MyFOVController = PlayerCamera.GetComponent<CameraFov>();
 
-       // pistolShot = transform.Find("Main Camera").Find("HandPos").Find("GunHolder").Find("Pistol(Clone)").GetComponentInChildren<AudioSource>();
+        //Ensure the grapple particle system doesnt play by default
+        GrappleParticleSystem.Stop();
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandleInput();
-        HandleLook();
-          
-        /// Trying to get raycast to constantly draw from player in order
-        /// to play particle system on hook points
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, minRange, GrappleMask))
+        //Lock the x-axis of the look direction when climbing ladders
+        //otherwise pass the look direction to the movement script as is
+        if (!IsClimbing)
+            MyMovement.Look(LookDirection);
+        else
+            MyMovement.Look(new Vector2(0.0f, LookDirection.y));
+
+        //Create the ray for the grapple raycast
+        GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
+        //Perform the raycast for the grapple
+        if (Physics.Raycast(GrappleRay, out GrappleTarget, GrappleRange, GrappleMask))
         {
-            if(TargetedHookPoint != raycastHit.transform.GetComponent<Hook>() && TargetedHookPoint != null)
+            //if aiming at a different grapple point from the one stored
+            //hide the canvas on the old one before proceeding
+            if(TargetedHookPoint != GrappleTarget.transform.GetComponent<Hook>() && TargetedHookPoint != null)
             {
                 TargetedHookPoint.HideCanvas();
             }
-            
-            TargetedHookPoint = raycastHit.transform.GetComponent<Hook>();
-            TargetedHookPoint.DisplayCanvas();
-           
-            //raycastHit.transform.GetComponent<ParticleSystem>().Play();
 
-            // Play particle system
-            // Play UI element that displays "Hook" with hook image?
+            //Store the result of the raycast and display the canvas
+            TargetedHookPoint = GrappleTarget.transform.GetComponent<Hook>();
+            TargetedHookPoint.DisplayCanvas();
         }
         else
         {
-            if(TargetedHookPoint != null)
+            //If the raycat fails to hit anything and there is still a hook stored
+            //Hide its canvas and set the local store to null
+            if (TargetedHookPoint != null)
+            {
                 TargetedHookPoint.HideCanvas();
+                TargetedHookPoint = null;
+            }
         }
+
+        //While holding the aim button, disable weapon sway and move the gun to the aim position
+        //otherwise return to default position and resume sway
+        if(IsAiming)
+        {
+            MyWeaponSway.enabled = false;
+            MyAnimator.SetBool("isAiming", true);
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * AimingSmoothFactor);
+        }
+        else
+        {
+            MyWeaponSway.enabled = true;
+            MyAnimator.SetBool("isAiming", false);
+            GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * AimingSmoothFactor);
+        }
+
         UpdateUI();
     }
 
     private void FixedUpdate()
     {
-        Vector2 MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
-
         //Core Player movement
         if (!IsClimbing && !IsWallRunning)
         {
@@ -173,14 +368,15 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-
+        //If climbing a ladder, use the climb ladder function to move up/down using the y component of the move direction
+        //while also using the x component to dismount early if desired using the default move function
         if(IsClimbing)
         {
-            //GetComponent<Rigidbody>().useGravity = false;
             MyMovement.Move(new Vector2(MoveDirection.x, 0));
             MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
         }
 
+        //Use the wall running scripts move function when wall running instead of the default movement
         if (IsWallRunning)
         {
             if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
@@ -192,114 +388,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HandleInput()
-    {
-        //Weapon Handling
-        ///////////////////////////////////////////////////////////////////////
-
-        //Fire the players currently equipped weapon 
-        //Using either LMB, R2, or RT depending on input device
-        if (CustomInputManager.GetAxis("RightTrigger") != CustomInputManager.GetAxisNeutralPosition("RightTrigger"))
-        {
-            //Use the equipped weapon
-            if (MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward))
-            {
-                animator.SetBool("isFiring", true);
-            }
-        }
-        else
-        {
-            animator.SetBool("isFiring", false);
-        }
-
-
-        //Slow time for the player
-        //using either RMB, L2, or LT depending on input device
-        if (CustomInputManager.GetAxis("LeftTrigger") != CustomInputManager.GetAxisNeutralPosition("LeftTrigger") && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
-        {
-            GetComponentInChildren<WeaponSway>().enabled = false;
-            animator.SetBool("isAiming", true);
-            GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * smoothFactor);
-
-            //MyTimeManager.DoSlowmotion();
-        }
-        else
-        {
-            GetComponentInChildren<WeaponSway>().enabled = true;
-            animator.SetBool("isAiming", false);
-            GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * smoothFactor);
-        }
-
-        //Reload the currently equipped weapon
-        //Using either the R key, Square, or X-button depending on input device
-        if (CustomInputManager.GetButtonDown("ActionButton4"))
-        {
-            if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
-            {
-                animator.SetBool("isReloading", true);
-                MyWeaponController.ReloadWeapon();
-            }
-        }
-        else
-        {
-            animator.SetBool("isReloading", false);
-        }
-
-        //Swap the currently equipped weapon
-        //NB currently just iterates through the weapons list, but would be better with a weapon wheel
-        //Using the V key, Triangle, or the Y-Button depending on input device
-        if (CustomInputManager.GetButtonDown("ActionButton3"))
-        {
-            //if the next increment is beyond the bounds of the weapons list, reset to zero
-            if (MyWeaponController.CurrentWeaponIndex + 1 < MyWeaponController.GetWeaponListSize())
-            {
-                MyWeaponController.ChangeWeapon(MyWeaponController.CurrentWeaponIndex + 1);
-            }
-            else
-            {
-                MyWeaponController.ChangeWeapon(0);
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            GrappleToHook();
-        }
-
-        // Jump using the Spacebar, X-Button (PS4), or the A-Button (Xbox One)
-        if (CustomInputManager.GetButtonDown("ActionButton1") && !IsWallRunning)
-        {
-            MyMovement.Jump();
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            MyMovement.IsSprinting = true;
-        }
-        else
-        {
-            MyMovement.IsSprinting = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            MyTimeController.ToggleSlowMo();
-        }
-    }
-
-    public void HandleLook()
-    {
-        if (!IsClimbing && !IsWallRunning)
-            MyMovement.Look(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else if(IsClimbing)
-            MyMovement.Look(new Vector2(0.0f, CustomInputManager.GetAxisRaw("RightStickVertical")));
-        else if(IsWallRunning)
-            MyMovement.LookOnWall(new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")));   
-    }
-
+    //This function is used to update the healthbar and ammo counter in the UI
+    //NB The focus bar is updated elsewhere
     void UpdateUI()
     {
         AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
@@ -310,7 +400,7 @@ public class PlayerController : MonoBehaviour
         HealthBar.value = MyStats.Health;
     }
 
-   
+   //This function begins the process of grappling to the targeted hook point
     void GrappleToHook()
     {
         if (TargetedHookPoint != null)
@@ -319,29 +409,36 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //This coroutine handles the grappling mechanic itself
     IEnumerator MoveGrapple(Vector3 destination)
     {
-        GetComponent<LineRenderer>().enabled = true;
-        speedLinesParticleSystem.Play();
-        cameraFov.SetCameraFov(HOOKSHOT_FOV);
+        //Enable the line renderer, play the particle effect and update the FOV
+        MyLineRenderer.enabled = true;
+        GrappleParticleSystem.Play();
+        MyFOVController.UseGrappleFOV();
 
+        //Use the line renderer to draw a line from the player to the hook
         GetComponent<LineRenderer>().SetPositions(new Vector3[] { MyWeaponController.CurrentGun.transform.GetChild(0).transform.position, destination });
 
         yield return null;
-        while (Vector3.Distance(transform.position, destination) > reachedHookshotPositionDistance)
+
+        //While the player is more than the min distance away from the hook point, move towards it and update the line renderer
+        while (Vector3.Distance(transform.position, destination) > GrappleMinDistance)
         {
-            yield return new WaitForEndOfFrame();
+            yield return null;
             transform.position = Vector3.MoveTowards(transform.position, destination, GrappleSpeed);
             GetComponent<LineRenderer>().SetPosition(0, MyWeaponController.CurrentGun.transform.GetChild(0).transform.position);
         }
 
-        GetComponent<LineRenderer>().enabled = false;
-        cameraFov.SetCameraFov(NORMAL_FOV);
-        speedLinesParticleSystem.Stop();
+        //After reaching the hook point, disable the line renderer, stop the particle effect, and return to normal FOV
+        MyLineRenderer.enabled = false;
+        MyFOVController.UseNormalFOV();
+        GrappleParticleSystem.Stop();
     }
 
     public void OnCollisionEnter(Collision collision)
     {
+        //If the player is hit by a physical bullet object, take damage
         if (collision.transform.CompareTag("Bullet"))
         {
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);

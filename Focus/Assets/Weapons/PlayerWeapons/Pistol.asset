@@ -19,10 +19,14 @@ MonoBehaviour:
   WeaponDamage: 15
   WeaponRange: 100
   ImpactForce: 500
+  CanAimDownSights: 1
+  ReloadSound: {fileID: 8300000, guid: dcf82412bed18f44db2bff4fa75b7633, type: 3}
+  FireSound: {fileID: 8300000, guid: f05b9b8f9c7cb8f4595f06c2cde83c43, type: 3}
+  MuzzleFlash: {fileID: 0}
   WeaponFireRate: 0.5
   WeaponAmmoType: 0
-  WeaponMagCapacity: 50
-  WeaponAmmoLoaded: 12
+  WeaponMagCapacity: 10
+  WeaponAmmoLoaded: 9
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}

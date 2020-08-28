@@ -11,6 +11,11 @@ public class WallRunning : MonoBehaviour
     [SerializeField] float TurnSpeed = 5.0f;
     [SerializeField] float TiltSpeed = 5.0f;
     [SerializeField] float MinAngle = 1.0f;
+    public bool IsTurning = false;
+    bool IsJumping = false;
+    Vector3 JumpOffDirection = new Vector3();
+    public float UpwardBias = 0.5f;
+
 
     private void Start()
     {
@@ -20,8 +25,7 @@ public class WallRunning : MonoBehaviour
     }
 
   
-    Vector3 JumpOffDirection = new Vector3();
-    public float UpwardBias = 0.5f;
+   
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("RunnableWall"))
@@ -119,16 +123,14 @@ public class WallRunning : MonoBehaviour
 
         }
     }
-    private void Update()
+
+    public void JumpOffWall()
     {
-        if (GetComponent<PlayerController>().IsWallRunning && CustomInputManager.GetButtonDown("ActionButton1"))
-        {
-            rb.velocity += wallJumpForce * JumpOffDirection;
-            IsJumping = true;
-        }
+        rb.velocity += wallJumpForce * JumpOffDirection;
+        IsJumping = true;
     }
-    public bool IsTurning = false;
-    bool IsJumping = false;
+ 
+  
 
     void StopWallRun()
     {

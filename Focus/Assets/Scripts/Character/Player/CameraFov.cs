@@ -5,6 +5,8 @@ public class CameraFov : MonoBehaviour
     private Camera playerCamera;
     private float targetFov;
     private float fov;
+    private const float NORMAL_FOV = 60f;
+    private const float HOOKSHOT_FOV = 100f;
 
     private void Awake()
     {
@@ -23,5 +25,16 @@ public class CameraFov : MonoBehaviour
     public void SetCameraFov(float targetFov)
     {
         this.targetFov = targetFov;
+    }
+
+    public void UseGrappleFOV()
+    {
+        this.targetFov = HOOKSHOT_FOV;
+
+    }
+
+    public void UseNormalFOV()
+    {
+        this.targetFov = NORMAL_FOV;
     }
 }

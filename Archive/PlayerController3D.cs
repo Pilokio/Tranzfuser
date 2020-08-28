@@ -34,12 +34,12 @@ public class PlayerController3D : CharacterController3D
     void Start()
     {
 
-        //Init the custom input manager and only track controllers connected on start
-        CustomInputManager.InitialiseCustomInputManager();
-        //Add bindings for a single player to the custom input manager
-        CustomInputManager.CreateDefaultSinglePlayerInputManager();
-        //Begin checking for controllers, to determine changes to the tracked controller list
-        StartCoroutine(CustomInputManager.CheckForControllers());
+        ////Init the custom input manager and only track controllers connected on start
+        //CustomInputManager.InitialiseCustomInputManager();
+        ////Add bindings for a single player to the custom input manager
+        //CustomInputManager.CreateDefaultSinglePlayerInputManager();
+        ////Begin checking for controllers, to determine changes to the tracked controller list
+        //StartCoroutine(CustomInputManager.CheckForControllers());
 
 
         //Initialise default rotation types and ensure camera holders and/or targets can be found
@@ -221,19 +221,19 @@ public class PlayerController3D : CharacterController3D
             }
         }
 
-        if (CustomInputManager.GetButtonDown("ActionButton1"))
-        {
-            Jump = true;
-        }
+        //if (CustomInputManager.GetButtonDown("ActionButton1"))
+        //{
+        //    Jump = true;
+        //}
 
-        if (CustomInputManager.GetButtonDown("ActionButton2") && CanChangeCamType)
-        {
-            ChangeCamera();
-        }
+        //if (CustomInputManager.GetButtonDown("ActionButton2") && CanChangeCamType)
+        //{
+        //    ChangeCamera();
+        //}
 
 
-        MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
-        LookDirection = new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")) * LookSensitivity * Time.deltaTime;
+       // MoveDirection = new Vector2(CustomInputManager.GetAxisRaw("LeftStickHorizontal"), CustomInputManager.GetAxisRaw("LeftStickVertical"));
+       // LookDirection = new Vector2(CustomInputManager.GetAxisRaw("RightStickHorizontal"), CustomInputManager.GetAxisRaw("RightStickVertical")) * LookSensitivity * Time.deltaTime;
 
 
     }

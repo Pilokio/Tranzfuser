@@ -52,6 +52,14 @@ public class TimeControl : MonoBehaviour
             StopSlowMo();
     }
 
+    public void SetSlowMo(bool slow)
+    {
+        if(slow)
+            DoSlowMo();
+        else
+            StopSlowMo();
+    }
+
     private void DoSlowMo()
     {
         IsSlowMo = true;

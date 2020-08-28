@@ -21,12 +21,12 @@ MonoBehaviour:
   ImpactForce: 10000
   CanAimDownSights: 0
   ReloadSound: {fileID: 0}
-  FireSound: {fileID: 0}
+  FireSound: {fileID: 8300000, guid: 00e50f92f89fbf04eac7b07c768f3420, type: 3}
   MuzzleFlash: {fileID: 0}
   WeaponFireRate: 1
   WeaponAmmoType: 4
   WeaponMagCapacity: 1
-  WeaponAmmoLoaded: 0
+  WeaponAmmoLoaded: 1
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}

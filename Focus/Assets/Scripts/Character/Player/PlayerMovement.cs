@@ -111,17 +111,27 @@ public class PlayerMovement : BaseBehaviour
             Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
+    float LookSensitivity = 0.0f;
+
+    public void SetLookSensitivity(bool mouse)
+    {
+        if(mouse)
+        {
+            LookSensitivity = LookSensitivityKeyboardAndMouse;
+        }
+        else
+        {
+            LookSensitivity = LookSensitivityController;
+        }
+    }
 
     public void Look(Vector2 LookDirection)
     {
-        float LookSensitivity = 0.0f;
 
         //LookDirection = new Vector2(Mathf.Clamp(LookDirection.x, -1, 1), Mathf.Clamp(LookDirection.y, -1, 1));
 
-        LookSensitivity = LookSensitivityController;
 
-        if (CustomInputManager.ControllersConnected == false)
-            LookSensitivity = LookSensitivityKeyboardAndMouse;
+        //if (CustomInputManager.ControllersConnected == false)
 
         if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
             LookDirection.x = 0.0f;
@@ -150,7 +160,7 @@ public class PlayerMovement : BaseBehaviour
         float LookSensitivity = 0.0f;
         LookSensitivity = LookSensitivityController;
 
-        if (CustomInputManager.ControllersConnected == false)
+        //if (CustomInputManager.ControllersConnected == false)
             LookSensitivity = LookSensitivityKeyboardAndMouse;
 
         if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
