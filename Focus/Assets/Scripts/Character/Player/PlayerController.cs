@@ -330,7 +330,7 @@ public class PlayerController : MonoBehaviour
 
         //While holding the aim button, disable weapon sway and move the gun to the aim position
         //otherwise return to default position and resume sway
-        if(IsAiming)
+        if(IsAiming && MyWeaponController.CurrentWeaponIndex != 2)
         {
             MyWeaponSway.enabled = false;
             MyAnimator.SetBool("isAiming", true);
