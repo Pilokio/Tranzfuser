@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 9010799026035839492}
   - component: {fileID: 3328231122005307133}
   - component: {fileID: 473648194269119674}
-  - component: {fileID: 5823292700935599716}
   - component: {fileID: 8980882312939417605}
   m_Layer: 9
   m_Name: Pistol
@@ -210,24 +209,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &5823292700935599716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3894653387011299873}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d64df11dda3f4540a2f4c6cdd5f2ec2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CanBeGrappled:
-    serializedVersion: 2
-    m_Bits: 256
-  gunTip: {fileID: 4186418237122211633}
-  DepthCam: {fileID: 0}
-  player: {fileID: 0}
 --- !u!82 &8980882312939417605
 AudioSource:
   m_ObjectHideFlags: 0
@@ -240,7 +221,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
