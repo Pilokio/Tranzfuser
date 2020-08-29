@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e894949d24cc4fd4591c451707b8b135, type: 3}
   m_Name: Rocket Launcher
   m_EditorClassIdentifier: 
-  WeaponName: Rocket Launcher
+  WeaponName: RPG
   Type: 4
   WeaponObject: {fileID: 856349316141069662, guid: 8514ff6988b51ac4fb12bb73cf121aed,
     type: 3}

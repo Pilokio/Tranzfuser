@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu]
 public class Weapon : ScriptableObject
@@ -9,6 +10,7 @@ public class Weapon : ScriptableObject
 
     [Header("Weapon Data")]
     public string WeaponName;
+    public Image WeaponImage;
     public WeaponType Type;
     public GameObject WeaponObject;
     public int WeaponDamage;
