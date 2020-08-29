@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   WeaponName: Shotgun
-  WeaponImage: {fileID: 21300000, guid: 5e0edd544624153438963c3c539cf7bd, type: 3}
+  WeaponImage: {fileID: 21300000, guid: a0f2cc3c47af70f43b863b45108c9676, type: 3}
   Type: 3
   WeaponObject: {fileID: 4549486197502553273, guid: cd8827a8c41111d4d8b358ec51c4725d,
     type: 3}
@@ -27,7 +27,7 @@ MonoBehaviour:
   WeaponFireRate: 0.75
   WeaponAmmoType: 3
   WeaponMagCapacity: 2
-  WeaponAmmoLoaded: 1
+  WeaponAmmoLoaded: 2
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}
