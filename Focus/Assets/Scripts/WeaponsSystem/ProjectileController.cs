@@ -11,12 +11,14 @@ public class ProjectileController : MonoBehaviour
     float DistanceTravelled = 0;   
     float MaxTravelDistance = 100;
 
+    public bool IsExplosive = false;
+
     // Start is called before the first frame update
     void Awake()
     {
-            GetComponent<TrailRenderer>().enabled = DebugMode;
+        GetComponent<TrailRenderer>().enabled = DebugMode;
 
-            StartingPosition = transform.position;
+        StartingPosition = transform.position;
     }
 
     public void Fire(Vector3 Direction, float Force, float MaxRange)

@@ -400,7 +400,8 @@ public class PlayerController : MonoBehaviour
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
 
-        WeaponImage.sprite = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage;
+        if(MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage != null && WeaponImage != null)
+            WeaponImage.sprite = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage;
     }
 
    //This function begins the process of grappling to the targeted hook point
