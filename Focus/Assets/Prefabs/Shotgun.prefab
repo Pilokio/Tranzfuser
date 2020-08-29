@@ -107,7 +107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2271878140981910139}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0023, y: -0.0006, z: -0.0262}
+  m_LocalPosition: {x: -0.0023, y: 0.0051, z: -0.0461}
   m_LocalScale: {x: 0.7263822, y: 0.5896915, z: 0.5896914}
   m_Children: []
   m_Father: {fileID: 2943349078071171597}
@@ -129,9 +129,9 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
-  autoRandomSeed: 1
+  autoRandomSeed: 0
   useRigidbodyForVelocity: 1
   startDelay:
     serializedVersion: 2
