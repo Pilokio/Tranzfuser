@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Text AmmoDisplayText;
     //The player health bar
     [SerializeField] Slider HealthBar;
+    [SerializeField] Image WeaponImage;
     #endregion
 
     #region Grapple
@@ -135,7 +136,7 @@ public class PlayerController : MonoBehaviour
 
     public void Aim(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
         {
             IsAiming = true;
         }
@@ -330,7 +331,7 @@ public class PlayerController : MonoBehaviour
 
         //While holding the aim button, disable weapon sway and move the gun to the aim position
         //otherwise return to default position and resume sway
-        if(IsAiming && MyWeaponController.CurrentWeaponIndex != 2)
+        if(IsAiming)
         {
             MyWeaponSway.enabled = false;
             MyAnimator.SetBool("isAiming", true);
@@ -398,6 +399,8 @@ public class PlayerController : MonoBehaviour
 
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
+
+        WeaponImage.sprite = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage;
     }
 
    //This function begins the process of grappling to the targeted hook point

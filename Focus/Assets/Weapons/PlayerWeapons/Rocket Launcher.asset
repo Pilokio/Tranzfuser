@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Rocket Launcher
   m_EditorClassIdentifier: 
   WeaponName: RPG
+  WeaponImage: {fileID: 21300000, guid: 9dd179b944ab2d14d8885702a459f3f6, type: 3}
   Type: 4
   WeaponObject: {fileID: 856349316141069662, guid: 8514ff6988b51ac4fb12bb73cf121aed,
     type: 3}

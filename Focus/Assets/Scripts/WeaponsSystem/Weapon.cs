@@ -10,7 +10,7 @@ public class Weapon : ScriptableObject
 
     [Header("Weapon Data")]
     public string WeaponName;
-    public Image WeaponImage;
+    public Sprite WeaponImage;
     public WeaponType Type;
     public GameObject WeaponObject;
     public int WeaponDamage;
