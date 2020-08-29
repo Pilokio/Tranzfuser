@@ -27820,6 +27820,18 @@ Transform:
   m_Father: {fileID: 420153395}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180.36198, z: 0}
+--- !u!114 &490186258 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3878792344340726679, guid: 845486fde7f84d74997e69cd311a6b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 501952362}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &497029061
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -66890,7 +66902,7 @@ PrefabInstance:
         type: 3}
       propertyPath: AmmoDisplayText
       value: 
-      objectReference: {fileID: 592379631}
+      objectReference: {fileID: 490186258}
     - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: HealthBar

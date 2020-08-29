@@ -12,6 +12,8 @@ public class ProjectileController : MonoBehaviour
     float MaxTravelDistance = 100;
 
     public bool IsExplosive = false;
+    public ParticleSystem Explosion;
+    public float ImpactForce = 0.0f;
 
     // Start is called before the first frame update
     void Awake()
@@ -32,9 +34,35 @@ public class ProjectileController : MonoBehaviour
         if(DebugMode)
             Debug.Log("I have hit something. Destroying self.");
         
-        Destroy(this.gameObject);
+        if(IsExplosive)
+        {
+            Explosion.GetComponent<ParticleSystem>();
+
+            if(Explosion != null)
+                Explosion.Play();
+
+            Collider[] cols = Physics.OverlapSphere(transform.position, 10.0f);
+            foreach (Collider c in cols)
+            {
+                if (c.gameObject.GetComponent<CharacterStats>())
+                {
+                    c.gameObject.GetComponent<CharacterStats>().TakeDamage((int)DamageAmount);
+                }
+
+                if (c.gameObject.GetComponent<Rigidbody>())
+                {
+                    c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(ImpactForce, transform.position, 10.0f);
+                }
+            }
+        }
+
+        Invoke("Cleanup", 2.0f);
     }
 
+    void Cleanup()
+    {
+        Destroy(this.gameObject);
+    }
 
     private void Update()
     {

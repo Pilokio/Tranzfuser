@@ -229,6 +229,7 @@ public class WeaponController : MonoBehaviour
     private void SpawnBullet()
     {
         GameObject bulletTemp = Instantiate(WeaponsList[CurrentWeaponIndex].AmmoObject, GetGunTip().transform.position + GetGunTip().transform.forward, GetGunTip().transform.rotation);
+        bulletTemp.GetComponent<ProjectileController>().ImpactForce = WeaponsList[CurrentWeaponIndex].ImpactForce;
         bulletTemp.GetComponent<ProjectileController>().DamageAmount = WeaponsList[CurrentWeaponIndex].WeaponDamage;
         bulletTemp.GetComponent<ProjectileController>().Fire(GetGunTip().transform.forward, WeaponsList[CurrentWeaponIndex].BulletForce, WeaponsList[CurrentWeaponIndex].WeaponRange);
     }
