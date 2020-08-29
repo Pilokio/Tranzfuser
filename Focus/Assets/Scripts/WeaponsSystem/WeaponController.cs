@@ -153,6 +153,15 @@ public class WeaponController : MonoBehaviour
                 //Else fire weapon via raycast
                 if ((WeaponsList[CurrentWeaponIndex].SpawnAmmo == Weapon.AmmoSpawn.Always) || (WeaponsList[CurrentWeaponIndex].SpawnAmmo == Weapon.AmmoSpawn.SlowMoOnly && PlayerManager.Instance.Player.transform.GetComponent<TimeControl>().IsSlowMo))
                 {
+                    if (CurrentGun.GetComponent<AudioSource>() && GetCurrentlyEquippedWeapon().FireSound != null)
+                    {
+                        CurrentGun.GetComponent<AudioSource>().clip = GetCurrentlyEquippedWeapon().FireSound;
+                        CurrentGun.GetComponent<AudioSource>().Play();
+                    }
+
+                    if (GetGunTip().transform.childCount > 0)
+                        GetGunTip().transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+
                     SpawnBullet();
                 }
                 else
