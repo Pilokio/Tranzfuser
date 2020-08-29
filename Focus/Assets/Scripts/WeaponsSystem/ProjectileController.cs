@@ -53,10 +53,15 @@ public class ProjectileController : MonoBehaviour
                 {
                     c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(ImpactForce, transform.position, 10.0f);
                 }
-            }
+            }   
+            
+            Invoke("Cleanup", 2.0f);
+        }
+        else
+        {
+            Cleanup();
         }
 
-        Invoke("Cleanup", 2.0f);
     }
 
     void Cleanup()
