@@ -395,8 +395,7 @@ public class PlayerController : MonoBehaviour
     //NB The focus bar is updated elsewhere
     void UpdateUI()
     {
-        AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponName + ": "
-            + MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded + "/"
+        AmmoDisplayText.text = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded + "/"
             + MyStats.GetAmmoCount(MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoType);
 
         HealthBar.maxValue = MyStats.MaxHealth;
