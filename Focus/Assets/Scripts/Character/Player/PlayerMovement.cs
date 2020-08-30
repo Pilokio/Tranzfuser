@@ -79,7 +79,7 @@ public class PlayerMovement : BaseBehaviour
        if(forwardPush <= 0.25f)
         {    
             //Uncomment this to make player drop from wall when not moving
-            GetComponent<PlayerController>().SetIsWallRunning(false);
+            //GetComponent<PlayerController>().SetIsWallRunning(false);
             return;
         }
 
@@ -155,14 +155,17 @@ public class PlayerMovement : BaseBehaviour
         transform.Rotate(transform.up * LookDirection.x);
     }
 
+    public float MinYClamp = -90.0f;
+    public float MaxYClamp = 90.0f;
+
+    public void SetCameraClamps(float minY, float maxY)
+    {
+        MinYClamp = minY;
+        MaxYClamp = maxY;
+    }
+
     public void LookOnWall(Vector2 LookDirection)
     {
-        float LookSensitivity = 0.0f;
-        LookSensitivity = LookSensitivityController;
-
-        //if (CustomInputManager.ControllersConnected == false)
-            LookSensitivity = LookSensitivityKeyboardAndMouse;
-
         if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
             LookDirection.x = 0.0f;
 
@@ -176,14 +179,12 @@ public class PlayerMovement : BaseBehaviour
         XRotation -= LookDirection.y;
 
         //Clamp to prevent full 360 rotation around the x-axis
-        XRotation = Mathf.Clamp(XRotation, -90, 90);
+        XRotation = Mathf.Clamp(XRotation, -45, 45);
 
 
         //Update the x rotation of the camera based on the new Look Direction
         YRotation += LookDirection.x;
-
-        //Clamp to prevent full 360 rotation around the x-axis
-        //YRotation = Mathf.Clamp(YRotation, -90, 90);
+        YRotation = Mathf.Clamp(YRotation, MinYClamp, MaxYClamp);
 
 
         //Update the camera's x rotation

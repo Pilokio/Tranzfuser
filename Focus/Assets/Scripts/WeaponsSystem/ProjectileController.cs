@@ -60,12 +60,16 @@ public class ProjectileController : MonoBehaviour
         }
         else
         {
-            Cleanup();
+            //if(collision.transform.CompareTag("Enemy"))
+            //{
+                Cleanup();
+            //}
+
         }
 
     }
 
-    void Cleanup()
+    public void Cleanup()
     {
         Destroy(this.gameObject);
     }

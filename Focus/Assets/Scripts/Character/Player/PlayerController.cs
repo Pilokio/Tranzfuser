@@ -299,10 +299,18 @@ public class PlayerController : MonoBehaviour
     {
         //Lock the x-axis of the look direction when climbing ladders
         //otherwise pass the look direction to the movement script as is
-        if (!IsClimbing)
-            MyMovement.Look(LookDirection);
-        else
+        if (IsClimbing)
+        {
             MyMovement.Look(new Vector2(0.0f, LookDirection.y));
+        }
+        else if (IsWallRunning)
+        {
+            MyMovement.LookOnWall(LookDirection);
+        }
+        else
+        {
+            MyMovement.Look(LookDirection);
+        }
 
         //Create the ray for the grapple raycast
         GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);

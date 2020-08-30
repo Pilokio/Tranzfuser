@@ -23,11 +23,16 @@ public class WallRunning : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _PlayerController = GetComponent<PlayerController>();
     }
+    [SerializeField] LayerMask WallLayermask;
 
-  
-   
+    bool WallToRight = false;
+    bool WallToLeft = false;
+
     private void OnCollisionEnter(Collision collision)
     {
+        WallToRight = false;
+        WallToLeft = false;
+
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
@@ -38,6 +43,24 @@ public class WallRunning : MonoBehaviour
             JumpOffDirection = collision.contacts[0].normal;
             //Adds some upward force to the wall jump
             JumpOffDirection += (Vector3.up * UpwardBias);
+
+
+            if(Physics.Raycast(transform.position, transform.right, 1.0f, WallLayermask))
+            {
+                Debug.Log("Right");
+                WallToRight = true;
+                StartCoroutine(TiltCamera(35));
+                GetComponent<PlayerMovement>().SetCameraClamps(-45, 0);
+            }
+            
+            if (Physics.Raycast(transform.position, -transform.right, 1.0f, WallLayermask))
+            {
+                Debug.Log("Left");
+                WallToLeft = true;
+                StartCoroutine(TiltCamera(-35));
+                GetComponent<PlayerMovement>().SetCameraClamps(0, 45);
+            }
+
 
             //Determine which direction the player is looking at (ie where they are moving) relative to the wall's rotation
 
@@ -72,32 +95,9 @@ public class WallRunning : MonoBehaviour
                 TargetRote = collision.gameObject.transform.localEulerAngles.y;
             }
 
+
             //Start the coroutine to turn the player object to the target rotation
             StartCoroutine(TurnPlayer(TargetRote));
-
-
-            //Vector3 Direction = (transform.position - collision.gameObject.transform.position).normalized;
-            //Vector3 LeftorRight = Vector3.Cross(transform.forward, Direction);
-            //float dot = Vector3.Dot(LeftorRight, transform.up);
-            ////Debug.Log("Dot = " + dot);
-
-            Vector3 relativePoint = MainCamera.transform.InverseTransformPoint(collision.transform.position);
-
-            //if (relativePoint.x > 0f)
-            //{
-            //    Debug.Log("To the right");
-            //    StartCoroutine(TiltCamera(35));
-            //}
-            //else if (relativePoint.x < 0f)
-            //{
-            //    Debug.Log("To the left");
-            //    StartCoroutine(TiltCamera(-35));
-            //}
-            //else
-            //{
-            //    Debug.Log("Neither left nor right. Defaulting to Right");
-            //    StartCoroutine(TiltCamera(-35));
-            //}
 
             //Set the player wall running bool to true
             GetComponent<PlayerController>().SetIsWallRunning(true);
@@ -112,13 +112,18 @@ public class WallRunning : MonoBehaviour
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
-            WallRunCleanup();
-            //StartCoroutine(Cleanup());
 
-            if (IsJumping)
-                Invoke("StopWallRun",0.25f);
-            else
-                Invoke("StopWallRun", 0.0f);
+
+            StartCoroutine(TiltCamera(0));
+
+
+            //MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
+
+
+            StartCoroutine(RestoreCamera());
+
+
+            GetComponent<PlayerController>().SetIsWallRunning(false);
 
 
         }
@@ -127,14 +132,6 @@ public class WallRunning : MonoBehaviour
     public void JumpOffWall()
     {
         rb.velocity += wallJumpForce * JumpOffDirection;
-        IsJumping = true;
-    }
- 
-  
-
-    void StopWallRun()
-    {
-        GetComponent<PlayerController>().SetIsWallRunning(false);
     }
 
     IEnumerator TurnPlayer(float TargetAngle)
@@ -143,7 +140,7 @@ public class WallRunning : MonoBehaviour
 
         while (transform.localEulerAngles.y != TargetAngle)
         {
-            if (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, TargetAngle)) <= MinAngle)// || !IsTurning)
+            if (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, TargetAngle)) <= MinAngle)
             {
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, TargetAngle, transform.rotation.eulerAngles.z);
             }
@@ -158,8 +155,6 @@ public class WallRunning : MonoBehaviour
         IsTurning = false;
     }
 
-   
-
     IEnumerator TiltCamera(float TargetAngle)
     {
         while (MainCamera.transform.localEulerAngles.z != TargetAngle)
@@ -173,35 +168,30 @@ public class WallRunning : MonoBehaviour
                 MainCamera.transform.rotation = Quaternion.Euler(MainCamera.transform.rotation.eulerAngles.x, MainCamera.transform.rotation.eulerAngles.y, Mathf.LerpAngle(MainCamera.transform.rotation.eulerAngles.z, TargetAngle, Time.deltaTime * TiltSpeed));
             }
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 
-
-    void WallRunCleanup()
+    IEnumerator RestoreCamera()
     {
-        float angle = MainCamera.transform.localEulerAngles.y;
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, angle, transform.rotation.eulerAngles.z);
-        Invoke("FinalCheck", 0.25f);
-    }
+        MainCamera.transform.Rotate(new Vector3(0, Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)));
 
-    //IEnumerator Cleanup()
-    //{
-    //    float angle = MainCamera.transform.localEulerAngles.y;
-    //    transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, angle, transform.rotation.eulerAngles.z);
+        yield return null;
 
-    //    yield return new WaitForEndOfFrame();
-    //    FinalCheck();
-    //    //Invoke("FinalCheck", 0.5f);
-    //}
+        //while(MainCamera.transform.localEulerAngles.y != 0.0f)
+        //{
+        //    if (Mathf.Abs(Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)) <= 5.0f)
+        //    {
+        //        Debug.Log("Close Enough");
+        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.rotation.eulerAngles.x, 0.0f, MainCamera.transform.rotation.eulerAngles.z);
+        //        break;
+        //    }
+        //    else
+        //    {
+        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.rotation.eulerAngles.x, Mathf.LerpAngle(MainCamera.transform.rotation.eulerAngles.y, 0.0f, Time.deltaTime * TiltSpeed), MainCamera.transform.rotation.eulerAngles.z);
+        //    }
 
-
-    void FinalCheck()
-    {
-        if(MainCamera.transform.localEulerAngles.y != 0.0f)
-        {
-            //Debug.LogWarning("Standard Wall Run Cleanup failed to correct camera rotation. Backup fix in place to prevent movement errors");
-            MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
-        }
+        //    yield return null;
+        //}
     }
 }
