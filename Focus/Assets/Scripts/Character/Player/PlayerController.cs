@@ -275,8 +275,6 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 120;
-
         //Get and store the main camera, used by the player
         PlayerCamera = Camera.main;
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e894949d24cc4fd4591c451707b8b135, type: 3}
   m_Name: Rocket Launcher
   m_EditorClassIdentifier: 
-  WeaponName: RPG
+  WeaponName: 
   WeaponImage: {fileID: 21300000, guid: 4f421bb824e9e3b489680f45c75cebf3, type: 3}
   Type: 4
   WeaponObject: {fileID: 856349316141069662, guid: 8514ff6988b51ac4fb12bb73cf121aed,
@@ -31,4 +31,4 @@ MonoBehaviour:
   SpawnAmmo: 0
   AmmoObject: {fileID: 6995895095541000088, guid: 6251ec7f2cc6ed14eb908e68c6a28b19,
     type: 3}
-  BulletForce: 7500
+  BulletForce: 55000
