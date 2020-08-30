@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2577044019862559134}
   - component: {fileID: 2577044019862559135}
   - component: {fileID: 2577044019862559132}
+  - component: {fileID: 5119232725150937966}
   m_Layer: 14
   m_Name: MovingPlatform
   m_TagString: Untagged
@@ -126,3 +127,20 @@ MonoBehaviour:
   Axis: 2
   Speed: 5
   MoveRange: 14.44
+--- !u!114 &5119232725150937966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2577044019862559130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6090da511f8374135a15dd8655adcd44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _recordingInterval: 0.5
+  _mode: 1
+  _globalClockKey: Enemies
+  _rewindable: 1
+  _recordingDuration: 30

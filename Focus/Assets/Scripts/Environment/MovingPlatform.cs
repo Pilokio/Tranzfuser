@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using Chronos;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingPlatform : MonoBehaviour
+public class MovingPlatform : BaseBehaviour
 {
 
     public enum MoveAxis { x, y, z };
@@ -72,7 +73,7 @@ public class MovingPlatform : MonoBehaviour
         }
         
         //Move the platform 
-        rb.MovePosition(transform.position + Direction * Speed * Time.fixedDeltaTime);
+        rb.MovePosition(transform.position + Direction * Speed * time.fixedDeltaTime);
     }
 
     private void OnValidate()
@@ -104,7 +105,7 @@ public class MovingPlatform : MonoBehaviour
         //If a rigidbody touches this platform and remains, move it along with the platform
         if(collision.transform.GetComponent<Rigidbody>())
         {
-            collision.transform.GetComponent<Rigidbody>().MovePosition(collision.transform.position + Direction * Speed * Time.fixedDeltaTime);
+            collision.transform.GetComponent<Rigidbody>().MovePosition(collision.transform.position + Direction * Speed * time.fixedDeltaTime);
         }
     }
 }

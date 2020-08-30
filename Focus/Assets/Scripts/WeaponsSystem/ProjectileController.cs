@@ -12,7 +12,7 @@ public class ProjectileController : MonoBehaviour
     float MaxTravelDistance = 100;
 
     public bool IsExplosive = false;
-    public ParticleSystem Explosion;
+    public GameObject Explosion;
     public float ImpactForce = 0.0f;
 
     // Start is called before the first frame update
@@ -39,8 +39,12 @@ public class ProjectileController : MonoBehaviour
             GetComponent<MeshRenderer>().enabled = false;
             Explosion.GetComponent<ParticleSystem>();
 
-            if(Explosion != null)
-                Explosion.Play();
+            if (Explosion != null)
+            {
+                GameObject temp = Instantiate(Explosion, transform.position, Quaternion.identity);
+                temp.GetComponent<ParticleSystem>().Play();
+            }
+
 
             Collider[] cols = Physics.OverlapSphere(transform.position, 10.0f);
             foreach (Collider c in cols)
@@ -54,18 +58,10 @@ public class ProjectileController : MonoBehaviour
                 {
                     c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(ImpactForce, transform.position, 10.0f);
                 }
-            }   
-            
-            Invoke("Cleanup", 2.0f);
+            }
         }
-        else
-        {
-            //if(collision.transform.CompareTag("Enemy"))
-            //{
-                Cleanup();
-            //}
-
-        }
+        
+        Cleanup();
 
     }
 
