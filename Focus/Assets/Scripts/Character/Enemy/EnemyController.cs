@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,6 +13,9 @@ using Chronos;
 [DisallowMultipleComponent]
 public class EnemyController : BaseBehaviour
 {
+#pragma warning disable 0649
+
+
     #region AssignableInEditor
     [SerializeField] Animator MyAnimator;
 
@@ -56,6 +58,7 @@ public class EnemyController : BaseBehaviour
     private HealthBar MyHealthBar;
     #endregion
 
+#pragma warning restore 0649
 
     
     //The alert status determines whether the enemy is in open combat or not
@@ -127,7 +130,6 @@ public class EnemyController : BaseBehaviour
     private int HitThreshold = 2;
     #endregion
 
-    private bool IsAnimated = false;
 
     private void Start()
     {
@@ -137,10 +139,6 @@ public class EnemyController : BaseBehaviour
         MyEnemyStats = GetComponent<EnemyStats>();
 
         MyHealthBar = GetComponent<HealthBar>();
-
-
-        if (MyAnimator != null)
-            IsAnimated = true;
 
 
         //Store the hitboxes attached to this enemy

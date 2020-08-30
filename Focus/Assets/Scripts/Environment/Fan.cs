@@ -4,10 +4,11 @@ using UnityEngine;
 using Chronos;
 
 public class Fan : BaseBehaviour
-{ 
+{
+
     [SerializeField] float speed = 500.0f;
     [SerializeField] int DamageAmount = 25;
-    [SerializeField] float KnockbackForce = 50.0f;
+    //[SerializeField] float KnockbackForce = 50.0f;
 
     
     private void Start()
