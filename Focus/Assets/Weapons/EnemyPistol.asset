@@ -13,17 +13,22 @@ MonoBehaviour:
   m_Name: EnemyPistol
   m_EditorClassIdentifier: 
   WeaponName: Enemy Pistol
+  WeaponImage: {fileID: 0}
   Type: 0
   WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
     type: 3}
   WeaponDamage: 25
   WeaponRange: 25
   ImpactForce: 100
+  CanAimDownSights: 1
+  ReloadSound: {fileID: 0}
+  FireSound: {fileID: 0}
+  MuzzleFlash: {fileID: 0}
   WeaponFireRate: 1
   WeaponAmmoType: 0
   WeaponMagCapacity: 10
-  WeaponAmmoLoaded: 6
+  WeaponAmmoLoaded: 1
   SpawnAmmo: 1
-  AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
+  AmmoObject: {fileID: 6995895095541000088, guid: 66c0d9a3cfa4f79488aab3c789fbb929,
     type: 3}
   BulletForce: 1000
