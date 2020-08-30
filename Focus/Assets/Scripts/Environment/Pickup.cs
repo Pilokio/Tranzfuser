@@ -26,11 +26,11 @@ public class Pickup : MonoBehaviour
         {
             if (other.gameObject.GetComponent<CharacterStats>() == null)
             {
-                Debug.Log("The player does not have the character stats component");
+                Debug.LogError("The player does not have the character stats component");
             }
             else
             {
-                Debug.Log(transform.name + " has been picked up by the player");
+
 
                 if (Type == PickupType.AMMO)
                 {

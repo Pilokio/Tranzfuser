@@ -9,9 +9,9 @@ public class WeaponSway : MonoBehaviour
     public float maxAmount;
     public float smoothAmount;
 
-    private Vector3 initialPosition;
+    private Vector3 initialPosition = new Vector3();
 
-    private PlayerController playerController = new PlayerController();
+    private PlayerController playerController;
 
     // Start is called before the first frame update
     void Start()

@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Respawn : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField] private Transform RespawnPoint;
+#pragma warning restore 0649
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.transform.CompareTag("Player"))
         {
-            Debug.Log("Respawning Player");
-
             other.transform.position = RespawnPoint.position;
             other.transform.rotation = RespawnPoint.rotation;
         }

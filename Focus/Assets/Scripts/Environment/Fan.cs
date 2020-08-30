@@ -4,22 +4,16 @@ using UnityEngine;
 using Chronos;
 
 public class Fan : BaseBehaviour
-{ 
+{
+
     [SerializeField] float speed = 500.0f;
     [SerializeField] int DamageAmount = 25;
     [SerializeField] float KnockbackForce = 50.0f;
 
-    
-    private void Start()
-    {
-        //store non rote angles and  freeze in update ?
-    }
-
     // Update is called once per frame
     void Update()
     {
-        
-        transform.Rotate(transform.right * speed * time.deltaTime);
+        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + speed * time.deltaTime));
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -27,6 +21,9 @@ public class Fan : BaseBehaviour
         if (collision.transform.CompareTag("Player"))
         {
             collision.transform.GetComponent<CharacterStats>().TakeDamage(DamageAmount);
+
+
+            collision.transform.GetComponent<Rigidbody>().AddForce(collision.contacts[0].normal * KnockbackForce, ForceMode.Impulse);
 
             //Vector3 FanPos = transform.position;
             //FanPos.y = collision.transform.position.y;

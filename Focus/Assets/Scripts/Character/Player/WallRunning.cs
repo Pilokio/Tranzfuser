@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
+
 public class WallRunning : MonoBehaviour
 {
+#pragma warning disable 0649
+
 
     private Rigidbody rb;
     private PlayerController _PlayerController;
@@ -12,10 +16,11 @@ public class WallRunning : MonoBehaviour
     [SerializeField] float TiltSpeed = 5.0f;
     [SerializeField] float MinAngle = 1.0f;
     public bool IsTurning = false;
-    bool IsJumping = false;
     Vector3 JumpOffDirection = new Vector3();
     public float UpwardBias = 0.5f;
+    [SerializeField] LayerMask WallLayermask;
 
+#pragma warning restore 0649
 
     private void Start()
     {
@@ -23,20 +28,13 @@ public class WallRunning : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _PlayerController = GetComponent<PlayerController>();
     }
-    [SerializeField] LayerMask WallLayermask;
 
-    bool WallToRight = false;
-    bool WallToLeft = false;
 
     private void OnCollisionEnter(Collision collision)
     {
-        WallToRight = false;
-        WallToLeft = false;
-
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
-            IsJumping = false;
 
             //Use the wall normal to determine the jump off direction
             //This will not change regardless of move direction
@@ -45,18 +43,14 @@ public class WallRunning : MonoBehaviour
             JumpOffDirection += (Vector3.up * UpwardBias);
 
 
-            if(Physics.Raycast(transform.position, transform.right, 1.0f, WallLayermask))
+            if (Physics.Raycast(transform.position, transform.right, 1.0f, WallLayermask))
             {
-                Debug.Log("Right");
-                WallToRight = true;
                 StartCoroutine(TiltCamera(35));
                 GetComponent<PlayerMovement>().SetCameraClamps(-45, 0);
             }
-            
+
             if (Physics.Raycast(transform.position, -transform.right, 1.0f, WallLayermask))
             {
-                Debug.Log("Left");
-                WallToLeft = true;
                 StartCoroutine(TiltCamera(-35));
                 GetComponent<PlayerMovement>().SetCameraClamps(0, 45);
             }
@@ -105,27 +99,17 @@ public class WallRunning : MonoBehaviour
         }
     }
 
-
-
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("RunnableWall"))
         {
             StopAllCoroutines();
 
-
             StartCoroutine(TiltCamera(0));
-
-
-            //MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, 0.0f, MainCamera.transform.localEulerAngles.z);
-
 
             StartCoroutine(RestoreCamera());
 
-
             GetComponent<PlayerController>().SetIsWallRunning(false);
-
-
         }
     }
 
@@ -174,24 +158,16 @@ public class WallRunning : MonoBehaviour
 
     IEnumerator RestoreCamera()
     {
-        MainCamera.transform.Rotate(new Vector3(0, Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)));
+        while (Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f) > 1.0f)
+        {
+            MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.localEulerAngles.x, Mathf.LerpAngle(MainCamera.transform.localEulerAngles.y, 0.0f, Time.deltaTime * TiltSpeed), MainCamera.transform.localEulerAngles.z);
+           // MainCamera.transform.Rotate(new Vector3(0, Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)));
 
-        yield return null;
+            yield return null;
+        }
+         MainCamera.transform.Rotate(new Vector3(0, Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)));
 
-        //while(MainCamera.transform.localEulerAngles.y != 0.0f)
-        //{
-        //    if (Mathf.Abs(Mathf.DeltaAngle(MainCamera.transform.localEulerAngles.y, 0.0f)) <= 5.0f)
-        //    {
-        //        Debug.Log("Close Enough");
-        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.rotation.eulerAngles.x, 0.0f, MainCamera.transform.rotation.eulerAngles.z);
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        MainCamera.transform.localEulerAngles = new Vector3(MainCamera.transform.rotation.eulerAngles.x, Mathf.LerpAngle(MainCamera.transform.rotation.eulerAngles.y, 0.0f, Time.deltaTime * TiltSpeed), MainCamera.transform.rotation.eulerAngles.z);
-        //    }
-
-        //    yield return null;
-        //}
     }
+
+
 }

@@ -79,7 +79,7 @@ public class PlayerMovement : BaseBehaviour
        if(forwardPush <= 0.25f)
         {    
             //Uncomment this to make player drop from wall when not moving
-            //GetComponent<PlayerController>().SetIsWallRunning(false);
+            GetComponent<PlayerController>().SetIsWallRunning(false);
             return;
         }
 
@@ -249,4 +249,6 @@ public class PlayerMovement : BaseBehaviour
     {
         grounded = false;
     }
+
+ 
 }

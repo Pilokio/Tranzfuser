@@ -86,12 +86,11 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Traversal Variables
-    public Vector3 characterVelocityMomentum;
-
     //The direction of movement based on player input
     private Vector2 MoveDirection = new Vector2();
     //The look direction based on player input
     private Vector2 LookDirection = new Vector2();
+
     //Is the player using a ladder?
     public bool IsClimbing { get; private set; }
     //Is the player wall running?
@@ -360,21 +359,20 @@ public class PlayerController : MonoBehaviour
         //Core Player movement
         if (!IsClimbing && !IsWallRunning)
         {
-            // Apply momentum
-            MyMovement.Move(characterVelocityMomentum);
+          
 
             MyMovement.Move(MoveDirection);
 
-            // Dampen momentum
-            if (characterVelocityMomentum.magnitude >= 0f)
-            {
-                float momentumDrag = 3f;
-                characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
-                if (characterVelocityMomentum.magnitude < .0f)
-                {
-                    characterVelocityMomentum = Vector3.zero;
-                }
-            }
+            //// Dampen momentum
+            //if (characterVelocityMomentum.magnitude >= 0f)
+            //{
+            //    float momentumDrag = 3f;
+            //    characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
+            //    if (characterVelocityMomentum.magnitude < .0f)
+            //    {
+            //        characterVelocityMomentum = Vector3.zero;
+            //    }
+            //}
         }
         
         //If climbing a ladder, use the climb ladder function to move up/down using the y component of the move direction
