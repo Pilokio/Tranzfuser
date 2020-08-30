@@ -38299,6 +38299,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 780805466}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &781593843 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3878792345164944985, guid: 845486fde7f84d74997e69cd311a6b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 501952362}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &784937132
 GameObject:
   m_ObjectHideFlags: 0
@@ -39368,7 +39380,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 33
+  m_RootOrder: 31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &829091505
 GameObject:
@@ -64362,6 +64374,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44625522a092df343a5b405b8aaaf671, type: 3}
+--- !u!114 &1836710277 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3878792344060293492, guid: 845486fde7f84d74997e69cd311a6b81,
+    type: 3}
+  m_PrefabInstance: {fileID: 501952362}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1837114372
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65162,7 +65186,7 @@ PrefabInstance:
         type: 3}
       propertyPath: HealthBar
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 781593843}
     - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: debugHitPointTransform
@@ -65242,7 +65266,7 @@ PrefabInstance:
         type: 3}
       propertyPath: FocusBar
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1836710277}
     - target: {fileID: 8866296316120507348, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: WeaponsList.Array.size
@@ -65482,7 +65506,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 34
+  m_RootOrder: 32
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1891853965
 Mesh:
