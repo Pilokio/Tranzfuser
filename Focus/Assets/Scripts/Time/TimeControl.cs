@@ -1,6 +1,7 @@
 ﻿using Chronos;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.UI;
 
 public class TimeControl : MonoBehaviour
@@ -17,17 +18,13 @@ public class TimeControl : MonoBehaviour
     public float FocusRestoreRate = 0.1f;
     public int FocusRestoreAmount = 1;
 
-
-    public int FocusMeter = 100;
-
-    public Slider FocusBar;
-
     [Range(0, 100)]
     [SerializeField] float PlayerSlowPercentage = 50;
     [Range(0, 100)]
     [SerializeField] float EnemySlowPercentage = 50;
 
-    private float MaxFocus = 100;
+    [SerializeField] public int MaxFocus = 100;
+    public int FocusMeter { get; set; }
 
     public bool IsSlowMo = false;
 
@@ -40,8 +37,8 @@ public class TimeControl : MonoBehaviour
         DefaultPlayerTimescale = PlayerClock.localTimeScale;
         DefaultEnemyTimescale = EnemyClock.localTimeScale;
 
-        FocusBar.maxValue = MaxFocus;
-        FocusBar.value = FocusMeter;
+        MaxFocus = 100;
+        FocusMeter = MaxFocus;
     }
 
     public void ToggleSlowMo()
@@ -97,7 +94,6 @@ public class TimeControl : MonoBehaviour
         {
             yield return new WaitForSeconds(FocusDrainRate);
             FocusMeter -= FocusDrainAmount;
-            FocusBar.value = FocusMeter;
         }
 
         //Stop the slow mo when the focus value falls below 0
@@ -112,7 +108,6 @@ public class TimeControl : MonoBehaviour
         {
             yield return new WaitForSeconds(FocusRestoreRate);
             FocusMeter += FocusRestoreAmount;
-            FocusBar.value = FocusMeter;
         }
     }
 }

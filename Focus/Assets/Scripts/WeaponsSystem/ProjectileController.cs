@@ -36,6 +36,7 @@ public class ProjectileController : MonoBehaviour
         
         if(IsExplosive)
         {
+            GetComponent<MeshRenderer>().enabled = false;
             Explosion.GetComponent<ParticleSystem>();
 
             if(Explosion != null)
