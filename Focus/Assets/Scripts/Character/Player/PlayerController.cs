@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Text AmmoDisplayText;
     //The player health bar
     [SerializeField] Slider HealthBar;
+    [SerializeField] Slider FocusBar;
+
     [SerializeField] Image WeaponImage;
     #endregion
 
@@ -400,7 +402,10 @@ public class PlayerController : MonoBehaviour
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
 
-        if(MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage != null && WeaponImage != null)
+        FocusBar.maxValue = MyTimeController.MaxFocus;
+        FocusBar.value = MyTimeController.FocusMeter;
+
+        if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage != null && WeaponImage != null)
             WeaponImage.sprite = MyWeaponController.GetCurrentlyEquippedWeapon().WeaponImage;
     }
 
