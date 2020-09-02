@@ -529,6 +529,7 @@ public class EnemyController : BaseBehaviour
             MyAnimator.SetBool("IsRun", false);
             MyAnimator.SetBool("IsIdle", false);
             MyAnimator.SetBool("IsSearch", false);
+            MyAnimator.SetBool("IsShoot", false);
 
             //Move to the current target patrol point
             if (!IsPaused)
@@ -617,6 +618,8 @@ public class EnemyController : BaseBehaviour
         MyAnimator.SetBool("IsIdle", false);
         MyAnimator.SetBool("IsWalk", false);
         MyAnimator.SetBool("IsSearch", true);
+        MyAnimator.SetBool("IsShoot", false);
+
         yield return new WaitForSeconds(WaitTime);
 
         MyNavMeshAgent.SetDestination(new Vector3(Random.Range(SearchOrigin.x - SearchRadius, SearchOrigin.x + SearchRadius), SearchOrigin.y, Random.Range(SearchOrigin.z - SearchRadius, SearchOrigin.z + SearchRadius)));
@@ -725,6 +728,8 @@ public class EnemyController : BaseBehaviour
     //This function will fire the currently equipped weapon at the player
     private void Attack()
     {
+      
+        MyAnimator.SetBool("IsShoot", true);
         MyWeaponController.UseWeapon(transform.position + EyePosition, DirectionOfPlayer);
     }
 
@@ -735,6 +740,7 @@ public class EnemyController : BaseBehaviour
         MyAnimator.SetBool("IsIdle", true);
         MyAnimator.SetBool("IsWalk", false);
         MyAnimator.SetBool("IsSearch", false);
+        MyAnimator.SetBool("IsShoot", false);
 
         MyNavMeshAgent.SetDestination(transform.position);
     }
@@ -892,6 +898,12 @@ public class EnemyController : BaseBehaviour
         }
     }
 
+    public void DisableColliders()
+    {
+        DetectionSphere.enabled = false;
+        HeadCollider.enabled = false;
+        BodyCollider.enabled = false;
+    }
     //This function determines which hitbox a physical bullet object intersects
     public void IsHit(Collider bullet, int damageAmount)
     {
@@ -936,7 +948,7 @@ public class EnemyController : BaseBehaviour
     //This is used to check if a physical bullet object collides with this enemy
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Bullet"))
+        if (collision.transform.CompareTag("Bullet") && !MyEnemyStats.IsDead)
         {
             IsHit(collision.gameObject.GetComponent<Collider>(), (int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
         }

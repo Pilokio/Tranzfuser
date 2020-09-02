@@ -52,7 +52,9 @@ public class EnemyStats : CharacterStats
         MyAnimator.enabled = false;
         SetRigidbodyState(false);
         SetColliderState(true);
-        Destroy(gameObject, 7f);
+
+        GetComponent<EnemyController>().DisableColliders();
+        Destroy(gameObject, 60.0f);
 
     }
 
