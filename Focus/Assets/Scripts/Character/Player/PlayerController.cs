@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Slider FocusBar;
 
     [SerializeField] Image WeaponImage;
+
     #endregion
 
     #region Grapple

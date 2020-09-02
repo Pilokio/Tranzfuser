@@ -28,6 +28,7 @@ public class TimeControl : MonoBehaviour
 
     public bool IsSlowMo = false;
 
+    [SerializeField] GameObject SlowMoEffect;
 
     private void Start()
     {
@@ -39,6 +40,8 @@ public class TimeControl : MonoBehaviour
 
         MaxFocus = 100;
         FocusMeter = MaxFocus;
+        SlowMoEffect.SetActive(false);
+
     }
 
     public void ToggleSlowMo()
@@ -64,7 +67,7 @@ public class TimeControl : MonoBehaviour
         //Slow the player and enemies
         PlayerClock.localTimeScale = DefaultPlayerTimescale * (PlayerSlowPercentage / 100);
         EnemyClock.localTimeScale = DefaultEnemyTimescale * (EnemySlowPercentage / 100);
-
+        SlowMoEffect.SetActive(true);
         //stop restoring and start draining
         StopAllCoroutines();
         StartCoroutine(DrainFocusMeter());
@@ -75,6 +78,7 @@ public class TimeControl : MonoBehaviour
     private void StopSlowMo()
     {
         IsSlowMo = false;
+        SlowMoEffect.SetActive(false);
 
         //Restore the player and enemies to the default time scale
         PlayerClock.localTimeScale = DefaultPlayerTimescale;
