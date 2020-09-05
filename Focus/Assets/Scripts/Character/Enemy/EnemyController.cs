@@ -728,7 +728,8 @@ public class EnemyController : BaseBehaviour
     //This function will fire the currently equipped weapon at the player
     private void Attack()
     {
-      
+        MyAnimator.SetBool("IsIdle", false);
+
         MyAnimator.SetBool("IsShoot", true);
         MyWeaponController.UseWeapon(transform.position + EyePosition, DirectionOfPlayer);
     }
