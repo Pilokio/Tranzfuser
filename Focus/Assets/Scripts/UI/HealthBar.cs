@@ -7,15 +7,15 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
 #pragma warning disable 0649
-
+    [SerializeField] private GameObject HealthbarUI;
     [SerializeField] private Slider HealthBarObject;
-    [SerializeField] private Text StateTxt;
+    //[SerializeField] private Text StateTxt;
 #pragma warning restore 0649
 
-    public void UpdateStateText(string state)
-    {
-        StateTxt.text = state;
-    }
+    //public void UpdateStateText(string state)
+    //{
+    //    StateTxt.text = state;
+    //}
     public void SetMaxHP(float maxHP)
     {
         HealthBarObject.maxValue = maxHP;
@@ -24,5 +24,11 @@ public class HealthBar : MonoBehaviour
     public void UpdateHealthbar(float currentHP)
     {
         HealthBarObject.value = currentHP;
+    }
+
+    public void DisableHealthbar()
+    {
+        if(HealthbarUI.activeSelf)
+            HealthbarUI.SetActive(false);
     }
 }

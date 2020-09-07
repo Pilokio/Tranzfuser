@@ -73,6 +73,13 @@ public class TimeControl : MonoBehaviour
         StartCoroutine(DrainFocusMeter());
     }
 
+    private void Update()
+    {
+        if(IsSlowMo)
+        {
+           GetComponent<Rigidbody>().velocity = new Vector3(Mathf.Clamp(GetComponent<Rigidbody>().velocity.x, -7.0f, 7.0f), Mathf.Clamp(GetComponent<Rigidbody>().velocity.y, -7.0f, 7.0f), Mathf.Clamp(GetComponent<Rigidbody>().velocity.z, -7.0f, 7.0f));
+        }
+    }
 
 
     private void StopSlowMo()

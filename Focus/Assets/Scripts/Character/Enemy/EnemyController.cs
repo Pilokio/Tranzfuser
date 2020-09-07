@@ -205,7 +205,7 @@ public class EnemyController : BaseBehaviour
         if (MyHealthBar != null)
         {
             MyHealthBar.UpdateHealthbar(MyEnemyStats.Health);
-            MyHealthBar.UpdateStateText(AlertStatus.ToString());
+           // MyHealthBar.UpdateStateText(AlertStatus.ToString());
 
         }
 
@@ -478,6 +478,10 @@ public class EnemyController : BaseBehaviour
                     break;
             }
         }
+        else
+        {
+            MyHealthBar.DisableHealthbar();
+        }
     }
 
     #region NonCombatMethods
@@ -552,7 +556,6 @@ public class EnemyController : BaseBehaviour
     }
 
     //This function rotates the enemy to face the given point (usually the player)
-    //FIXME? Some lag occurs when moving the player while this function is being called. Check if coincidence.
     void FaceTarget(Vector3 target)
     {
         Vector3 direction = (target - transform.position).normalized;

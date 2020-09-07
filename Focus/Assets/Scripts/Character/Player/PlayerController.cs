@@ -310,6 +310,10 @@ public class PlayerController : MonoBehaviour
             MyMovement.Look(LookDirection);
         }
 
+
+        
+
+
         //Create the ray for the grapple raycast
         GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
         //Perform the raycast for the grapple
