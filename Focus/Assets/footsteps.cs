@@ -37,12 +37,5 @@ public class footsteps : MonoBehaviour
         {
             playerMovement.GetComponent<AudioSource>().Stop();
         }
-
-
-        //else if (playerMovement.grounded == false && playerController.IsWallRunning == false)
-        //{
-        //    playerMovement.GetComponent<AudioSource>().Stop();
-        //}
-
     }
 }
