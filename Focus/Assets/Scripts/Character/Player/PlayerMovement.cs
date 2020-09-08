@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerMovement : BaseBehaviour
 {
-
     // Movement
     public float XRotation { get; set; }
     public float YRotation { get; set; }
@@ -12,14 +11,14 @@ public class PlayerMovement : BaseBehaviour
     [SerializeField] float LookSensitivityController = 150.0f;
 
     [Header("Movement Parameters")]
-    [SerializeField] float WalkSpeed = 5.0f;
-    [SerializeField] float SprintSpeed = 10.0f;
+    [SerializeField] public float WalkSpeed = 5.0f;
+    [SerializeField] public float SprintSpeed = 10.0f;
     [SerializeField] float ClimbSpeed = 2.0f;
     [SerializeField] float WallRunSpeed = 10.0f;
 
     public bool IsSprinting { get; set; }
 
-    private bool grounded = false;
+    public bool grounded = false;
     [SerializeField] float maxSlopeAngle = 35f;
     [SerializeField] LayerMask whatIsGround = new LayerMask();
 
@@ -32,6 +31,8 @@ public class PlayerMovement : BaseBehaviour
 
     private bool cancellingGrounded = false;
     private Vector3 normalVector = Vector3.up;
+
+    public bool IsMoving = false;
 
 
     // Other
@@ -50,6 +51,8 @@ public class PlayerMovement : BaseBehaviour
 
     public void Move(Vector3 MoveDirection)
     {
+        
+
         if (MoveDirection.x < 0.25 && MoveDirection.x > -0.25)
             MoveDirection.x = 0.0f;
 
@@ -69,7 +72,16 @@ public class PlayerMovement : BaseBehaviour
         }
 
         if (Move.magnitude > 0.1f)
+        {
+            IsMoving = true;
             rb.MovePosition(new Vector3(rb.position.x + Move.x, rb.position.y, rb.position.z + Move.z));
+        }
+
+        if (Move.magnitude < 0.1f)
+        {
+            IsMoving = false;
+        }
+
     }
 
     public Vector3 ForwardOnWall = new Vector3();
