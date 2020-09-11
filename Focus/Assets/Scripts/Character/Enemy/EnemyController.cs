@@ -116,9 +116,9 @@ public class EnemyController : BaseBehaviour
 
     #region TimersAndCounters
     //The timer used to track searching when in the suspicious state
-    private float SearchTimer;
+    private float SearchTimer = 10.0f;
     //The timer used to track how long LOS can be broken for before having to search
-    private float LOS_Timer = 0.0f;
+    private float LOS_Timer = 10.0f;
     //The amount of time the enemy will search for
     private float TimeForSearch = 10.0f;
     //The amount of time the enemy will wait before searching if LOS is broken
@@ -173,7 +173,7 @@ public class EnemyController : BaseBehaviour
 
         //Initialise the timers and counters
         TimeForSearch *= MyProfile.Determination;
-        SearchTimer = TimeForSearch;
+        //SearchTimer = TimeForSearch;
         DecisionTimer = 0.0f; //Set to 0 so we can immediately make a decision
 
 
@@ -206,8 +206,8 @@ public class EnemyController : BaseBehaviour
         {
             MyHealthBar.UpdateHealthbar(MyEnemyStats.Health);
            // MyHealthBar.UpdateStateText(AlertStatus.ToString());
-
         }
+     
 
         if (!MyEnemyStats.IsDead)
         {
@@ -252,7 +252,7 @@ public class EnemyController : BaseBehaviour
                     { 
                         //Move to suspicious mode and heighten detection cone
                         ChangeDetectionMode(true);
-                        SearchTimer = TimeForSearch;
+                        //SearchTimer = TimeForSearch;
                         
                         AlertStatus = EnemyUtility.AlertState.Suspicious;
                         StartCoroutine(FindSearchPoint());
@@ -284,14 +284,20 @@ public class EnemyController : BaseBehaviour
                 case EnemyUtility.AlertState.Suspicious:
                     #region SuspiciousBehaviours
 
-                    SearchTimer -= time.deltaTime;
+                    //SearchTimer -= time.deltaTime;
 
-                    if(SearchTimer <= 0.0f)
+                    //if(SearchTimer <= 0.0f)
+                    //{
+                    //    SearchTimer = TimeForSearch;
+                    //    ChangeDetectionMode(false);
+                    //    AlertStatus = EnemyUtility.AlertState.Idle;
+                    //    break;
+                    //}
+
+                    if(!SwitchingToIdle)
                     {
-                        SearchTimer = TimeForSearch;
-                        ChangeDetectionMode(false);
-                        AlertStatus = EnemyUtility.AlertState.Idle;
-                        break;
+                        SwitchingToIdle = true;
+                        Invoke("ReturnToIdle", SearchTimer);
                     }
 
 
@@ -331,15 +337,22 @@ public class EnemyController : BaseBehaviour
                     //this enemy will search for the player by moving to the suspicious state
                     if (!TargetSighted)
                     {
-                        LOS_Timer -= Time.deltaTime;
 
-
-                        if(LOS_Timer <= 0.0f)
+                        if (!SwitchingToSuspicious)
                         {
-                            LOS_Timer = TimeForLOS;
-                            SearchTimer = TimeForSearch;
-                            AlertStatus = EnemyUtility.AlertState.Suspicious;
+                            SwitchingToSuspicious = true;
+                            Invoke("ReturnToSuspicious", LOS_Timer);
                         }
+
+                        //LOS_Timer -= Time.deltaTime;
+
+
+                        //if(LOS_Timer <= 0.0f)
+                        //{
+                        //    LOS_Timer = TimeForLOS;
+                        //    SearchTimer = TimeForSearch;
+                        //    AlertStatus = EnemyUtility.AlertState.Suspicious;
+                        //}
                     }
 
 
@@ -484,6 +497,28 @@ public class EnemyController : BaseBehaviour
         }
     }
 
+    bool SwitchingToIdle = false;
+    void ReturnToIdle()
+    {
+        SearchTimer = TimeForSearch;
+        ChangeDetectionMode(false);
+        AlertStatus = EnemyUtility.AlertState.Idle;
+        SwitchingToIdle = false;
+    }
+
+
+    bool SwitchingToSuspicious = false;
+
+    void ReturnToSuspicious()
+    {
+        if(TargetSighted)
+        {
+            return;
+        }
+
+        AlertStatus = EnemyUtility.AlertState.Suspicious;
+        SwitchingToSuspicious = false;
+    }    
     #region NonCombatMethods
     //This function determines whether the enemy can see the player from their current position and heading
     private bool DetectTarget(Transform Target, bool isPlayer)

@@ -54,7 +54,7 @@ public class EnemyStats : CharacterStats
         SetColliderState(true);
 
         GetComponent<EnemyController>().DisableColliders();
-        Destroy(gameObject, 60.0f);
+       // Destroy(gameObject, 60.0f);
 
     }
 
