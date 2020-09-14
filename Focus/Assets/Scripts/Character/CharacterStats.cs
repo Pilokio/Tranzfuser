@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 /// <summary>
 /// This script holds the relevant stats for each character in the game and is used to track their supplies
 /// </summary>
@@ -51,6 +51,7 @@ public class CharacterStats : MonoBehaviour
         {
             Health = 0;
             IsDead = true;
+            SceneManager.LoadScene(1);
         }
     }
 
