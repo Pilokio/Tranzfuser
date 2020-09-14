@@ -204,6 +204,12 @@ public class WeaponController : MonoBehaviour
                                     c.gameObject.GetComponent<CharacterStats>().TakeDamage(WeaponsList[CurrentWeaponIndex].WeaponDamage);
                                 }
 
+                                if(c.CompareTag("Enemy"))
+                                {
+                                    hit.transform.GetComponent<EnemyController>().UpdateHealthbar();
+                                }
+
+
                                 if (c.gameObject.GetComponent<Rigidbody>())
                                 {
                                     c.gameObject.GetComponent<Rigidbody>().AddExplosionForce(WeaponsList[CurrentWeaponIndex].ImpactForce, hitLocation, 10.0f);

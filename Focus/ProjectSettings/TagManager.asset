@@ -12,6 +12,7 @@ TagManager:
   - HookPoint
   - Platform
   - Fan
+  - TestPlayer
   layers:
   - Default
   - TransparentFX
