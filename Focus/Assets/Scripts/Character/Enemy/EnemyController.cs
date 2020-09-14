@@ -95,8 +95,6 @@ public class EnemyController : MonoBehaviour
         {
             MyHealthBar.SetMaxHP(MyEnemyStats.MaxHealth);
             MyHealthBar.UpdateHealthbar(MyEnemyStats.Health);
-            MyHealthBar.UpdateStateText(AlertStatus.ToString());
-
         }
 
         //Extra check at the end of startup to ensure everything is initialised correctly 
@@ -208,10 +206,6 @@ public class EnemyController : MonoBehaviour
     {
         AlertStatus = EnemyUtility.AlertState.Hostile;
         TargetSighted = true;
-        if (MyHealthBar != null)
-        {
-            MyHealthBar.UpdateStateText(AlertStatus.ToString());
-        }
     }
 
     //This function determines if the enemy can see the player
