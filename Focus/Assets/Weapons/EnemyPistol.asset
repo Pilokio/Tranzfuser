@@ -27,8 +27,8 @@ MonoBehaviour:
   WeaponFireRate: 1
   WeaponAmmoType: 0
   WeaponMagCapacity: 10
-  WeaponAmmoLoaded: 8
-  SpawnAmmo: 1
+  WeaponAmmoLoaded: 3
+  SpawnAmmo: 0
   AmmoObject: {fileID: 6995895095541000088, guid: 66c0d9a3cfa4f79488aab3c789fbb929,
     type: 3}
-  BulletForce: 1000
+  BulletForce: 55000

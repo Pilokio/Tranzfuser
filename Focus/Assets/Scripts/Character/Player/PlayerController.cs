@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -409,6 +410,11 @@ public class PlayerController : MonoBehaviour
 
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
+
+        if (MyStats.Health <= 0)
+        {
+            SceneManager.LoadScene(1);
+        }
 
         FocusBar.maxValue = MyTimeController.MaxFocus;
         FocusBar.value = MyTimeController.FocusMeter;

@@ -17,7 +17,7 @@ MonoBehaviour:
   Type: 0
   WeaponObject: {fileID: 3894653387011299873, guid: 611d508859cd7ba47b9c4199eb9b55c5,
     type: 3}
-  WeaponDamage: 15
+  WeaponDamage: 25
   WeaponRange: 100
   ImpactForce: 500
   CanAimDownSights: 1
@@ -26,8 +26,8 @@ MonoBehaviour:
   MuzzleFlash: {fileID: 0}
   WeaponFireRate: 0.5
   WeaponAmmoType: 0
-  WeaponMagCapacity: 10
-  WeaponAmmoLoaded: 3
+  WeaponMagCapacity: 20
+  WeaponAmmoLoaded: 20
   SpawnAmmo: 1
   AmmoObject: {fileID: 6995895095541000088, guid: 2152f79d2d8bca148bbb3b5e880fd18e,
     type: 3}
