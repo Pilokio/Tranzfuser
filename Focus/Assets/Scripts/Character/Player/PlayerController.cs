@@ -411,7 +411,7 @@ public class PlayerController : MonoBehaviour
         HealthBar.maxValue = MyStats.MaxHealth;
         HealthBar.value = MyStats.Health;
 
-        if (MyStats.MaxHealth <= 0)
+        if (MyStats.Health <= 0)
         {
             SceneManager.LoadScene(1);
         }
