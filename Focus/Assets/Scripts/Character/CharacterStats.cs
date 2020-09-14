@@ -51,7 +51,6 @@ public class CharacterStats : MonoBehaviour
         {
             Health = 0;
             IsDead = true;
-            SceneManager.LoadScene(1);
         }
     }
 
