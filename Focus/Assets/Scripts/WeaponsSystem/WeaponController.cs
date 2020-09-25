@@ -229,13 +229,13 @@ public class WeaponController : MonoBehaviour
                 WeaponsList[CurrentWeaponIndex].WeaponAmmoLoaded--;
                 return true;
             }
-            else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
-            {
-                //Automatically reload if the player attempts to fire the weapon 
-                //provided they have more ammunition
-                ReloadWeapon();
-                return false;
-            }
+            //else if (MyStats.GetAmmoCount(WeaponsList[CurrentWeaponIndex].WeaponAmmoType) > 0)
+            //{
+            //    //Automatically reload if the player attempts to fire the weapon 
+            //    //provided they have more ammunition
+            //   // ReloadWeapon();
+            //    return false;
+            //}
         }
 
         return false;

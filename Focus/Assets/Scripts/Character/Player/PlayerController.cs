@@ -202,8 +202,6 @@ public class PlayerController : MonoBehaviour
 
     public void Aim(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
             if (context.ReadValueAsButton() && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
             {
                 IsAiming = true;
@@ -212,7 +210,6 @@ public class PlayerController : MonoBehaviour
             {
                 IsAiming = false;
             }
-        }
     }
 
     public void Fire(InputAction.CallbackContext context)
