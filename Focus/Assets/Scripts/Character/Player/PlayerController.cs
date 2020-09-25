@@ -536,6 +536,7 @@ public class PlayerController : MonoBehaviour
     {
         StartGrapple(destination);
 
+
         //While the player is more than the min distance away from the hook point, move towards it and update the line renderer
         while (Vector3.Distance(transform.position, destination) > GrappleMinDistance)
         {
@@ -543,7 +544,7 @@ public class PlayerController : MonoBehaviour
 
             if (!MasterPause.IsPaused)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destination, GrappleSpeed);
+                transform.position = Vector3.MoveTowards(transform.position, destination, 100.0f * GetComponent<Timeline>().deltaTime);
                 GetComponent<LineRenderer>().SetPosition(0, MyWeaponController.CurrentGun.transform.GetChild(0).transform.position);
             }
         }
