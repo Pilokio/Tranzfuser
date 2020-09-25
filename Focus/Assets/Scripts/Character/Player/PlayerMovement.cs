@@ -1,5 +1,6 @@
 using Chronos;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : BaseBehaviour
 {
@@ -24,7 +25,7 @@ public class PlayerMovement : BaseBehaviour
 
     // Jumping Params
     [Space]
-    [SerializeField] float jumpCooldown = 0.25f;
+    [SerializeField] float jumpCooldown = 0.1f;
     [SerializeField] float jumpForce = 550f;
     private bool readyToJump = true;
 
@@ -39,12 +40,14 @@ public class PlayerMovement : BaseBehaviour
     private Camera MainCamera;
     private Rigidbody rb;
 
+    public Slider SensitivitySlider;
+
     // Start is called before the first frame update
     void Start()
     {
         MainCamera = Camera.main;
         rb = GetComponent<Rigidbody>();
-
+        UpdateLookSensitivity();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -136,35 +139,44 @@ public class PlayerMovement : BaseBehaviour
             LookSensitivity = LookSensitivityController;
         }
     }
+    
+
+
+    public void UpdateLookSensitivity()
+    {
+        LookSensitivity = SensitivitySlider.value;
+    }
 
     public void Look(Vector2 LookDirection)
     {
-
-        //LookDirection = new Vector2(Mathf.Clamp(LookDirection.x, -1, 1), Mathf.Clamp(LookDirection.y, -1, 1));
-
-
-        //if (CustomInputManager.ControllersConnected == false)
-
-        if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
-            LookDirection.x = 0.0f;
-
-        if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
-            LookDirection.y = 0.0f;
+        if (!MasterPause.IsPaused)
+        {
+            //LookDirection = new Vector2(Mathf.Clamp(LookDirection.x, -1, 1), Mathf.Clamp(LookDirection.y, -1, 1));
 
 
-        LookDirection *= LookSensitivity * Time.deltaTime;
+            //if (CustomInputManager.ControllersConnected == false)
 
-        //Update the x rotation of the camera based on the new Look Direction
-        XRotation -= LookDirection.y;
+            if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
+                LookDirection.x = 0.0f;
 
-        //Clamp to prevent full 360 rotation around the x-axis
-        XRotation = Mathf.Clamp(XRotation, -90, 90);
+            if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
+                LookDirection.y = 0.0f;
 
-        //Update the camera's x rotation
-        MainCamera.transform.localRotation = Quaternion.Euler(XRotation, MainCamera.transform.localRotation.eulerAngles.y, MainCamera.transform.localRotation.eulerAngles.z);
 
-        //Rotate the entire player container transform around the y-axis based on the look direction
-        transform.Rotate(transform.up * LookDirection.x);
+            LookDirection *= LookSensitivity * Time.deltaTime;
+
+            //Update the x rotation of the camera based on the new Look Direction
+            XRotation -= LookDirection.y;
+
+            //Clamp to prevent full 360 rotation around the x-axis
+            XRotation = Mathf.Clamp(XRotation, -90, 90);
+
+            //Update the camera's x rotation
+            MainCamera.transform.localRotation = Quaternion.Euler(XRotation, MainCamera.transform.localRotation.eulerAngles.y, MainCamera.transform.localRotation.eulerAngles.z);
+
+            //Rotate the entire player container transform around the y-axis based on the look direction
+            transform.Rotate(transform.up * LookDirection.x);
+        }
     }
 
     public float MinYClamp = -90.0f;
@@ -178,29 +190,32 @@ public class PlayerMovement : BaseBehaviour
 
     public void LookOnWall(Vector2 LookDirection)
     {
-        if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
-            LookDirection.x = 0.0f;
+        if (!MasterPause.IsPaused)
+        {
+            if (LookDirection.x < 0.25 && LookDirection.x > -0.25)
+                LookDirection.x = 0.0f;
 
-        if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
-            LookDirection.y = 0.0f;
-
-
-        LookDirection *= LookSensitivity * Time.deltaTime;
-
-        //Update the x rotation of the camera based on the new Look Direction
-        XRotation -= LookDirection.y;
-
-        //Clamp to prevent full 360 rotation around the x-axis
-        XRotation = Mathf.Clamp(XRotation, -45, 45);
+            if (LookDirection.y < 0.25 && LookDirection.y > -0.25)
+                LookDirection.y = 0.0f;
 
 
-        //Update the x rotation of the camera based on the new Look Direction
-        YRotation += LookDirection.x;
-        YRotation = Mathf.Clamp(YRotation, MinYClamp, MaxYClamp);
+            LookDirection *= LookSensitivity * Time.deltaTime;
+
+            //Update the x rotation of the camera based on the new Look Direction
+            XRotation -= LookDirection.y;
+
+            //Clamp to prevent full 360 rotation around the x-axis
+            XRotation = Mathf.Clamp(XRotation, -45, 45);
 
 
-        //Update the camera's x rotation
-        MainCamera.transform.localRotation = Quaternion.Euler(XRotation, YRotation, MainCamera.transform.localRotation.eulerAngles.z);
+            //Update the x rotation of the camera based on the new Look Direction
+            YRotation += LookDirection.x;
+            YRotation = Mathf.Clamp(YRotation, MinYClamp, MaxYClamp);
+
+
+            //Update the camera's x rotation
+            MainCamera.transform.localRotation = Quaternion.Euler(XRotation, YRotation, MainCamera.transform.localRotation.eulerAngles.z);
+        }
     }
 
     public void ClimbLadder(Vector3 Direction)

@@ -13,7 +13,10 @@ public class Fan : BaseBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + speed * time.deltaTime));
+        if (!MasterPause.IsPaused)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + speed * time.deltaTime));
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

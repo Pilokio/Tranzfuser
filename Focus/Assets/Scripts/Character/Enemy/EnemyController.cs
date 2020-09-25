@@ -121,23 +121,26 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!MyEnemyStats.IsDead)
+        if (!MasterPause.IsPaused)
         {
-            if (!MyEnemyStats.IsDead && !TargetSighted && AlertStatus == EnemyUtility.AlertState.Idle)
+            if (!MyEnemyStats.IsDead)
             {
-                TargetSighted = DetectPlayer();
-            }
-
-            if (AlertStatus == EnemyUtility.AlertState.Idle)
-            {
-                Collider[] nearbyenemies = Physics.OverlapSphere(transform.position, 50.0f, Enemies);
-
-                foreach (Collider collider in nearbyenemies)
+                if (!MyEnemyStats.IsDead && !TargetSighted && AlertStatus == EnemyUtility.AlertState.Idle)
                 {
-                    if (collider.GetComponent<EnemyController>().AlertStatus == EnemyUtility.AlertState.Hostile)
+                    TargetSighted = DetectPlayer();
+                }
+
+                if (AlertStatus == EnemyUtility.AlertState.Idle)
+                {
+                    Collider[] nearbyenemies = Physics.OverlapSphere(transform.position, 50.0f, Enemies);
+
+                    foreach (Collider collider in nearbyenemies)
                     {
-                        SwitchToHostile();
-                        break;
+                        if (collider.GetComponent<EnemyController>().AlertStatus == EnemyUtility.AlertState.Hostile)
+                        {
+                            SwitchToHostile();
+                            break;
+                        }
                     }
                 }
             }
@@ -155,50 +158,61 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!MyEnemyStats.IsDead)
+        MyNavMeshAgent.isStopped = MasterPause.IsPaused;
+
+        if (!MasterPause.IsPaused)
         {
-            switch (AlertStatus)
+            MyAnimator.speed = 1;
+
+            if (!MyEnemyStats.IsDead)
             {
-                case EnemyUtility.AlertState.Idle:
-                    if (PatrolPoints.Count > 0)
-                    {
-                        PlayWalkAnimation();
-                        Patrol();
-                    }
+                switch (AlertStatus)
+                {
+                    case EnemyUtility.AlertState.Idle:
+                        if (PatrolPoints.Count > 0)
+                        {
+                            PlayWalkAnimation();
+                            Patrol();
+                        }
 
-                    if (HitCounter > 0)
-                    {
-                        SwitchToHostile();
-                    }
+                        if (HitCounter > 0)
+                        {
+                            SwitchToHostile();
+                        }
 
-                    break;
-                case EnemyUtility.AlertState.Hostile:
+                        break;
+                    case EnemyUtility.AlertState.Hostile:
 
-                    float Distance = Vector3.Distance(transform.position, PlayerRef.transform.position);
+                        float Distance = Vector3.Distance(transform.position, PlayerRef.transform.position);
 
-                    if (Distance > MyWeaponController.GetCurrentlyEquippedWeapon().WeaponRange)
-                    {
-                        PlayRunAnimation();
-                        MoveIn();
-                    }
-                    else if (Distance < 10.0f)
-                    {
-                        PlayRunAnimation();
-                        Retreat();
-                    }
-                    else
-                    {
-                        PlayShootAnimation();
-                        HoldPosition();
-                        FaceTarget();
-                        Attack();
-                    }
-                    break;
+                        if (Distance > MyWeaponController.GetCurrentlyEquippedWeapon().WeaponRange)
+                        {
+                            PlayRunAnimation();
+                            MoveIn();
+                        }
+                        else if (Distance < 10.0f)
+                        {
+                            PlayRunAnimation();
+                            Retreat();
+                        }
+                        else
+                        {
+                            PlayShootAnimation();
+                            HoldPosition();
+                            FaceTarget();
+                            Attack();
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                MyHealthBar.DisableHealthbar();
             }
         }
         else
         {
-            MyHealthBar.DisableHealthbar();
+            MyAnimator.speed = 0;
         }
     }
 

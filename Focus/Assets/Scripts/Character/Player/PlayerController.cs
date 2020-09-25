@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerMovement))]
@@ -100,6 +101,68 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+
+
+    public GameObject PauseMenu;
+    Vector3 StartGrav = new Vector3();
+    Vector3 PrevVelocity = new Vector3();
+    public void SetPause(bool pause)
+    {
+        MasterPause.IsPaused = pause;
+        PauseMenu.SetActive(pause);
+
+        if(pause)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            Physics.gravity = Vector3.zero;
+            PrevVelocity = GetComponent<Rigidbody>().velocity;
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Physics.gravity = StartGrav;
+            GetComponent<Rigidbody>().velocity = PrevVelocity;
+
+        }
+    }
+
+    public void QuitApplication()
+    {
+        Application.Quit();
+    }
+
+    public AudioMixer MasterMixer;
+    public Slider VolumeSlider;
+
+    public void UpdateVolume()
+    {
+        MasterMixer.SetFloat("volume", VolumeSlider.value);
+    }
+
+
+    public GameObject Checkpoint { get; set; }
+
+    public void Respawn()
+    {
+        if (Checkpoint != null)
+        {    
+            
+
+            transform.position = Checkpoint.transform.position;
+            transform.rotation = Checkpoint.transform.rotation;
+          
+            MyStats.Health = MyStats.MaxHealth;
+            MyStats.IsDead = false;
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
 #pragma warning restore 0649
 
     #region Input Callbacks
@@ -113,14 +176,14 @@ public class PlayerController : MonoBehaviour
 
     public void Look(InputAction.CallbackContext context)
     {
-        if(context.control.name == "delta")
-        {
-            MyMovement.SetLookSensitivity(true);
-        }
-        else
-        {
-            MyMovement.SetLookSensitivity(false);
-        }
+        //if(context.control.name == "delta")
+        //{
+        //    MyMovement.SetLookSensitivity(true);
+        //}
+        //else
+        //{
+        //    MyMovement.SetLookSensitivity(false);
+        //}
 
         LookDirection = context.ReadValue<Vector2>();
     }
@@ -151,23 +214,26 @@ public class PlayerController : MonoBehaviour
 
     public void Fire(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (!MasterPause.IsPaused)
         {
-            //Use the equipped weapon
-            if (MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward))
+            if (context.ReadValueAsButton())
             {
-                MyAnimator.SetBool("isFiring", true);
+                //Use the equipped weapon
+                if (MyWeaponController.UseWeapon(Camera.main.transform.position, Camera.main.transform.forward))
+                {
+                    MyAnimator.SetBool("isFiring", true);
+                }
             }
-        }
-        else
-        {
-            MyAnimator.SetBool("isFiring", false);
+            else
+            {
+                MyAnimator.SetBool("isFiring", false);
+            }
         }
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
         {
             MyTimeController.ToggleSlowMo(); 
         }
@@ -175,7 +241,7 @@ public class PlayerController : MonoBehaviour
 
     public void Grapple(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
         {
             GrappleToHook();
         }
@@ -183,7 +249,7 @@ public class PlayerController : MonoBehaviour
 
     public void WeaponSwap(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
         {
             //if the next increment is beyond the bounds of the weapons list, reset to zero
             if (MyWeaponController.CurrentWeaponIndex + 1 < MyWeaponController.GetWeaponListSize())
@@ -199,7 +265,7 @@ public class PlayerController : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
         {
             if (IsWallRunning)
             {
@@ -213,7 +279,7 @@ public class PlayerController : MonoBehaviour
     }
     public void Reload(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
         {
             if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
             {
@@ -232,6 +298,7 @@ public class PlayerController : MonoBehaviour
         if (context.ReadValueAsButton())
         {
             //Toggle pause menu here
+            SetPause(true);
         }
     }
 
@@ -291,116 +358,131 @@ public class PlayerController : MonoBehaviour
 
         //Ensure the grapple particle system doesnt play by default
         GrappleParticleSystem.Stop();
+        StartGrav = Physics.gravity;
+        float startVol = 0;
+         MasterMixer.GetFloat("volume", out startVol);
+        VolumeSlider.value = startVol;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Lock the x-axis of the look direction when climbing ladders
-        //otherwise pass the look direction to the movement script as is
-        if (IsClimbing)
+        if (!MasterPause.IsPaused)
         {
-            MyMovement.Look(new Vector2(0.0f, LookDirection.y));
-        }
-        else if (IsWallRunning)
-        {
-            MyMovement.LookOnWall(LookDirection);
-        }
-        else
-        {
-            MyMovement.Look(LookDirection);
-        }
-
-
-        
-
-
-        //Create the ray for the grapple raycast
-        GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
-        //Perform the raycast for the grapple
-        if (Physics.Raycast(GrappleRay, out GrappleTarget, GrappleRange, GrappleMask))
-        {
-            //if aiming at a different grapple point from the one stored
-            //hide the canvas on the old one before proceeding
-            if(TargetedHookPoint != GrappleTarget.transform.GetComponent<Hook>() && TargetedHookPoint != null)
+            //Lock the x-axis of the look direction when climbing ladders
+            //otherwise pass the look direction to the movement script as is
+            if (IsClimbing)
             {
-                TargetedHookPoint.HideCanvas();
+                MyMovement.Look(new Vector2(0.0f, LookDirection.y));
+            }
+            else if (IsWallRunning)
+            {
+                MyMovement.LookOnWall(LookDirection);
+            }
+            else
+            {
+                MyMovement.Look(LookDirection);
             }
 
-            //Store the result of the raycast and display the canvas
-            TargetedHookPoint = GrappleTarget.transform.GetComponent<Hook>();
-            TargetedHookPoint.DisplayCanvas();
-        }
-        else
-        {
-            //If the raycat fails to hit anything and there is still a hook stored
-            //Hide its canvas and set the local store to null
-            if (TargetedHookPoint != null)
+
+
+
+
+            //Create the ray for the grapple raycast
+            GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);
+            //Perform the raycast for the grapple
+            if (Physics.Raycast(GrappleRay, out GrappleTarget, GrappleRange, GrappleMask))
             {
-                TargetedHookPoint.HideCanvas();
-                TargetedHookPoint = null;
+                //if aiming at a different grapple point from the one stored
+                //hide the canvas on the old one before proceeding
+                if (TargetedHookPoint != GrappleTarget.transform.GetComponent<Hook>() && TargetedHookPoint != null)
+                {
+                    TargetedHookPoint.HideCanvas();
+                }
+
+                //Store the result of the raycast and display the canvas
+                TargetedHookPoint = GrappleTarget.transform.GetComponent<Hook>();
+                TargetedHookPoint.DisplayCanvas();
             }
-        }
+            else
+            {
+                //If the raycat fails to hit anything and there is still a hook stored
+                //Hide its canvas and set the local store to null
+                if (TargetedHookPoint != null)
+                {
+                    TargetedHookPoint.HideCanvas();
+                    TargetedHookPoint = null;
+                }
+            }
 
-        //While holding the aim button, disable weapon sway and move the gun to the aim position
-        //otherwise return to default position and resume sway
-        if(IsAiming)
-        {
-            MyWeaponSway.enabled = false;
-            MyAnimator.SetBool("isAiming", true);
-            GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * AimingSmoothFactor);
-        }
-        else
-        {
-            MyWeaponSway.enabled = true;
-            MyAnimator.SetBool("isAiming", false);
-            GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * AimingSmoothFactor);
-        }
+            //While holding the aim button, disable weapon sway and move the gun to the aim position
+            //otherwise return to default position and resume sway
+            if (IsAiming)
+            {
+                MyWeaponSway.enabled = false;
+                MyAnimator.SetBool("isAiming", true);
+                GunHolder.transform.position = Vector3.Lerp(GunHolder.transform.position, AimDownSightsPos.transform.position, Time.deltaTime * AimingSmoothFactor);
+            }
+            else
+            {
+                MyWeaponSway.enabled = true;
+                MyAnimator.SetBool("isAiming", false);
+                GunHolder.transform.position = Vector3.Lerp(GunHolder.position, OriginalGunPos.position, Time.deltaTime * AimingSmoothFactor);
+            }
 
-        UpdateUI();
+            UpdateUI();
+        }
     }
 
     private void FixedUpdate()
     {
-        //Core Player movement
-        if (!IsClimbing && !IsWallRunning)
+        if (!MasterPause.IsPaused)
         {
-          
 
-            MyMovement.Move(MoveDirection);
-
-            //// Dampen momentum
-            //if (characterVelocityMomentum.magnitude >= 0f)
-            //{
-            //    float momentumDrag = 3f;
-            //    characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
-            //    if (characterVelocityMomentum.magnitude < .0f)
-            //    {
-            //        characterVelocityMomentum = Vector3.zero;
-            //    }
-            //}
-        }
-        
-        //If climbing a ladder, use the climb ladder function to move up/down using the y component of the move direction
-        //while also using the x component to dismount early if desired using the default move function
-        if(IsClimbing)
-        {
-            MyMovement.Move(new Vector2(MoveDirection.x, 0));
-            MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
-        }
-
-        //Use the wall running scripts move function when wall running instead of the default movement
-        if (IsWallRunning)
-        {
-            if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
+            if(transform.position.y <= 100)
             {
-                MyWallRunning.IsTurning = false;
+                MyStats.TakeDamage(MyStats.MaxHealth);
             }
 
-            MyMovement.MoveOnWall(MoveDirection.y);
+            //Core Player movement
+            if (!IsClimbing && !IsWallRunning)
+            {
+
+
+                MyMovement.Move(MoveDirection);
+
+                //// Dampen momentum
+                //if (characterVelocityMomentum.magnitude >= 0f)
+                //{
+                //    float momentumDrag = 3f;
+                //    characterVelocityMomentum -= characterVelocityMomentum * momentumDrag * Time.deltaTime;
+                //    if (characterVelocityMomentum.magnitude < .0f)
+                //    {
+                //        characterVelocityMomentum = Vector3.zero;
+                //    }
+                //}
+            }
+
+            //If climbing a ladder, use the climb ladder function to move up/down using the y component of the move direction
+            //while also using the x component to dismount early if desired using the default move function
+            if (IsClimbing)
+            {
+                MyMovement.Move(new Vector2(MoveDirection.x, 0));
+                MyMovement.ClimbLadder(new Vector3(0, MoveDirection.y, 0));
+            }
+
+            //Use the wall running scripts move function when wall running instead of the default movement
+            if (IsWallRunning)
+            {
+                if (MyWallRunning.IsTurning && MoveDirection.y != 0.0f)
+                {
+                    MyWallRunning.IsTurning = false;
+                }
+
+                MyMovement.MoveOnWall(MoveDirection.y);
+            }
         }
     }
-
     //This function is used to update the healthbar and ammo counter in the UI
     //NB The focus bar is updated elsewhere
     void UpdateUI()
@@ -413,7 +495,10 @@ public class PlayerController : MonoBehaviour
 
         if (MyStats.Health <= 0)
         {
-            SceneManager.LoadScene(1);
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+            Invoke("Respawn", 0.1f);
         }
 
         FocusBar.maxValue = MyTimeController.MaxFocus;
@@ -435,6 +520,26 @@ public class PlayerController : MonoBehaviour
     //This coroutine handles the grappling mechanic itself
     IEnumerator MoveGrapple(Vector3 destination)
     {
+        StartGrapple(destination);
+
+        //While the player is more than the min distance away from the hook point, move towards it and update the line renderer
+        while (Vector3.Distance(transform.position, destination) > GrappleMinDistance)
+        {
+            yield return new WaitForEndOfFrame();
+
+            if (!MasterPause.IsPaused)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, destination, GrappleSpeed);
+                GetComponent<LineRenderer>().SetPosition(0, MyWeaponController.CurrentGun.transform.GetChild(0).transform.position);
+            }
+        }
+
+        StopGrapple();
+    }
+
+
+    void StartGrapple(Vector3 destination)
+    {
         //Enable the line renderer, play the particle effect and update the FOV
         MyLineRenderer.enabled = true;
         GrappleParticleSystem.Play();
@@ -442,22 +547,18 @@ public class PlayerController : MonoBehaviour
 
         //Use the line renderer to draw a line from the player to the hook
         GetComponent<LineRenderer>().SetPositions(new Vector3[] { MyWeaponController.CurrentGun.transform.GetChild(0).transform.position, destination });
+    }
 
-        yield return null;
-
-        //While the player is more than the min distance away from the hook point, move towards it and update the line renderer
-        while (Vector3.Distance(transform.position, destination) > GrappleMinDistance)
-        {
-            yield return null;
-            transform.position = Vector3.MoveTowards(transform.position, destination, GrappleSpeed);
-            GetComponent<LineRenderer>().SetPosition(0, MyWeaponController.CurrentGun.transform.GetChild(0).transform.position);
-        }
-
+    void StopGrapple()
+    {
+        StopAllCoroutines();
         //After reaching the hook point, disable the line renderer, stop the particle effect, and return to normal FOV
         MyLineRenderer.enabled = false;
         MyFOVController.UseNormalFOV();
         GrappleParticleSystem.Stop();
     }
+
+    private bool CollidingWithHook = false;
 
     public void OnCollisionEnter(Collision collision)
     {
@@ -465,6 +566,11 @@ public class PlayerController : MonoBehaviour
         if (collision.transform.CompareTag("Bullet"))
         {
             MyStats.TakeDamage((int)collision.gameObject.GetComponent<ProjectileController>().DamageAmount);
+        }
+
+        if(collision.transform.CompareTag("HookPoint"))
+        {
+            StopGrapple();
         }
     }
 }

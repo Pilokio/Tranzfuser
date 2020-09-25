@@ -49,31 +49,50 @@ public class MovingPlatform : BaseBehaviour
 
     private void FixedUpdate()
     {
-        //Ensure the direction is inverted when reaching the edge of the movement range based on the axis of travel
-        switch (Axis)
+        if (!MasterPause.IsPaused)
         {
-            case MoveAxis.x:
-                if (transform.position.x >= StartingPosition.x + MoveRange || transform.position.x <= StartingPosition.x - MoveRange)
-                {
-                    Direction.x *= -1;
-                }
-                break;
-            case MoveAxis.y:
-                if (transform.position.y >= StartingPosition.y + MoveRange || transform.position.y <= StartingPosition.y - MoveRange)
-                {
-                    Direction.y *= -1;
-                }
-                break;
-            case MoveAxis.z:
-                if (transform.position.z >= StartingPosition.z + MoveRange || transform.position.z <= StartingPosition.z - MoveRange)
-                {
-                    Direction.z *= -1;
-                }
-                break;
+            //Ensure the direction is inverted when reaching the edge of the movement range based on the axis of travel
+            switch (Axis)
+            {
+                case MoveAxis.x:
+                    if (transform.position.x >= StartingPosition.x + MoveRange)
+                    {
+                        Direction.x = -1;
+                    }
+
+                    if (transform.position.x <= StartingPosition.x - MoveRange)
+                    {
+                        Direction.x = 1;
+                    }
+
+                    break;
+                case MoveAxis.y:
+                    if (transform.position.y >= StartingPosition.y + MoveRange)
+                    {
+                        Direction.y = -1;
+                    }
+
+                    if (transform.position.y <= StartingPosition.y - MoveRange)
+                    {
+                        Direction.y = 1;
+                    }
+                    break;
+                case MoveAxis.z:
+                    if (transform.position.z >= StartingPosition.z + MoveRange)
+                    {
+                        Direction.z = -1;
+                    }
+
+                    if (transform.position.z <= StartingPosition.z - MoveRange)
+                    {
+                        Direction.z = 1;
+                    }
+                    break;
+            }
+
+            //Move the platform 
+            rb.MovePosition(transform.position + Direction * Speed * time.fixedDeltaTime);
         }
-        
-        //Move the platform 
-        rb.MovePosition(transform.position + Direction * Speed * time.fixedDeltaTime);
     }
 
     private void OnValidate()
