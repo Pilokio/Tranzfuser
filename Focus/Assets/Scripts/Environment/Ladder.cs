@@ -49,7 +49,6 @@ public class Ladder : MonoBehaviour
     {        
         if (PlayerOccupied)
         {
-            Debug.Log("I am on the ladder");
             if (Mathf.Abs(playerController.GetMoveDirection().x) >= 0.25f)
             {
                 player.GetComponent<PlayerController>().SetIsClimbing(false);

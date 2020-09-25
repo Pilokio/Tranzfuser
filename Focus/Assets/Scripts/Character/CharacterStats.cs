@@ -32,6 +32,9 @@ public class CharacterStats : MonoBehaviour
     [Header("Throwables")]
     [SerializeField] public int GrenadeCount = 10;
 
+
+    [SerializeField] GameObject PlayerDamageIndicator;
+
     private void Start()
     {
         IsDead = false;
@@ -45,6 +48,9 @@ public class CharacterStats : MonoBehaviour
 
     public void TakeDamage(int dmg)
     {
+        if(transform.CompareTag("Player"))
+            PlayerDamageIndicator.SetActive(true);
+
         Health -= dmg;
 
         if (Health <= 0)
@@ -52,8 +58,15 @@ public class CharacterStats : MonoBehaviour
             Health = 0;
             IsDead = true;
         }
+
+        if (transform.CompareTag("Player"))
+            Invoke("SetIndicatorInActive", 0.5f);
     }
 
+    void SetIndicatorInActive()
+    {
+        PlayerDamageIndicator.SetActive(false);
+    }
     public void RestoreHealth(int amount)
     {
         Health += amount;

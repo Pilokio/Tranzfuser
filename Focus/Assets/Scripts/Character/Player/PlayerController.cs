@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour
 
 
     public GameObject PauseMenu;
-    Vector3 StartGrav = new Vector3();
+    [SerializeField] Vector3 StartGrav = new Vector3();
     Vector3 PrevVelocity = new Vector3();
     public void SetPause(bool pause)
     {
@@ -129,9 +129,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void QuitApplication()
+    public void QuitGame()
     {
-        Application.Quit();
+        SceneManager.LoadScene(0);
     }
 
     public AudioMixer MasterMixer;
@@ -202,13 +202,16 @@ public class PlayerController : MonoBehaviour
 
     public void Aim(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
+        if (context.performed)
         {
-            IsAiming = true;
-        }
-        else
-        {
-            IsAiming = false;
+            if (context.ReadValueAsButton() && MyWeaponController.GetCurrentlyEquippedWeapon().CanAimDownSights)
+            {
+                IsAiming = true;
+            }
+            else
+            {
+                IsAiming = false;
+            }
         }
     }
 
@@ -228,77 +231,94 @@ public class PlayerController : MonoBehaviour
             {
                 MyAnimator.SetBool("isFiring", false);
             }
+
         }
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+        if (context.performed)
         {
-            MyTimeController.ToggleSlowMo(); 
+            if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+            {
+                MyTimeController.ToggleSlowMo();
+            }
         }
     }
 
     public void Grapple(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+        if (context.performed)
         {
-            GrappleToHook();
+            if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+            {
+                GrappleToHook();
+            }
         }
     }
 
     public void WeaponSwap(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+        if (context.performed)
         {
-            //if the next increment is beyond the bounds of the weapons list, reset to zero
-            if (MyWeaponController.CurrentWeaponIndex + 1 < MyWeaponController.GetWeaponListSize())
+            if (context.ReadValueAsButton() && !MasterPause.IsPaused)
             {
-                MyWeaponController.ChangeWeapon(MyWeaponController.CurrentWeaponIndex + 1);
-            }
-            else
-            {
-                MyWeaponController.ChangeWeapon(0);
+                //if the next increment is beyond the bounds of the weapons list, reset to zero
+                if (MyWeaponController.CurrentWeaponIndex + 1 < MyWeaponController.GetWeaponListSize())
+                {
+                    MyWeaponController.ChangeWeapon(MyWeaponController.CurrentWeaponIndex + 1);
+                }
+                else
+                {
+                    MyWeaponController.ChangeWeapon(0);
+                }
             }
         }
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
+        if (context.performed)
         {
-            if (IsWallRunning)
+            if (context.ReadValueAsButton() && !MasterPause.IsPaused)
             {
-                MyWallRunning.JumpOffWall();
-            }
-            else
-            {
-                MyMovement.Jump();
+                if (IsWallRunning)
+                {
+                    MyWallRunning.JumpOffWall();
+                }
+                else
+                {
+                    MyMovement.Jump();
+                }
             }
         }
     }
     public void Reload(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton() && !MasterPause.IsPaused)
-        {
-            if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
+            if (context.ReadValueAsButton() && !MasterPause.IsPaused)
             {
-                MyAnimator.SetBool("isReloading", true);
-                MyWeaponController.ReloadWeapon();
+                if (MyWeaponController.GetCurrentlyEquippedWeapon().WeaponAmmoLoaded < MyWeaponController.GetCurrentlyEquippedWeapon().WeaponMagCapacity)
+                {
+                    MyAnimator.SetBool("isReloading", true);
+                    MyWeaponController.ReloadWeapon();
+                }
             }
-        }
-        else
-        {
-            MyAnimator.SetBool("isReloading", false);
-        }
+            else
+            {
+                MyAnimator.SetBool("isReloading", false);
+            }
+        
     }
 
     public void Pause(InputAction.CallbackContext context)
     {
-        if (context.ReadValueAsButton())
+        if (context.performed)
         {
-            //Toggle pause menu here
-            SetPause(true);
+            if (context.ReadValueAsButton())
+            {
+                //Toggle pause menu here
+                SetPause(true);
+            }
         }
     }
 
@@ -343,6 +363,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetPause(false);
+
         //Get and store the main camera, used by the player
         PlayerCamera = Camera.main;
 
@@ -358,7 +380,6 @@ public class PlayerController : MonoBehaviour
 
         //Ensure the grapple particle system doesnt play by default
         GrappleParticleSystem.Stop();
-        StartGrav = Physics.gravity;
         float startVol = 0;
          MasterMixer.GetFloat("volume", out startVol);
         VolumeSlider.value = startVol;
@@ -383,10 +404,6 @@ public class PlayerController : MonoBehaviour
             {
                 MyMovement.Look(LookDirection);
             }
-
-
-
-
 
             //Create the ray for the grapple raycast
             GrappleRay = new Ray(PlayerCamera.transform.position, PlayerCamera.transform.forward);

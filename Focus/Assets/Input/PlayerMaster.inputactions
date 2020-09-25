@@ -27,7 +27,7 @@
                     "id": "386e55a8-4e41-419c-99e6-edfec9bd66ae",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press"
                 },
                 {
                     "name": "Jump",
@@ -35,7 +35,7 @@
                     "id": "9f3244c1-9866-4959-b339-0401334d5f49",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Sprint",
@@ -51,7 +51,7 @@
                     "id": "c00e2470-94cf-4ece-8652-194fbbbad9c4",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Aim",
@@ -67,7 +67,7 @@
                     "id": "50072381-04b3-49f8-b7ab-652276642226",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "WeaponSwap",
@@ -75,7 +75,7 @@
                     "id": "2f6f85ad-2c74-464c-8620-395d3c00048d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Grapple",
@@ -83,7 +83,7 @@
                     "id": "4aaf9cb0-da4d-4adc-acfc-bdf0a2507c99",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Reload",
@@ -91,7 +91,7 @@
                     "id": "36d7bfeb-983b-45b1-8aa7-95190ba3e220",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap"
+                    "interactions": "Press(behavior=2)"
                 }
             ],
             "bindings": [
@@ -317,6 +317,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b99fa83c-7eb9-4cb6-a9df-09f6eee16bbb",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "47e06122-3253-4505-8f26-e9bd0bdcee9c",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
@@ -340,7 +351,7 @@
                 {
                     "name": "",
                     "id": "cc697e37-a57e-4671-aae8-558c3cc92b4b",
-                    "path": "<Keyboard>/z",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

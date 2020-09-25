@@ -7355,7 +7355,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Press Z to slow time.
+  m_text: 'Press E to slow time.
 
     Time Bending consumes Focus.'
   m_isRightToLeft: 0
@@ -42008,6 +42008,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1877914527}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &587025221 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3611018250486517414, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1877914527}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &587025227 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3424501046184128463, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
@@ -46900,7 +46906,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 587025229}
-        m_MethodName: QuitApplication
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -70099,6 +70105,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1157442910}
   m_Mesh: {fileID: -4121606559162394652, guid: 468df16e9b145f34c94b1c16f856b0e1, type: 3}
+--- !u!1 &1157750777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1157750778}
+  - component: {fileID: 1157750780}
+  - component: {fileID: 1157750779}
+  m_Layer: 17
+  m_Name: DamageIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1157750778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157750777}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -32.70748, y: 13.826019, z: -13.27442}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 587025221}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1157750779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157750777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: 51c788f1d27ce434aa85a6a3ef8ef4b0, type: 2}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
+--- !u!65 &1157750780
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157750777}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1162579429
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97515,6 +97583,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 24100000, guid: 89b04cd176211574f86bd8efa9f07e16,
         type: 2}
+    - target: {fileID: 2883289800570198643, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
+        type: 3}
+      propertyPath: StartGrav.y
+      value: -30
+      objectReference: {fileID: 0}
     - target: {fileID: 3424501046184128463, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: SensitivitySlider
@@ -97605,6 +97678,11 @@ PrefabInstance:
       propertyPath: WallLayermask.m_Bits
       value: 65536
       objectReference: {fileID: 0}
+    - target: {fileID: 7396363903081029579, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
+        type: 3}
+      propertyPath: PlayerDamageIndicator
+      value: 
+      objectReference: {fileID: 1157750777}
     - target: {fileID: 8866296316120507348, guid: 4fe90acbfa9550f48a3f52a6579bb72e,
         type: 3}
       propertyPath: WeaponsList.Array.size
