@@ -148,8 +148,8 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         if (Checkpoint != null)
-        {    
-            
+        {
+            StopGrapple();
 
             transform.position = Checkpoint.transform.position;
             transform.rotation = Checkpoint.transform.rotation;
